@@ -7,8 +7,10 @@ Current status: abandoned due to existance of [this project](https://github.com/
 # How to build
 Project is set up to build with VS Code Tasks. You can take a look on it inside `.vscode/tasks.json` if want to build manually.
 
-Make sure you set the directory to your Flash SDK in `.vscode/settings.json`. You can get it [here](https://airsdk.harman.com/download)
+You will need VS Code with [AS3&MXML Plugin](https://marketplace.visualstudio.com/items?itemName=bowlerhatllc.vscode-as3mxml).
 Also, [dotnet9](https://dotnet.microsoft.com/en-us/download/dotnet/9.0) is required to build both client and server.
+
+Make sure you set the directory to your Flash SDK in `.vscode/settings.json`. You can get it [here](https://airsdk.harman.com/download).
 
 Building:
 

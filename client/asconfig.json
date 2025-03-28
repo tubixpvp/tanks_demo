@@ -1,0 +1,24 @@
+{
+    "type": "lib",
+    "compilerOptions": {
+        "include-sources": [
+            "libraries/Alternativa3D",
+            "libraries/AlternativaTypes",
+            "libraries/AlternativaUtils",
+            "libraries/AlternativaClient",
+            "libraries/AlternativaNetwork",
+            "libraries/AlternativaProtocol",
+            "libraries/AlternativaOSGI",
+            "libraries/AlternativaFont",
+            "libraries/AlternativaGUI",
+            "libraries/AlternativaSkinManager",
+            "libraries/AlternativaPhysics",
+
+            "models/AlternativaClientModels",
+
+            "base"
+        ],
+        "target-player": "32.0",
+        "output": "bin/client.swc"
+    }
+}

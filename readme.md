@@ -11,6 +11,9 @@ Make sure you set the directory to your Flash SDK in `.vscode/settings.json`. Yo
 Also, [dotnet9](https://dotnet.microsoft.com/en-us/download/dotnet/9.0) is required to build both client and server.
 
 Building:
+
 Windows: Press Ctrl+Shift+B
+
 MacOS: Press Command+Shift+B
+
 -> Select your option: build client or server

@@ -1,0 +1,16 @@
+{
+    "type": "lib",
+    "compilerOptions": {
+        "include-sources": [
+            "./"
+        ],
+        "external-library-path": [
+            "./../../bin/AlternativaIOInterfaces/library.swc",
+            "./../../bin/AlternativaClient/library.swc",
+            "./../../bin/AlternativaSkinManager/library.swc",
+            "./../../bin/AlternativaUtils/library.swc"
+        ],
+        "target-player": "32.0",
+        "output": "./../../bin/AlternativaMouseManager/library.swc"
+    }
+}

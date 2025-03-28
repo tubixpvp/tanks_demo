@@ -1,0 +1,14 @@
+{
+    "type": "lib",
+    "compilerOptions": {
+        "include-sources": [
+            "./"
+        ],
+        "external-library-path": [
+            "./../../bin/AlternativaIOInterfaces/library.swc",
+            "./../../bin/AlternativaClient/library.swc"
+        ],
+        "target-player": "32.0",
+        "output": "./../../bin/AlternativaKeyboardManager/library.swc"
+    }
+}

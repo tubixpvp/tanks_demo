@@ -16,14 +16,22 @@ internal class FlashCodeGenerator(string packageName, string[]? defaultImports =
             [typeof(bool)] = (null, "Boolean", "Boolean"),
             [typeof(short)] = ("alternativa.protocol.type", "Short", "int"),
             [typeof(byte)] = ("alternativa.protocol.type", "Byte", "int"),
-            [typeof(long)] = ("alternativa.types", "Long", "Long")
+            [typeof(long)] = ("alternativa.types", "Long", "Long"),
+            [typeof(uint)] = ("alternativa.protocol.types", "UInt", "int"),
+            [typeof(ushort)] = ("alternativa.protocol.types", "UShort", "int"),
         };
     
-    public static string GetFlashDeclarationTypeName(Type type)
+    public static string GetFlashDeclarationTypeString(Type type)
     {
         if (PredefinedTypes.TryGetValue(type, out var data))
         {
             return data.flashDeclarationName;
+        }
+
+        if (type.IsArray)
+        {
+            //return $"Vector.<{GetFlashDeclarationTypeString(type.GetElementType()!)}>";
+            return "Array";
         }
         return type.Name;
     }

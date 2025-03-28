@@ -10,6 +10,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Core\Core.csproj" />
       <ProjectReference Include="..\Platform\Platform.csproj" />
+      <ProjectReference Include="..\Projects.Tanks\Projects.Tanks.csproj" />
     </ItemGroup>
 
 </Project>

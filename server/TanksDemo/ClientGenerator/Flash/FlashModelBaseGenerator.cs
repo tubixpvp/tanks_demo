@@ -189,8 +189,13 @@ internal class FlashModelBaseGenerator : IClientDataGenerator
 
         foreach (ParameterInfo parameter in parameters)
         {
-            functionStr += ", " + parameter.Name + ":" + FlashCodeGenerator.GetFlashDeclarationTypeName(parameter.ParameterType);
+            functionStr += ", " + parameter.Name + ":" + FlashCodeGenerator.GetFlashDeclarationTypeString(parameter.ParameterType);
 
+            if (parameter.ParameterType.IsArray)
+            {
+                generator.AddImport(parameter.ParameterType.GetElementType()!);
+                continue;
+            }
             generator.AddImport(parameter.ParameterType);
         }
 

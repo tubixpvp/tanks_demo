@@ -1,0 +1,12 @@
+{
+    "type": "lib",
+    "compilerOptions": {
+        "include-sources": [
+            "./"
+        ],
+        "external-library-path": [
+        ],
+        "target-player": "32.0",
+        "output": "./../../bin/AlternativaUtils/library.swc"
+    }
+}

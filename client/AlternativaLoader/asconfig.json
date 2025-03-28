@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "source-path": ["./src"],
+        "external-library-path": [
+        ],
+        "target-player": "32.0",
+        "output": "./../bin/AlternativaLoader.swf"
+    },
+    "mainClass": "AlternativaLoader"
+}

@@ -11,6 +11,7 @@
       <ProjectReference Include="..\Core\Core.csproj" />
       <ProjectReference Include="..\Logging\Logging.csproj" />
       <ProjectReference Include="..\Platform\Platform.csproj" />
+      <ProjectReference Include="..\Projects.Tanks\Projects.Tanks.csproj" />
     </ItemGroup>
 
 </Project>

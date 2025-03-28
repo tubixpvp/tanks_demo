@@ -16,16 +16,6 @@
 		},
 
 		{
-			"label": "Game Client Build",
-			"group": "build",
-			"type": "actionscript",
-			"debug": true,
-			"asconfig": "client/asconfig.json",
-			"problemMatcher": [],
-			"dependsOn": ["Generate Client Base"]
-		},
-
-		{
 			"label": "Game Server Build",
 			"group": "build",
 			"command": "dotnet",
@@ -35,6 +25,185 @@
 			"options": {
 				"cwd": "${workspaceFolder}/server/TanksDemo/TanksDemo"
 			}
+		},
+
+
+		{
+			"label": "Game Client Build",
+			"group": "build",
+			"dependsOn": [
+				"Clear Client Bin",
+
+				"Build AlternativaOSGI",
+				"Build AlternativaTypes",
+				"Build AlternativaUtils",
+				"Build AlternativaProtocol",
+				"Build AlternativaNetwork",
+				"Build AlternativaClient",
+
+				"Build TanksFonts",
+				"Build AlternativaSkinManager",
+				"Build AlternativaPhysics",
+				"Build TanksLoader",
+
+				"Build AlternativaIOInterfaces",
+				"Build AlternativaKeyboardManager",
+				"Build AlternativaMouseManager",
+
+				"Build AlternativaGUI",
+				"Build Alternativa3D",
+
+				"Build ClientBase",
+
+				"Build AlternativaClientModels",
+				"Build World3DModels",
+				"Build TanksModels3D",
+				"Build TanksModels",
+				
+				"Build AlternativaLoader"
+			],
+			"dependsOrder": "sequence"
+		},
+
+		{
+			"label": "Clear Client Bin",
+			"type": "shell",
+			"command": "start clear_bin.bat",
+			"options": {
+				"cwd": "${workspaceFolder}/client"
+			}
+		},
+
+
+		{
+			"label": "Build AlternativaOSGI",
+			"type": "actionscript",
+			"debug": true,
+			"asconfig": "client/libraries/AlternativaOSGI/asconfig.json"
+		},
+		{
+			"label": "Build AlternativaTypes",
+			"type": "actionscript",
+			"debug": true,
+			"asconfig": "client/libraries/AlternativaTypes/asconfig.json"
+		},
+		{
+			"label": "Build AlternativaUtils",
+			"type": "actionscript",
+			"debug": true,
+			"asconfig": "client/libraries/AlternativaUtils/asconfig.json"
+		},
+		{
+			"label": "Build AlternativaClient",
+			"type": "actionscript",
+			"debug": true,
+			"asconfig": "client/libraries/AlternativaClient/asconfig.json"
+		},
+		{
+			"label": "Build AlternativaProtocol",
+			"type": "actionscript",
+			"debug": true,
+			"asconfig": "client/libraries/AlternativaProtocol/asconfig.json"
+		},
+		{
+			"label": "Build AlternativaNetwork",
+			"type": "actionscript",
+			"debug": true,
+			"asconfig": "client/libraries/AlternativaNetwork/asconfig.json"
+		},
+		{
+			"label": "Build TanksFonts",
+			"type": "actionscript",
+			"debug": true,
+			"asconfig": "client/libraries/TanksFonts/asconfig.json"
+		},
+		{
+			"label": "Build AlternativaSkinManager",
+			"type": "actionscript",
+			"debug": true,
+			"asconfig": "client/libraries/AlternativaSkinManager/asconfig.json"
+		},
+		{
+			"label": "Build AlternativaPhysics",
+			"type": "actionscript",
+			"debug": true,
+			"asconfig": "client/libraries/AlternativaPhysics/asconfig.json"
+		},
+		{
+			"label": "Build TanksLoader",
+			"type": "actionscript",
+			"debug": true,
+			"asconfig": "client/libraries/TanksLoader/asconfig.json"
+		},
+		{
+			"label": "Build AlternativaIOInterfaces",
+			"type": "actionscript",
+			"debug": true,
+			"asconfig": "client/libraries/AlternativaIOInterfaces/asconfig.json"
+		},
+		{
+			"label": "Build AlternativaKeyboardManager",
+			"type": "actionscript",
+			"debug": true,
+			"asconfig": "client/libraries/AlternativaKeyboardManager/asconfig.json"
+		},
+		{
+			"label": "Build AlternativaMouseManager",
+			"type": "actionscript",
+			"debug": true,
+			"asconfig": "client/libraries/AlternativaMouseManager/asconfig.json"
+		},
+		{
+			"label": "Build AlternativaGUI",
+			"type": "actionscript",
+			"debug": true,
+			"asconfig": "client/libraries/AlternativaGUI/asconfig.json"
+		},
+		{
+			"label": "Build Alternativa3D",
+			"type": "actionscript",
+			"debug": true,
+			"asconfig": "client/libraries/Alternativa3D/asconfig.json"
+		},
+
+		{
+			"label": "Build ClientBase",
+			"type": "actionscript",
+			"debug": true,
+			"asconfig": "client/asconfig_clientbase.json",
+			"dependsOn":["Generate Client Base"]
+		},
+
+		{
+			"label": "Build AlternativaClientModels",
+			"type": "actionscript",
+			"debug": true,
+			"asconfig": "client/models/AlternativaClientModels/asconfig.json"
+		},
+		{
+			"label": "Build World3DModels",
+			"type": "actionscript",
+			"debug": true,
+			"asconfig": "client/models/World3DModels/asconfig.json"
+		},
+		{
+			"label": "Build TanksModels3D",
+			"type": "actionscript",
+			"debug": true,
+			"asconfig": "client/models/TanksModels3D/asconfig.json"
+		},
+		{
+			"label": "Build TanksModels",
+			"type": "actionscript",
+			"debug": true,
+			"asconfig": "client/models/TanksModels/asconfig.json"
+		},
+
+		{
+			"label": "Build AlternativaLoader",
+			"type": "actionscript",
+			"debug": true,
+			"asconfig": "client/AlternativaLoader/asconfig.json"
 		}
 	]
 }

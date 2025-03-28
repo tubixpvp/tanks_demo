@@ -29,9 +29,18 @@ internal class FlashExportTypesGenerator : IClientDataGenerator
         string packageName = type.Namespace!.ToLower();
 
         FlashCodeGenerator generator = new FlashCodeGenerator(packageName);
-        
-        generator.AddLine("public class " + type.Name);
-        
+
+        if (type.BaseType != null && type.BaseType != typeof(object) && type.BaseType != typeof(Enum))
+        {
+            generator.AddLine($"public class {type.Name} extends {type.BaseType.Name}");
+
+            generator.AddImport(type.BaseType);
+        }
+        else
+        {
+            generator.AddLine("public class " + type.Name);
+        }
+
         generator.OpenCurvedBrackets();
         //class contents:
 
@@ -39,10 +48,40 @@ internal class FlashExportTypesGenerator : IClientDataGenerator
         {
             GenerateEnum(type, generator);
         }
+        else
+        {
+            GenerateTypeFields(type, generator);
+        }
         
         generator.CloseCurvedBrackets(); //class contents end
         
         await File.WriteAllTextAsync(filePath, generator.GetResult());
+    }
+
+    private void GenerateTypeFields(Type type, FlashCodeGenerator generator)
+    {
+        FieldInfo[] fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
+
+        foreach (FieldInfo fieldInfo in fields)
+        {
+            Type fieldType = fieldInfo.FieldType;
+            fieldType = Nullable.GetUnderlyingType(fieldType) ?? fieldType;
+            
+            generator.AddLine($"public var {FirstLetterToLower(fieldInfo.Name)}:{FlashCodeGenerator.GetFlashDeclarationTypeString(fieldType)};");
+            generator.AddEmptyLine();
+
+            if (fieldType.IsArray)
+            {
+                generator.AddImport(fieldType.GetElementType()!);
+                continue;
+            }
+            generator.AddImport(fieldType);
+        }
+    }
+
+    private static string FirstLetterToLower(string str)
+    {
+        return str.Substring(0, 1).ToLower() + str.Substring(1);
     }
 
     private void GenerateEnum(Type type, FlashCodeGenerator generator)
@@ -59,12 +98,12 @@ internal class FlashExportTypesGenerator : IClientDataGenerator
         Type underlyingType = Enum.GetUnderlyingType(type);
         generator.AddImport(underlyingType);
         
-        string valueType = FlashCodeGenerator.GetFlashDeclarationTypeName(underlyingType);
+        string valueType = FlashCodeGenerator.GetFlashDeclarationTypeString(underlyingType);
         
         generator.AddLine($"public var value:{valueType};");
         generator.AddEmptyLine();
         
-        generator.AddLine($"public function LayerModelEnum(value:{valueType})");
+        generator.AddLine($"public function {type.Name}(value:{valueType})");
         
         generator.OpenCurvedBrackets();
         generator.AddLine("this.value = value;");

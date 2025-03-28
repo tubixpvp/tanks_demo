@@ -1,0 +1,14 @@
+{
+    "type": "lib",
+    "compilerOptions": {
+        "include-sources": [
+            "./"
+        ],
+        "external-library-path": [
+            "./../../bin/AlternativaUtils/library.swc",
+            "./../../bin/AlternativaTypes/library.swc"
+        ],
+        "target-player": "32.0",
+        "output": "./../../bin/Alternativa3D/library.swc"
+    }
+}

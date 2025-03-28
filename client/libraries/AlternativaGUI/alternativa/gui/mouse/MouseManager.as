@@ -1,6 +1,6 @@
 package alternativa.gui.mouse {
 	
-	import alternativa.gui.skin.cursor.baseSkin.BaseCursorSkin;
+	import alternativa.skin.cursor.baseSkin.BaseCursorSkin;
 	
 	import flash.display.DisplayObjectContainer;
 	import flash.display.Stage;

@@ -1,0 +1,17 @@
+{
+    "type": "lib",
+    "compilerOptions": {
+        "include-sources": [
+            "./"
+        ],
+        "external-library-path": [
+            "./../../bin/AlternativaOSGI/library.swc",
+            "./../../bin/AlternativaProtocol/library.swc",
+            "./../../bin/AlternativaTypes/library.swc",
+            "./../../bin/AlternativaNetwork/library.swc",
+            "./../../bin/AlternativaUtils/library.swc"
+        ],
+        "target-player": "32.0",
+        "output": "./../../bin/AlternativaClient/library.swc"
+    }
+}

@@ -155,6 +155,11 @@ package alternativa.init {
 			
 			debug = new Debug();
 		}
+
+		public static function get console() : IConsoleService
+		{
+			return osgi.getService(IConsoleService) as IConsoleService;
+		}
 		
 		public function stop(osgi:OSGi):void {
 			

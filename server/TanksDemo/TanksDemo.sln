@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Platform", "Platform\Platfo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSGI", "OSGI\OSGI.csproj", "{F86D53B9-5424-43E3-9433-9FC1FBA2BA19}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Projects.Tanks", "Projects.Tanks\Projects.Tanks.csproj", "{5726B1B9-8F94-4562-8190-5FD5F0522CF5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,5 +50,9 @@ Global
 		{F86D53B9-5424-43E3-9433-9FC1FBA2BA19}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F86D53B9-5424-43E3-9433-9FC1FBA2BA19}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F86D53B9-5424-43E3-9433-9FC1FBA2BA19}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5726B1B9-8F94-4562-8190-5FD5F0522CF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5726B1B9-8F94-4562-8190-5FD5F0522CF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5726B1B9-8F94-4562-8190-5FD5F0522CF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5726B1B9-8F94-4562-8190-5FD5F0522CF5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

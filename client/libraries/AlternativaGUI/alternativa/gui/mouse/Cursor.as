@@ -7,7 +7,7 @@ package alternativa.gui.mouse {
 	import alternativa.gui.mouse.dnd.IDrag;
 	import alternativa.gui.mouse.dnd.IDragObject;
 	import alternativa.gui.mouse.dnd.IDrop;
-	import alternativa.gui.skin.cursor.CursorSkin;
+	import alternativa.skin.cursor.CursorSkin;
 	import alternativa.utils.MouseUtils;
 	
 	import flash.display.Bitmap;

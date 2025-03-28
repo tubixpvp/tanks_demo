@@ -1,0 +1,20 @@
+{
+    "type": "lib",
+    "compilerOptions": {
+        "include-sources": [
+            "./"
+        ],
+        "external-library-path": [
+            "./../../bin/AlternativaClient/library.swc",
+            "./../../bin/ClientBase/library.swc",
+            "./../../bin/AlternativaTypes/library.swc",
+            "./../../bin/AlternativaProtocol/library.swc",
+            "./../../bin/AlternativaClientModels/library.swc",
+            "./../../bin/Alternativa3D/library.swc",
+            "./../../bin/AlternativaPhysics/library.swc",
+            "./../../bin/AlternativaUtils/library.swc"
+        ],
+        "target-player": "32.0",
+        "output": "./../../bin/World3DModels/library.swc"
+    }
+}

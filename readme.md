@@ -2,8 +2,8 @@
 This is "Tanks" - demo game made by AlternativaPlatform in 2008 as demonstration of their technologies.
 This project is about compiling the client and reimplementing the server on C#.
 
-Everything inside client/libraries and client/models is copyrighted by [AlternativaPlatform](https://github.com/AlternativaPlatform). 
-The content is not recommended for commercial use.
+Everything inside `client/libraries` and `client/models` is a leaked code from AlternativaPlaform.
+Therefore, the content is not for commercial use.
 
 Current status: abandoned due to existance of [this project](https://github.com/juhe1/alternativa-maven-auto-build).
 

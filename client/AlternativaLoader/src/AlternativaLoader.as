@@ -21,6 +21,7 @@ package {
 	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
 	import flash.utils.Timer;
+	import alternativa.loader.Long;
 	
 	//import swfaddress.SWFAddress;
 	//import swfaddress.SWFAddressEvent;
@@ -46,8 +47,8 @@ package {
 		// Путь к ресурсам
 		private var resources:String;
 		
-		private var libraryId:Array;
-		private var libraryVersion:Array;
+		private var libraryId:Vector.<Long>;
+		private var libraryVersion:Vector.<Long>;
 		private var library:Array;
 		
 		private var console:PriorConsole;
@@ -92,8 +93,8 @@ package {
 			tabEnabled = true;
 			
 			library = new Array();
-			libraryId = new Array();
-			libraryVersion = new Array();
+			libraryId = new Vector.<Long>();
+			libraryVersion = new Vector.<Long>();
 			librariesInitParams = new Dictionary();
 			librariesData = new Object();
 			
@@ -245,8 +246,8 @@ package {
 				if (debug) {
 					console.writeToChannel("RESOURCE", "   library name: " + lib.@name);
 				}
-				libraryId.push(Number(lib.@id));
-				libraryVersion.push(Number(lib.@version));
+				libraryId.push(getLongByString(String(lib.@id)));
+				libraryVersion.push(getLongByString(String(lib.@version)));
 			}
 			library.push(loadResource(libraryId.shift(), libraryVersion.shift(), 0));
 		}
@@ -303,24 +304,24 @@ package {
 		/**
 		 * Сформировать путь до ресурса
 		 */
-		private function makeResourceUrl(id:Number, version:Number):String {
+		private function makeResourceUrl(id:Long, version:Long):String {
 			//console.write("makeResourceUrl resources: " + resources);
 			//var url:String = "http://" + server + "/" + resources  + "/libraries/" + Number(id).toString() + "/" + version.toString() + "/";
 			
 			var url:String = "http://" + server + "/" + resources;
 			
-			var longId:ByteArray = LongToByteArray(id);
+			var longId:ByteArray = longToByteArray(id);
 			
-			url += "/" + longId.readUnsignedInt().toString(16);
-			url += "/" + longId.readUnsignedShort().toString(16);
-			url += "/" + longId.readUnsignedByte().toString(16);
-			url += "/" + longId.readUnsignedByte().toString(16);
+			url += "/" + longId.readInt().toString(16);
+			url += "/" + longId.readShort().toString(16);
+			url += "/" + longId.readByte().toString(16);
+			url += "/" + longId.readByte().toString(16);
 			
 			url += "/";
 			
-			var longVersion:ByteArray = LongToByteArray(version);
-			var versHigh:int = longVersion.readUnsignedInt();
-			var versLow:int = longVersion.readUnsignedInt();
+			var longVersion:ByteArray = longToByteArray(version);
+			var versHigh:int = longVersion.readInt();
+			var versLow:int = longVersion.readInt();
 			if (versHigh != 0) {
 				url += versHigh.toString(16);
 			}
@@ -338,19 +339,28 @@ package {
 			//console.write("url: " + url);
 			return url;						
 		}
-		
-		private function LongToByteArray(value:Number):ByteArray {
+
+		private static function getLongByString(s:String):Long {
+			var high:int = 0;
+			var low:int = 0;
+			while (s.length < 16) {
+				s = "0" + s;
+			}
+			high = int("0x" + s.substr(0, 8));
+			low = int("0x" + s.substr(8, 8));
+			return new Long(high, low);
+		}
+		private static function longToByteArray(val:Long) : ByteArray
+		{
 			var longArray:ByteArray = new ByteArray();
-			longArray.position = 0;
-			//longArray.writeDouble(value);
-			longArray.writeInt(0);
-			longArray.writeInt(value);
+			longArray.writeInt(val.high);
+			longArray.writeInt(val.low);
 			longArray.position = 0;
 			return longArray;
 		}
 		
 		// Загрузка ресурса
-		private function loadResource(id:Number, version:Number, type:int):PriorLibraryResource {
+		private function loadResource(id:Long, version:Long, type:int):PriorLibraryResource {
 			// Определяем тип ресурса
 			var resourceClass:Class = PriorLibraryResource;
 			/*switch (type) {

@@ -1,0 +1,104 @@
+{
+  "libs": {
+    "AlternativaKeyboardManager": {
+      "id": 57867705394619,
+      "version": 1743258764741,
+      "hash": "SF5tR3FOI8O3whjCk3b0V+0gKW1GX2gLn8v7faCbujE="
+    },
+    "AlternativaClient": {
+      "id": 99798634887443,
+      "version": 1743258764700,
+      "hash": "n2iWRWQcir40Kqe7/E3b4gsHJWlIht9dtwaDSCsQHQc="
+    },
+    "AlternativaNetwork": {
+      "id": 99469845481471,
+      "version": 1743258764698,
+      "hash": "0fUGo4J+6v9jZCbDm4Qy1M1cbTdu64myJbIpWh3PNe0="
+    },
+    "AlternativaUtils": {
+      "id": 19616045777070,
+      "version": 1743258764694,
+      "hash": "+PbVPNUXVzEn9tEJDPF0OpuDiLTwlUqodR8uniSxNbk="
+    },
+    "AlternativaOSGI": {
+      "id": 66132482192816,
+      "version": 1743258764685,
+      "hash": "n2BLRh+eiopu91sGWMHBQUigYD3vHVV1rfgNDOeXo1E="
+    },
+    "AlternativaPhysics": {
+      "id": 38299295628589,
+      "version": 1743258764717,
+      "hash": "zMWo6XIDUe0JW3bswBmhAqeQMqEyxER6WV3D6n2LbM8="
+    },
+    "AlternativaIOInterfaces": {
+      "id": 55779745090323,
+      "version": 1743258764731,
+      "hash": "6bIeK47pAmkTWq13Oxt+UzaIksLjNHYGhl2h8QbwAhA="
+    },
+    "AlternativaTypes": {
+      "id": 97370091582278,
+      "version": 1743258764692,
+      "hash": "G+lnP7d/5uq2yMME4KM6Vn0TlhwCgaHYuoBAMQHqFws="
+    },
+    "TanksLoader": {
+      "id": 30964600968592,
+      "version": 1743258764728,
+      "hash": "KPD8uWpbmecaD19g6l3XG9thckKoiDF0MueQVEoTZRI="
+    },
+    "AlternativaSkinManager": {
+      "id": 63405779680040,
+      "version": 1743258764715,
+      "hash": "8DkaHu+IpDSP5NMg2UxZPYG6SLqzd38TIQV0GoyV7pM="
+    },
+    "TanksFonts": {
+      "id": 95012043042696,
+      "version": 1743258764713,
+      "hash": "i6t1vQW93kx2sn6eaQ9d8tYv+m89vQfg6C3N1dYqIHc="
+    },
+    "AlternativaProtocol": {
+      "id": 13841300105855,
+      "version": 1743258764696,
+      "hash": "+/inMwgUpMRF9SKixE1jG0066qjHh71aNFOdDJJb+G8="
+    },
+    "AlternativaMouseManager": {
+      "id": 98479772463049,
+      "version": 1743258764743,
+      "hash": "L1vFEAjAK27UG/+vMG5mAYZKP5lLwekEY0ve17vxRh0="
+    },
+    "ClientBase": {
+      "id": 98479772463049,
+      "version": 1743258764749,
+      "hash": "P4juRZKSpox2URs5doTrIzhXzh+OZhG2+NxIPNA5JLU="
+    },
+    "AlternativaClientModels": {
+      "id": 37783401643422,
+      "version": 1743258764750,
+      "hash": "O7BnInoPK/vhHiOPRnbJvdNWODoh+1KxZuG/6Ypf3P8="
+    },
+    "Alternativa3D": {
+      "id": 55241288246669,
+      "version": 1743258764747,
+      "hash": "zJcqdHjzCkPqCS2J1yRWDcgKrLKfIcVAWHvp3WRQ6KI="
+    },
+    "AlternativaGUI": {
+      "id": 57357386667552,
+      "version": 1743258764745,
+      "hash": "B8J45D9R0MGVkiMBeLyUNEx/yc7u3gRc5llzkAcH9/Y="
+    },
+    "World3DModels": {
+      "id": 63171761064679,
+      "version": 1743258764752,
+      "hash": "D2Q1j3yiDqW8SjgMofhv5yZztibzTLavb6ZcswS/vsY="
+    },
+    "TanksModels3D": {
+      "id": 13746811888743,
+      "version": 1743258764753,
+      "hash": "/MaXLYXdyNvU8Lu42Y1OmUIYN46n9fPl1sENKIkzAdg="
+    },
+    "TanksModels": {
+      "id": 60157647603916,
+      "version": 1743258764768,
+      "hash": "NIMUVEgOzHtZ3+KTdldRCWBUuTfVhToXFspsq/pQATE="
+    }
+  }
+}

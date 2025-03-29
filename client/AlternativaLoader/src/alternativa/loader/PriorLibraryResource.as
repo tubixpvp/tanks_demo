@@ -15,8 +15,8 @@ package alternativa.loader {
 		
 		private static const initClassPath:String = "alternativa.init";
 
-		private var _id:Number;
-		private var _version:Number;
+		private var _id:Long;
+		private var _version:Long;
 		private var infoLoader:URLLoader;
 		private var manifestLoader:URLLoader;
 		private var loader:Loader;
@@ -33,7 +33,7 @@ package alternativa.loader {
 		
 		
 		
-		public function PriorLibraryResource(mainLoader:AlternativaLoader, osgi:Object, console:PriorConsole, id:Number, version:Number, librariesInitParams:Dictionary, librariesData:Object) {
+		public function PriorLibraryResource(mainLoader:AlternativaLoader, osgi:Object, console:PriorConsole, id:Long, version:Long, librariesInitParams:Dictionary, librariesData:Object) {
 			this.mainLoader = mainLoader;
 			this.osgi = osgi;
 			this.console = console;
@@ -157,13 +157,13 @@ package alternativa.loader {
 			return loader;
 		}
 		
-		public function set id(value:Number):void {
+		public function set id(value:Long):void {
 			_id = value;
 		}
-		public function get id():Number {
+		public function get id():Long {
 			return _id;
 		}
-		public function get version():Number {
+		public function get version():Long {
 			return _version;
 		}
 

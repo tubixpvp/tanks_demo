@@ -24,7 +24,7 @@ public class ParametersUtil
     
     public static ParametersUtil FromRunArguments(string[] args)
     {
-        //-port 123 -test hi world -auto false
+        args = string.Join(' ', args).Split(' ');
         
         Dictionary<string, string> parameters = new();
 

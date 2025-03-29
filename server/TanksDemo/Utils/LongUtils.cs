@@ -10,10 +10,10 @@ public static class LongUtils
         {
             _buffer.Clear();
 
-            _buffer.WriteInt64(input);
+            _buffer.WriteInt(input);
             _buffer.Position = 0;
 
-            return (_buffer.ReadInt32(), _buffer.ReadInt32());
+            return (_buffer.ReadInt(), _buffer.ReadInt());
         }
     }
 }

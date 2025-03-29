@@ -16,6 +16,22 @@
 		},
 
 		{
+			"label": "Generate Client Resources",
+			"type": "shell",
+			"command": "dotnet",
+			"args": [
+				"run",
+				"-clientDir ${workspaceFolder}/client",
+				"-tasks ${workspaceFolder}/.vscode/tasks.json",
+				"-build_task Game Client Build",
+				"-output ${workspaceFolder}/resources/"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/server/TanksDemo/ResourcesBuilder"
+			}
+		},
+
+		{
 			"label": "Game Server Build",
 			"group": "build",
 			"command": "dotnet",
@@ -60,7 +76,9 @@
 				"Build TanksModels3D",
 				"Build TanksModels",
 				
-				"Build AlternativaLoader"
+				"Build AlternativaLoader",
+
+				"Generate Client Resources"
 			],
 			"dependsOrder": "sequence"
 		},

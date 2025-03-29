@@ -23,15 +23,30 @@ public class ByteArray
         _writer = endian == ByteEndian.BigEndian ? new BigEndianBinaryWriter(_stream) : new BinaryWriter(_stream);
     }
 
-    public void WriteInt64(long value)
+    public void WriteInt(long value)
     {
         _writer.Write(value);
     }
 
 
-    public int ReadInt32()
+    public int ReadInt()
     {
         return _reader.ReadInt32();
+    }
+
+    public uint ReadUInt()
+    {
+        return _reader.ReadUInt32();
+    }
+
+    public short ReadShort()
+    {
+        return _reader.ReadInt16();
+    }
+
+    public byte ReadByte()
+    {
+        return _reader.ReadByte();
     }
 
     public void Clear()

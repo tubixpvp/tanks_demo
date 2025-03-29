@@ -86,7 +86,15 @@
 		{
 			"label": "Clear Client Bin",
 			"type": "shell",
-			"command": "start clear_bin.bat",
+			"windows":{
+				"command": "start clear_bin.bat"
+			},
+			"linux":{
+				"command": "sh clear_bin.sh"
+			},
+			"osx":{
+				"command": "sh clear_bin.sh"
+			},
 			"options": {
 				"cwd": "${workspaceFolder}/client"
 			}

@@ -1,4 +1,5 @@
-base
+./base/
 bin
 .DS_Store
 .svn
+./.vscode/settings.json

@@ -10,5 +10,10 @@ package alternativa.loader
             this.high = high;
             this.low = low;
         }
+
+        public function toString() : String
+        {
+            return "Long(" + this.high + ", " + this.low + ")";
+        }
     }
 }

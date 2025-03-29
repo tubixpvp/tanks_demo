@@ -58,9 +58,7 @@ package {
 		
 		private var mainContainer:Sprite;
 		
-		private var osgi:Object; 
-		
-		public var mainLibrariesLoaded:Boolean = false;
+		private var osgi:Object;
 		
 		public var debug:Boolean;
 		
@@ -120,6 +118,12 @@ package {
 			Security.allowDomain("*");
 			
 			statusURL = "http://" + server + "/status.xml?rnd=" + Math.random();
+
+			if(debug)
+			{
+				console.write(statusURL);
+			}
+
 			statusRequest = new URLRequest(statusURL);
 			statusLoader = new URLLoader();
 			statusLoader.addEventListener(Event.COMPLETE, onStasusLoadComplete);
@@ -243,11 +247,12 @@ package {
 			
 			// Загружаем библиотеки
 			for each (var lib:XML in configXML.plugins.elements("plugin")) {
+				var id:Long = new Long(0, int(lib.@id));
 				if (debug) {
-					console.writeToChannel("RESOURCE", "   library name: " + lib.@name);
+					console.writeToChannel("RESOURCE", "   library name: " + lib.@name + "  id: (" + id.high + "," + id.low+")");
 				}
-				libraryId.push(getLongByString(String(lib.@id)));
-				libraryVersion.push(getLongByString(String(lib.@version)));
+				libraryId.push(id);
+				libraryVersion.push(new Long(0, int(lib.@version)));
 			}
 			library.push(loadResource(libraryId.shift(), libraryVersion.shift(), 0));
 		}
@@ -263,21 +268,18 @@ package {
 				if (debug) {
 					console.write("\nБазовые библиотеки загружены\n", 0x0000cc);
 				}
-				if (mainLibrariesLoaded) {
-					initMain();
-				} else {
-					mainLibrariesLoaded = true;
-				}
+				this.onMainLibrariesLoaded();
 			}
 		}
 		
-		public function initMain():void {
+		public function onMainLibrariesLoaded():void {
 			// Рассылка события в Main
-			for (var i:int = 0; i < library.length; i++) {
+			/*for (var i:int = 0; i < library.length; i++) {
 				if (PriorLibraryResource(library[i]).name == "библиотека Клиент") {
 					ApplicationDomain.currentDomain.getDefinition(initClassPath + ".Main").onMainLibrariesLoaded(library);
 				}
-			}
+			}*/
+			ApplicationDomain.currentDomain.getDefinition(initClassPath + ".Main").onMainLibrariesLoaded(library);
 		}
 		
 		public function initOSGi():Object {
@@ -292,7 +294,7 @@ package {
 				if (email != null && email != "") {
 					shared.data.userEmail = email;
 				}*/
-				osgi = ApplicationDomain.currentDomain.getDefinition(initClassPath + "." + "OSGi").init(debug, stage, mainContainer, crossdomain, ports, "http://" + server + "/" + resources, console, shared);
+				osgi = ApplicationDomain.currentDomain.getDefinition(initClassPath + "." + "OSGi").init(stage, mainContainer, crossdomain, ports[0], "http://" + server + "/" + resources, console, shared);
 			} else {
 				if (debug) {
 					console.writeToChannel("OSGI", "initOSGi не прошел!!!");
@@ -312,16 +314,16 @@ package {
 			
 			var longId:ByteArray = longToByteArray(id);
 			
-			url += "/" + longId.readInt().toString(16);
-			url += "/" + longId.readShort().toString(16);
-			url += "/" + longId.readByte().toString(16);
-			url += "/" + longId.readByte().toString(16);
+			url += "/" + longId.readUnsignedInt().toString(16);
+			url += "/" + longId.readUnsignedShort().toString(16);
+			url += "/" + longId.readUnsignedByte().toString(16);
+			url += "/" + longId.readUnsignedByte().toString(16);
 			
 			url += "/";
 			
 			var longVersion:ByteArray = longToByteArray(version);
-			var versHigh:int = longVersion.readInt();
-			var versLow:int = longVersion.readInt();
+			var versHigh:uint = longVersion.readUnsignedInt();
+			var versLow:uint = longVersion.readUnsignedInt();
 			if (versHigh != 0) {
 				url += versHigh.toString(16);
 			}
@@ -340,16 +342,6 @@ package {
 			return url;						
 		}
 
-		private static function getLongByString(s:String):Long {
-			var high:int = 0;
-			var low:int = 0;
-			while (s.length < 16) {
-				s = "0" + s;
-			}
-			high = int("0x" + s.substr(0, 8));
-			low = int("0x" + s.substr(8, 8));
-			return new Long(high, low);
-		}
 		private static function longToByteArray(val:Long) : ByteArray
 		{
 			var longArray:ByteArray = new ByteArray();

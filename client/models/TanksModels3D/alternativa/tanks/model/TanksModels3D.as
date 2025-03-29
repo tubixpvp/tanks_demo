@@ -8,11 +8,13 @@ package alternativa.tanks.model {
 	import projects.tanks.models.tank.ITankModelBase;
 	import projects.tanks.models.map.IMapModelBase;
 	import alternativa.osgi.service.console.IConsoleService;
+	import alternativa.osgi.bundle.IBundleActivator;
+	import alternativa.init.OSGi;
 	
 	
-	public class TanksModels3D {
+	public class TanksModels3D implements IBundleActivator {
 		
-		public static function init():void {
+		public function start(osgi:OSGi):void {
 			//Main.console.write("[TanksModels3D::init]");
 			(Main.osgi.getService(IConsoleService) as IConsoleService).writeToConsole("[TanksModels3D::init]");
 			
@@ -24,6 +26,10 @@ package alternativa.tanks.model {
 			
 			// Регистрация загрузчика 
 			Main.resourceRegister.registerResourceFactory(new A3DResourceFactory(), ResourceType.A3D_COLLISION_DATA);
+		}
+
+		public function stop(osgi:OSGi) : void
+		{
 		}
 		
 	}

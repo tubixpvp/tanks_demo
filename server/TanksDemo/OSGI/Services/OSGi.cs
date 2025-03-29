@@ -41,7 +41,7 @@ public static class OSGi
      */
     public static void Init()
     {
-        Services.Clear();
+        //Services.Clear();
         InjectionPoints.Clear();
 
         //create services

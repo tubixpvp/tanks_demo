@@ -24,7 +24,8 @@
 				"-clientDir ${workspaceFolder}/client",
 				"-tasks ${workspaceFolder}/.vscode/tasks.json",
 				"-build_task Game Client Build",
-				"-output ${workspaceFolder}/resources/"
+				"-output ${workspaceFolder}/resources/",
+				"-debug true"
 			],
 			"options": {
 				"cwd": "${workspaceFolder}/server/TanksDemo/ResourcesBuilder"
@@ -51,6 +52,7 @@
 				"Clear Client Bin",
 
 				"Build AlternativaOSGI",
+				"Build AlternativaFont",
 				"Build AlternativaTypes",
 				"Build AlternativaUtils",
 				"Build AlternativaProtocol",
@@ -106,6 +108,12 @@
 			"type": "actionscript",
 			"debug": true,
 			"asconfig": "client/libraries/AlternativaOSGI/asconfig.json"
+		},
+		{
+			"label": "Build AlternativaFont",
+			"type": "actionscript",
+			"debug": true,
+			"asconfig": "client/libraries/AlternativaFont/asconfig.json"
 		},
 		{
 			"label": "Build AlternativaTypes",
@@ -196,7 +204,7 @@
 			"label": "Build ClientBase",
 			"type": "actionscript",
 			"debug": true,
-			"asconfig": "client/asconfig_clientbase.json",
+			"asconfig": "client/base_cfg/asconfig.json",
 			"dependsOn":["Generate Client Base"]
 		},
 

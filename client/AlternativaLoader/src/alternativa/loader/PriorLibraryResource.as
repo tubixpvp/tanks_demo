@@ -115,7 +115,7 @@ package alternativa.loader {
 			if (console != null) {
 				console.writeToChannel("RESOURCE", "Библиотека " + _name + " загружена (" + LoaderInfo(e.target).bytesTotal + " байт)");
 			}
-			if (_name == "OSGI") {
+			if (_name == "AlternativaOSGI") {
 				osgi = mainLoader.initOSGi();
 			} else {
 				// Загружаем манифест
@@ -124,16 +124,19 @@ package alternativa.loader {
 		}
 		
 		private function onManifestLoadComplete(e:Event):void {
+
+			console.writeToChannel("OSGi", "manifest loaded, initiating library: " + _name);
+
 			// Инициализация библиотеки
 			osgi.installBundle(String(URLLoader(e.target).data));
 			
-			if (_name == "Клиент") {
+			/*if (_name == "AlternativaClient") {
 				if (mainLoader.mainLibrariesLoaded) {
 					mainLoader.initMain();
 				} else {
 					mainLoader.mainLibrariesLoaded = true;
 				}
-			}
+			}*/
 		}
 		
 		// Ошибка загрузки

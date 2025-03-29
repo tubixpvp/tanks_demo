@@ -1,6 +1,8 @@
 package alternativa.init {
 	
-	public class ClientModelsActivator {
+	import alternativa.osgi.bundle.IBundleActivator;
+
+	public class ClientModelsActivator implements IBundleActivator {
 		
 		public static var osgi:OSGi;
 		

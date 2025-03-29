@@ -20,6 +20,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResourcesBuilder", "Resourc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProdFileServer", "ProdFileServer\ProdFileServer.csproj", "{B151BA3A-38BD-46C2-BE6B-F39A4AA34D0B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Network", "Network\Network.csproj", "{DC45F955-6B20-4B3C-AA26-C769924C7530}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Config", "Config\Config.csproj", "{6DA3642E-473C-4E3F-B960-1F6705CE11C2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -66,5 +70,13 @@ Global
 		{B151BA3A-38BD-46C2-BE6B-F39A4AA34D0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B151BA3A-38BD-46C2-BE6B-F39A4AA34D0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B151BA3A-38BD-46C2-BE6B-F39A4AA34D0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC45F955-6B20-4B3C-AA26-C769924C7530}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC45F955-6B20-4B3C-AA26-C769924C7530}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC45F955-6B20-4B3C-AA26-C769924C7530}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC45F955-6B20-4B3C-AA26-C769924C7530}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6DA3642E-473C-4E3F-B960-1F6705CE11C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DA3642E-473C-4E3F-B960-1F6705CE11C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DA3642E-473C-4E3F-B960-1F6705CE11C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6DA3642E-473C-4E3F-B960-1F6705CE11C2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

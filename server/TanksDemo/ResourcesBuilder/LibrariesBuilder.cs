@@ -1,4 +1,5 @@
 ﻿using System.IO.Compression;
+using System.Text;
 using Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -10,7 +11,8 @@ internal class LibrariesBuilder
 {
     private const string AlternativaLoaderName = "AlternativaLoader";
     private const string BinaryFolder = "bin";
-    private const string LibrariesConfig = "libs_hash.json";
+
+    private readonly SWFLibrariesDataService LibsDataService = new ();
     
     private readonly ILogger _logger;
 
@@ -42,22 +44,7 @@ internal class LibrariesBuilder
 
     public async Task Build()
     {
-        string libsDataPath = Path.Combine(_clientRootDir, LibrariesConfig);
-
-        LibsConfigJson libsData;
-        if (!File.Exists(libsDataPath))
-        {
-            libsData = new LibsConfigJson()
-            {
-                Libs = new Dictionary<string, LibConfig>()
-            };
-        }
-        else
-        {
-            libsData = JsonConvert.DeserializeObject<LibsConfigJson>(
-                await File.ReadAllTextAsync(libsDataPath))!;
-        }
-        
+        Dictionary<string, SWFLibraryData> libsData = await LibsDataService.GetLibsData(_clientRootDir);
         
         JObject config = JObject.Parse(await File.ReadAllTextAsync(_tasksConfigPath));
         
@@ -68,28 +55,61 @@ internal class LibrariesBuilder
         if (clientBuildTask == null)
             throw new Exception("Build client task is not found in config: " + _buildClientTaskName);
 
-        string[] libs = clientBuildTask.DependsOn.Where(name => name.StartsWith("Build "))
-            .Select(name => name.Substring("Build ".Length)).ToArray();
-        libs = libs.Except([AlternativaLoaderName]).ToArray();
+        string[] tasks = clientBuildTask.DependsOn.Where(name => name.StartsWith("Build ")).ToArray();
+        tasks = tasks.Except(["Build "+AlternativaLoaderName]).ToArray();
         
         _logger.Log(LogLevel.Info, 
-            "Libraries from config: " + string.Join(", ", libs));
+            "Libraries from config: " + string.Join(", ", 
+                tasks.Select(task=>task.Substring("Build ".Length))));
 
         int libIndex = 0;
 
         //await Task.WhenAll(libs.Select(
         //    libName => BuildLibrary(libName, libIndex++, libsData)));
-        foreach (string libName in libs)
+        foreach (string taskName in tasks)
         {
-            await BuildLibrary(libName, libIndex++, libsData);
+            await BuildLibrary(taskName, libIndex++, libsData);
         }
 
-        await File.WriteAllTextAsync(libsDataPath, JsonConvert.SerializeObject(libsData, Formatting.Indented));
+        await LibsDataService.WriteLibsData(_clientRootDir, libsData);
+
+        await WriteLoader();
     }
 
-    private async Task BuildLibrary(string name, int libIndex, LibsConfigJson libsData)
+    private async Task WriteLoader()
     {
-        string libraryDir = Path.GetFullPath(Path.Combine(_libraryBinariesRoot, name));
+        string fileName = AlternativaLoaderName + ".swf";
+        string filePath = Path.GetFullPath(Path.Combine(_libraryBinariesRoot, fileName));
+
+        _logger.Log(LogLevel.Info, "Building AlternativaLoader: " + filePath);
+        
+        byte[] data = await File.ReadAllBytesAsync(filePath);
+
+        await _resourceBuilder.WriteFile(fileName, data);
+    }
+
+    private async Task BuildLibrary(string taskName, int libIndex, Dictionary<string, SWFLibraryData> libsData)
+    {
+        TaskConfigJson taskConfig = _tasks.First(task => task.Label == taskName);
+        
+        string libName = taskName["Build ".Length..];
+
+        string srcPath;
+        if (libName == "ClientBase")
+        {
+            srcPath = "base";
+        }
+        else
+        {
+            srcPath = Path.GetDirectoryName(taskConfig.ASConfigPath)!;
+            
+            if (srcPath.StartsWith("client/"))
+            {
+                srcPath = srcPath["client/".Length..];
+            }
+        }
+        
+        string libraryDir = Path.GetFullPath(Path.Combine(_libraryBinariesRoot, libName));
 
         _logger.Log(LogLevel.Debug, "Build library " + libraryDir);
 
@@ -97,39 +117,74 @@ internal class LibrariesBuilder
 
         string libHash = HashUtil.GetBase64SHA256String(librarySwcData);
         
-        if (!libsData.Libs.TryGetValue(name, out LibConfig? libData))
+        if (!libsData.TryGetValue(libName, out SWFLibraryData? libData))
         {
-            libData = new LibConfig()
+            libData = new SWFLibraryData()
             {
-                ResourceId = _random.NextInt64(10000000000000,99999999999999),
-                ResourceVersion = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                ResourceId = _random.Next(10000000,int.MaxValue),
+                ResourceVersion = _random.Next(10000000,int.MaxValue),
                 LibraryFileHash = libHash
             };
-            _logger.Log(LogLevel.Debug, $"Library config for {name} not exists, created new: {JsonConvert.SerializeObject(libData)}");
-            lock (libsData.Libs)
+            _logger.Log(LogLevel.Debug, $"Library config for {libName} not exists, created new: {JsonConvert.SerializeObject(libData)}");
+            lock (libsData)
             {
-                libsData.Libs.Add(name, libData);
+                libsData.Add(libName, libData);
             }
         }
         else if(libData.LibraryFileHash != libHash)
         {
-            libData.ResourceVersion = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(); //update the version
+            libData.ResourceVersion = _random.Next(10000000, int.MaxValue); //update the version
         }
+
+        byte[] swfData = await GetSwfFromSwc(librarySwcData);
+
+        Dictionary<string, byte[]> resourceData = new()
+        {
+            [_resourceBuilder.DebugMode?"debug.swf":"library.swf"] = swfData,
+            ["MANIFEST.MF"] = Encoding.UTF8.GetBytes(await GetManifest(srcPath, libName))
+        };
+
+        //write to file
+        await _resourceBuilder.BuildResource(libData.ResourceId, 
+            libData.ResourceVersion, 
+            libName,
+            resourceData);
+    }
+
+    private async Task<string> GetManifest(string libSrcPath, string libName)
+    {
+        libSrcPath = Path.Combine(_clientRootDir, libSrcPath);
+        libSrcPath = Path.GetFullPath(libSrcPath);
         
-        //unpack swf from swc
-        using ZipArchive archive = new ZipArchive(new MemoryStream(librarySwcData), ZipArchiveMode.Read);
+        string manifestPath = Path.Combine(libSrcPath, "manifest.json");
+
+        if (File.Exists(manifestPath))
+        {
+            JObject manifestJson = JObject.Parse(await File.ReadAllTextAsync(manifestPath));
+
+            string activator = manifestJson["activator"]!.ToObject<string>()!;
+            
+            return $"Bundle-Name: {libName}\nBundle-Activator: {activator}";
+        }
+
+        Console.WriteLine("manifest is missing: " + manifestPath);
+
+        return string.Empty;
+    }
+
+    private static async Task<byte[]> GetSwfFromSwc(byte[] swcData)
+    {
+        using ZipArchive archive = new ZipArchive(new MemoryStream(swcData), ZipArchiveMode.Read);
         
         ZipArchiveEntry swfEntry = archive.GetEntry("library.swf")!;
 
         byte[] swfData = new byte[swfEntry.Length];
-        await using (Stream stream = swfEntry.Open())
-        {
-            await stream.ReadExactlyAsync(swfData, 0, swfData.Length);
-        }
+        
+        await using Stream stream = swfEntry.Open();
+        
+        await stream.ReadExactlyAsync(swfData, 0, swfData.Length);
 
-        //write to file
-        await _resourceBuilder.BuildResource(libData.ResourceId, libData.ResourceVersion,
-            new(){["library.swf"] = swfData});
+        return swfData;
     }
 
     class TaskConfigJson
@@ -139,22 +194,8 @@ internal class LibrariesBuilder
 
         [JsonProperty("dependsOn")]
         public string[] DependsOn;
-    }
 
-    class LibsConfigJson
-    {
-        [JsonProperty("libs")]
-        public Dictionary<string, LibConfig> Libs;
-    }
-    class LibConfig
-    {
-        [JsonProperty("id")]
-        public long ResourceId;
-        
-        [JsonProperty("version")]
-        public long ResourceVersion;
-
-        [JsonProperty("hash")] 
-        public string LibraryFileHash;
+        [JsonProperty("asconfig")]
+        public string ASConfigPath;
     }
 }

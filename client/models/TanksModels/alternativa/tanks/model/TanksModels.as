@@ -15,9 +15,11 @@ package alternativa.tanks.model {
 	import projects.tanks.models.lobby.ILobbyModelBase;
 	import projects.tanks.models.battlefield.IBattlefieldModelBase;
 	import projects.tanks.models.users.user.IUserModelBase;
+	import alternativa.osgi.bundle.IBundleActivator;
+	import alternativa.init.OSGi;
 	
 	
-	public class TanksModels {
+	public class TanksModels implements IBundleActivator {
 		
 		[Embed(source="../resources/lobby_bg.jpg")] private static const backBitmap:Class;
 		private static const backBd:BitmapData = new backBitmap().bitmapData;
@@ -40,7 +42,8 @@ package alternativa.tanks.model {
 		public static var systemWindowContainer:WindowContainer;
 		
 		
-		public static function init():void {
+		public function start(osgi:OSGi):void 
+		{
 			//Main.console.write("TankModels init");
 			
 			windowContainer = new WindowContainer();
@@ -89,5 +92,9 @@ package alternativa.tanks.model {
 			systemWindowContainer.repaint(new Point(Main.stage.stageWidth, Main.stage.stageHeight));
 		}
 
+		public function stop(osgi:OSGi):void
+		{
+			
+		}
 	}
 }

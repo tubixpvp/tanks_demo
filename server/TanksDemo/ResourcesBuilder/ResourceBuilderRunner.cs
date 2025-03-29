@@ -1,10 +1,11 @@
 ﻿using System.Text;
+using System.Xml.Linq;
 using Logging;
 using Utils;
 
 namespace ResourcesBuilder;
 
-public class ResourceBuilderRunner
+internal class ResourceBuilderRunner
 {
     public static void Main(string[] args)
     {
@@ -12,6 +13,10 @@ public class ResourceBuilderRunner
     }
 
     public static readonly LoggerService LoggerService = new ();
+    
+    public readonly bool DebugMode;
+
+    private const string ResourcesFolder = "resources";
 
     private readonly ILogger _logger = LoggerService.GetLogger(typeof(ResourceBuilderRunner));
 
@@ -21,26 +26,30 @@ public class ResourceBuilderRunner
     {
         _logger.Log(LogLevel.Info, "Starting resource generator");
 
-        _resourcesOutputDir = Path.GetFullPath(launchParams.GetString("output") ?? throw new Exception("Output directory is not provided"));
+        DebugMode = launchParams.GetBoolean("debug");
+
+        _resourcesOutputDir = launchParams.GetString("output") ?? throw new Exception("Output directory is not provided");
+        _resourcesOutputDir = Path.GetFullPath(_resourcesOutputDir);
 
         _logger.Log(LogLevel.Info, "Output path: " + _resourcesOutputDir);
         
-        Task.Run(async () =>
+        if (Directory.Exists(_resourcesOutputDir))
         {
-            if (Directory.Exists(_resourcesOutputDir))
-            {
-                Directory.Delete(_resourcesOutputDir, true);
-            }
-            Directory.CreateDirectory(_resourcesOutputDir);
-            
+            Directory.Delete(_resourcesOutputDir, true);
+        }
+        Directory.CreateDirectory(_resourcesOutputDir);
+        
+        SafeTask.Run(async () =>
+        {
             await (new LibrariesBuilder(launchParams, this).Build());
-            
             
         }).Wait();
     }
 
-    public async Task BuildResource(long id, long version, Dictionary<string, byte[]> filesData)
+    public async Task BuildResource(long id, long version, string name, Dictionary<string, byte[]> filesData)
     {
+        filesData.Add("info.xml", Encoding.UTF8.GetBytes(MakeInfoForResource(id,name)));
+        
         string resourceOutputDir = MakeResourcePath(id, version);
 
         _logger.Log(LogLevel.Debug, $"Writing resource ({id}, {version}) to {resourceOutputDir}");
@@ -52,6 +61,13 @@ public class ResourceBuilderRunner
 
         await Task.WhenAll(filesData.Select(entry => 
             WriteResourceFile(resourceOutputDir, entry.Key, entry.Value)));
+    }
+
+    private static string MakeInfoForResource(long id, string name)
+    {
+        return new XElement("info",
+            new XAttribute("name", name)
+        ).ToString();
     }
 
     private async Task WriteResourceFile(string outputDir, string fileName, byte[] fileData)
@@ -67,30 +83,43 @@ public class ResourceBuilderRunner
 
         StringBuilder builder = new StringBuilder();
 
-        builder.Append(idBytes.ReadInt().ToString("x") + "/");
-        builder.Append(idBytes.ReadShort().ToString("x") + "/");
-        builder.Append(idBytes.ReadByte().ToString("x") + "/");
-        builder.Append(idBytes.ReadByte().ToString("x") + "/");
+        int radix = 16;
+
+        builder.Append(ToStringOfBase(idBytes.ReadUInt(),radix) + "/");
+        builder.Append(ToStringOfBase(idBytes.ReadUShort(), radix) + "/");
+        builder.Append(ToStringOfBase(idBytes.ReadByte(), radix) + "/");
+        builder.Append(ToStringOfBase(idBytes.ReadByte(), radix) + "/");
         builder.Append('/');
         
         ByteArray versionBytes = LongToBytes(version);
 
-        int verHigh = versionBytes.ReadInt();
-        int verLow = versionBytes.ReadInt();
+        uint verHigh = versionBytes.ReadUInt();
+        uint verLow = versionBytes.ReadUInt();
         if (verHigh != 0)
         {
-            builder.Append(verHigh.ToString("x"));
+            builder.Append(ToStringOfBase(verHigh, radix));
         }
-        builder.Append(verLow.ToString("x") + "/");
+        builder.Append(ToStringOfBase(verLow,radix) + "/");
         
-        return Path.GetFullPath(Path.Combine(_resourcesOutputDir, builder.ToString())); //get full path to convert path to system-dependent style
+        return Path.GetFullPath(Path.Combine(_resourcesOutputDir, ResourcesFolder, builder.ToString())); //get full path to convert path to system-dependent style
+    }
+
+    private static string ToStringOfBase(long val, int toBase)
+    {
+        return (Math.Sign(val) < 0 ? '-' : string.Empty) + val.ToString("x");
     }
 
     private static ByteArray LongToBytes(long val)
     {
         ByteArray bytes = new();
-        bytes.WriteInt(val);
+        bytes.WriteLong(val);
         bytes.Position = 0;
         return bytes;
+    }
+
+    public async Task WriteFile(string relativePath, byte[] fileData)
+    {
+        string path = Path.Combine(_resourcesOutputDir, relativePath);
+        await File.WriteAllBytesAsync(path, fileData);
     }
 }

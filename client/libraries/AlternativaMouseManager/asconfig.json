@@ -8,7 +8,8 @@
             "./../../bin/AlternativaIOInterfaces/library.swc",
             "./../../bin/AlternativaClient/library.swc",
             "./../../bin/AlternativaSkinManager/library.swc",
-            "./../../bin/AlternativaUtils/library.swc"
+            "./../../bin/AlternativaUtils/library.swc",
+            "./../../bin/AlternativaOSGI/library.swc"
         ],
         "target-player": "32.0",
         "output": "./../../bin/AlternativaMouseManager/library.swc"

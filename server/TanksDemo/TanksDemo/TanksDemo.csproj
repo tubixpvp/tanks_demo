@@ -8,7 +8,9 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Config\Config.csproj" />
       <ProjectReference Include="..\Core\Core.csproj" />
+      <ProjectReference Include="..\Network\Network.csproj" />
       <ProjectReference Include="..\Platform\Platform.csproj" />
       <ProjectReference Include="..\ProdFileServer\ProdFileServer.csproj" />
       <ProjectReference Include="..\Projects.Tanks\Projects.Tanks.csproj" />

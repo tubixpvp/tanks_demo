@@ -12,7 +12,8 @@
             "./../../bin/AlternativaClientModels/library.swc",
             "./../../bin/Alternativa3D/library.swc",
             "./../../bin/AlternativaPhysics/library.swc",
-            "./../../bin/AlternativaUtils/library.swc"
+            "./../../bin/AlternativaUtils/library.swc",
+            "./../../bin/AlternativaOSGI/library.swc"
         ],
         "target-player": "32.0",
         "output": "./../../bin/World3DModels/library.swc"

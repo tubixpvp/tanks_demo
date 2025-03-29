@@ -1,4 +1,5 @@
-﻿using Core.Model.Registry;
+﻿using Config;
+using Core.Model.Registry;
 using OSGI.Services;
 using ProdFileServer;
 using Utils;
@@ -15,6 +16,9 @@ internal class ServerMain
     private ServerMain(ParametersUtil launchParams)
     {
         //the server starts here
+
+        ServerLaunchParams.Init(launchParams);
+        ServerConfig.Init();
         
         OSGi.Init();
 
@@ -22,6 +26,6 @@ internal class ServerMain
 
         ProductionHttpFileServer fileServer = new ProductionHttpFileServer(launchParams);
 
-        fileServer.Start().Join();
+        fileServer.Start().Wait();
     }
 }

@@ -10,7 +10,7 @@ public static class LongUtils
         {
             _buffer.Clear();
 
-            _buffer.WriteInt(input);
+            _buffer.WriteLong(input);
             _buffer.Position = 0;
 
             return (_buffer.ReadInt(), _buffer.ReadInt());

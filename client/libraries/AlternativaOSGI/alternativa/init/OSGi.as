@@ -75,6 +75,8 @@ package alternativa.init {
 			dumpService.registerDumper(dumper, dumper.name);
 			dumper = new ServiceDumper(instance);
 			dumpService.registerDumper(dumper, dumper.name);
+
+			log.write("OSGi is running!");
 			
 			return instance;
 		}
@@ -111,6 +113,8 @@ package alternativa.init {
 		 * @return структурированные данные манифеста
 		 */		
 		private function parseManifest(manifest:String):Bundle {
+
+			(getService(IConsoleService) as IConsoleService).writeToConsole("manifest: " + manifest);
 			
 			var manifestStrings:Array = manifest.split("\n");
 			var manifestParams:Dictionary = new Dictionary(false);
@@ -126,9 +130,14 @@ package alternativa.init {
 			}
 			var name:String = manifestParams["Bundle-Name"];
 			var activatorClassName:String = manifestParams["Bundle-Activator"];
+			var activator:IBundleActivator = null;
 			if (ApplicationDomain.currentDomain.hasDefinition(activatorClassName)) {
 				var activatorClass:Class = Class(ApplicationDomain.currentDomain.getDefinition(activatorClassName));
-				var activator:IBundleActivator = IBundleActivator(new activatorClass());
+				activator = IBundleActivator(new activatorClass());
+			}
+			else
+			{
+				(getService(IConsoleService) as IConsoleService).writeToConsole("OSGi activator not found: " + activatorClassName);
 			}
 			if (name != "" && name != null) {
 				return new Bundle(name, activator, manifestParams);

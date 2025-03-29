@@ -15,12 +15,14 @@ package alternativa.model {
 	import platform.models.general.world3d.scene.IScene3DModelBase;
 	import platform.models.general.world3d.object3d.IObject3DModelBase;
 	import platform.models.general.world3d.view3d.IView3DModelBase;
+	import alternativa.osgi.bundle.IBundleActivator;
+	import alternativa.init.OSGi;
 	
-	public class World3DModels {
+	public class World3DModels implements IBundleActivator {
 		
 		public static const A3D_RESOURCE_TYPE:int = 5;
 		
-		public static function init():void {
+		public function start(osgi:OSGi):void {
 			Main.writeToConsole("World3DModels init", 0xFF0000);
 			
 			var model:IModel;
@@ -39,6 +41,10 @@ package alternativa.model {
 			
 			// Регистрация загрузчика A3D
 			Main.resourceRegister.registerResourceFactory(new A3DResourceFactory(), ResourceType.A3D);
+		}
+
+		public function stop(osgi:OSGi) : void
+		{
 		}
 	}
 }

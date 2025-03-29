@@ -1,19 +1,24 @@
 package alternativa.init {
 	import flash.text.Font;
+	import alternativa.osgi.bundle.IBundleActivator;
 	
-	public class AlternativaFont {
+	public class AlternativaFont implements IBundleActivator {
 		
 		[Embed(source="../font/AlternativaNormal.ttf", fontName="Alternativa", mimeType='application/x-font')]
 		private static const ttfNormal:Class;
 
 		[Embed(source="../font/AlternativaBold.ttf", fontName="Alternativa", mimeType='application/x-font', fontWeight="bold")]
 		private static const ttfBold:Class;
-		
-		public static function init():void {
+
+
+		public function start(osgi:OSGi) : void
+		{
 			Font.registerFont(ttfNormal);
 			Font.registerFont(ttfBold);
-			
-			//params["console"].write("Шрифт Alternativa инициализирован.", 0x0000cc);
+		}
+
+		public function stop(osgi:OSGi) : void
+		{
 		}
 	}
 }

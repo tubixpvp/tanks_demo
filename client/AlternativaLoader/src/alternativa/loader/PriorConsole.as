@@ -148,7 +148,7 @@ package alternativa.loader {
 			}*/
 			
 			
-			if ((event.keyCode == 192 && event.ctrlKey) || (event.keyCode == Keyboard.NUMPAD_0)) {
+			if ((event.keyCode == Keyboard.BACKQUOTE && event.ctrlKey) || (event.keyCode == Keyboard.NUMPAD_0)) {
 			//if (event.keyCode == Keyboard.SPACE && event.ctrlKey) {
 				visible ? hide() : show();
 			}

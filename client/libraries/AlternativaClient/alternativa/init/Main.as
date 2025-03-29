@@ -86,7 +86,7 @@ package alternativa.init {
 			osgi.registerService(IClassService, new ClassRegister()); 
 			osgi.registerService(ISpaceService, new SpaceRegister()); 
 			
-			//writeToConsole("Main start");
+			writeToConsole("Main start");
 			// Дамперы
 			var dumpService:IDumpService = IDumpService(osgi.getService(IDumpService));
 			var dumper:IDumper = new SpaceDumper();
@@ -107,8 +107,8 @@ package alternativa.init {
 			
 			var server:String = INetworkService(osgi.getService(INetworkService)).server;
 			var port:int = INetworkService(osgi.getService(INetworkService)).port;
-			//writeToConsole("Main server: " + server);
-			//writeToConsole("Main port: " + port);
+			writeToConsole("Main server: " + server);
+			writeToConsole("Main port: " + port);
 			var resourcesURL:String = INetworkService(osgi.getService(INetworkService)).resourcesPath;
 			
 			// Создаем сетевой клиент
@@ -174,7 +174,7 @@ package alternativa.init {
 		}
 		
 		public static function onMainLibrariesLoaded(loadedLibraries:Array):void {
-			//writeToConsole("Main onMainLibrariesLoaded");
+			writeToConsole("Main onMainLibrariesLoaded");
 			// Регистрируем загруженные базовые библиотеки
 			for (var i:int = 0; i < loadedLibraries.length; i++) {
 				var libraryWrapper:ResourceWrapper = new ResourceWrapper(loadedLibraries[i]);

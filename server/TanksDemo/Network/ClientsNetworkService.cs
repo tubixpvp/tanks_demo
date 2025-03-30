@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Sockets;
 using Config;
 using Logging;
+using Network.Session;
 using Network.Sockets;
 using OSGI.Services;
 using Utils;
@@ -13,6 +14,9 @@ public class ClientsNetworkService : IOSGiInitListener
 {
     [InjectService]
     private static LoggerService LoggerService;
+    
+    [InjectService]
+    private static NetworkSessionsRegistry SessionsRegistry;
     
     
     private readonly ServerNetworkConfig _netConfig;
@@ -65,7 +69,9 @@ public class ClientsNetworkService : IOSGiInitListener
         
         _logger.Log(LogLevel.Info, 
             $"New client has connected from IP: {netSocket.IPAddress}");
-        
-        
+
+        NetworkSession session = new NetworkSession(netSocket);
+
+        SessionsRegistry.AddSession(session);
     }
 }

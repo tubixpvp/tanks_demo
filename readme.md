@@ -5,8 +5,6 @@ This project is about compiling the client and reimplementing the server on C#.
 Everything inside `client/libraries` and `client/models` is a leaked code from AlternativaPlaform.
 Therefore, the content is not for commercial use.
 
-Current status: abandoned due to existance of [this project](https://github.com/juhe1/alternativa-maven-auto-build).
-
 # How to build
 Project is set up to build with VS Code Tasks. You can take a look on it inside `.vscode/tasks.json` if want to build manually.
 

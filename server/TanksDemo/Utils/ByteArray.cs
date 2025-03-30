@@ -9,6 +9,7 @@ public class ByteArray
 {
     public long Length => _stream.Length;
     public long Position {get=>_stream.Position;set=>_stream.Position=value;}
+    public long BytesAvailable => _stream.Length - _stream.Position;
     
     private readonly MemoryStream _stream;
     
@@ -23,40 +24,21 @@ public class ByteArray
         _writer = endian == ByteEndian.BigEndian ? new BigEndianBinaryWriter(_stream) : new BinaryWriter(_stream);
     }
 
-    public void WriteLong(long value)
-    {
-        _writer.Write(value);
-    }
-
+    public void WriteLong(long value) => _writer.Write(value);
     public void WriteInt(int value) => _writer.Write(value);
+    
+    public void WriteBytes(byte[] buffer) => _writer.Write(buffer);
+    public void WriteBytes(byte[] buffer, int offset, int count) => _writer.Write(buffer, offset, count);
 
 
-    public int ReadInt()
-    {
-        return _reader.ReadInt32();
-    }
-
-    public uint ReadUInt()
-    {
-        return _reader.ReadUInt32();
-    }
-
-    public short ReadShort()
-    {
-        return _reader.ReadInt16();
-    }
-
+    public int ReadInt() => _reader.ReadInt32();
+    public uint ReadUInt() => _reader.ReadUInt32();
+    public short ReadShort() => _reader.ReadInt16();
     public ushort ReadUShort() => _reader.ReadUInt16();
-
-    public byte ReadByte()
-    {
-        return _reader.ReadByte();
-    }
-
-    public sbyte ReadSByte()
-    {
-        return _reader.ReadSByte();
-    }
+    public byte ReadByte() => _reader.ReadByte();
+    public sbyte ReadSByte() => _reader.ReadSByte();
+    
+    public byte[] ReadBytes(int count) => _reader.ReadBytes(count);
 
     public void Clear()
     {

@@ -114,7 +114,7 @@ package alternativa.init {
 		 */		
 		private function parseManifest(manifest:String):Bundle {
 
-			(getService(IConsoleService) as IConsoleService).writeToConsole("manifest: " + manifest);
+			//(getService(IConsoleService) as IConsoleService).writeToConsole("manifest: " + manifest);
 			
 			var manifestStrings:Array = manifest.split("\n");
 			var manifestParams:Dictionary = new Dictionary(false);

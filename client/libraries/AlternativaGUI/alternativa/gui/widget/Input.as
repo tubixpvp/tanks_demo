@@ -1,6 +1,6 @@
 package alternativa.gui.widget {
-	import alternativa.gui.keyboard.keyfilter.FocusKeyFilter;
-	import alternativa.gui.keyboard.keyfilter.SimpleKeyFilter;
+	import alternativa.iointerfaces.keyboard.keyfilter.FocusKeyFilter;
+	import alternativa.iointerfaces.keyboard.keyfilter.SimpleKeyFilter;
 	import alternativa.gui.layout.enums.Align;
 	import alternativa.gui.skin.widget.InputSkin;
 	

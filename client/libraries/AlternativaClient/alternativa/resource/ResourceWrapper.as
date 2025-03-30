@@ -1,5 +1,7 @@
 package alternativa.resource {
 	import alternativa.types.Long;
+	import flash.system.ApplicationDomain;
+	import alternativa.types.LongFactory;
 	
 	
 	/**
@@ -26,11 +28,12 @@ package alternativa.resource {
 		}
 		
 		public function get id():Long {
-			return library.id;
+			return LongFactory.getLong(library.id.high,library.id.low);
 		}
 		
 		public function set id(value:Long):void {
-			library.id = value;
+			var loaderLong:Class = Class(ApplicationDomain.currentDomain.getDefinition("alternativa.loader.Long"));
+			library.id = new loaderLong(value.high, value.low);
 		}
 		
 		public function set version(value:int):void {

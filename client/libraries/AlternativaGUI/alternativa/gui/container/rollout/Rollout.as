@@ -3,8 +3,8 @@ package alternativa.gui.container.rollout {
 	import alternativa.gui.container.Container;
 	import alternativa.gui.container.WidgetContainer;
 	import alternativa.gui.container.group.FrameGroup;
-	import alternativa.gui.keyboard.keyfilter.FocusKeyFilter;
-	import alternativa.gui.keyboard.keyfilter.SimpleKeyFilter;
+	import alternativa.iointerfaces.keyboard.keyfilter.FocusKeyFilter;
+	import alternativa.iointerfaces.keyboard.keyfilter.SimpleKeyFilter;
 	import alternativa.gui.layout.enums.Align;
 	import alternativa.gui.layout.enums.Direction;
 	import alternativa.gui.layout.impl.CompletelyFillLayoutManager;

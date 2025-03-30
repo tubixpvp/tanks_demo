@@ -1,8 +1,8 @@
 package alternativa.gui.widget.button {
-	import alternativa.gui.keyboard.keyfilter.FocusKeyFilter;
-	import alternativa.gui.keyboard.keyfilter.SimpleKeyFilter;
+	import alternativa.iointerfaces.keyboard.keyfilter.FocusKeyFilter;
+	import alternativa.iointerfaces.keyboard.keyfilter.SimpleKeyFilter;
 	import alternativa.gui.layout.enums.Align;
-	import alternativa.gui.mouse.IMouseCoordListener;
+	import alternativa.iointerfaces.mouse.IMouseCoordListener;
 	import alternativa.gui.skin.widget.button.ButtonSkin;
 	import alternativa.gui.skin.widget.button.SwitchSkin;
 	import alternativa.gui.widget.Widget;

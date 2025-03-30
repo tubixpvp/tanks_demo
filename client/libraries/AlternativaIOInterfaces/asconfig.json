@@ -5,6 +5,8 @@
             "./"
         ],
         "external-library-path": [
+            "./../../bin/AlternativaOSGI/library.swc",
+            "./../../bin/AlternativaClient/library.swc"
         ],
         "target-player": "32.0",
         "output": "./../../bin/AlternativaIOInterfaces/library.swc"

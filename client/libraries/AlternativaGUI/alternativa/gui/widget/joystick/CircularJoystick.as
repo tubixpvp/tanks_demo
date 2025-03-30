@@ -1,6 +1,6 @@
 package alternativa.gui.widget.joystick {
 	import alternativa.gui.base.ActiveObject;
-	import alternativa.gui.mouse.IMouseCoordListener;
+	import alternativa.iointerfaces.mouse.IMouseCoordListener;
 	import alternativa.gui.skin.widget.button.ImageButtonSkin;
 	import alternativa.gui.widget.button.ImageButton;
 	import alternativa.utils.MouseUtils;

@@ -1,9 +1,9 @@
 package alternativa.gui.container {
 	import alternativa.gui.base.ActiveShapeObject;
 	import alternativa.gui.init.GUI;
-	import alternativa.gui.mouse.dnd.DragEvent;
-	import alternativa.gui.mouse.dnd.IDragObject;
-	import alternativa.gui.mouse.dnd.IDrop;
+	import alternativa.iointerfaces.mouse.dnd.DragEvent;
+	import alternativa.iointerfaces.mouse.dnd.IDragObject;
+	import alternativa.iointerfaces.mouse.dnd.IDrop;
 	import alternativa.gui.window.panel.PanelDragObject;
 	import alternativa.gui.window.panel.ResizeablePanelBase;
 	

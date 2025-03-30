@@ -134,6 +134,8 @@ internal class LibrariesBuilder
         else if(libData.LibraryFileHash != libHash)
         {
             libData.ResourceVersion = _random.Next(10000000, int.MaxValue); //update the version
+
+            libData.LibraryFileHash = libHash;
         }
 
         byte[] swfData = await GetSwfFromSwc(librarySwcData);
@@ -169,7 +171,7 @@ internal class LibrariesBuilder
 
         Console.WriteLine("manifest is missing: " + manifestPath);
 
-        return string.Empty;
+        return $"Bundle-Name: {libName}\nBundle-Activator: ";
     }
 
     private static async Task<byte[]> GetSwfFromSwc(byte[] swcData)

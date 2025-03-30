@@ -79,7 +79,7 @@ package alternativa.network {
 				}
 				flush();
 			} catch (error:Error) {
-				//trace("sendCommand error: " + error + " " + this);
+				trace("sendCommand error: " + error + " " + this);
 			}
 		}
 		
@@ -156,7 +156,7 @@ package alternativa.network {
 		 * @param event событие ошибки ввода-вывода
 		 */		
 		private function ioErrorHandler(event:IOErrorEvent):void {
-			//throw new Error(event.toString());
+			throw new Error(event.toString());
 		}
 		
 		/**
@@ -164,7 +164,7 @@ package alternativa.network {
 		 * @param event событие ошибки безопасности
 		 */		
 		private function securityErrorHandler(event:SecurityErrorEvent):void {
-			//throw new Error(event.toString());
+			throw new Error(event.toString());
 		}
 		
 	}

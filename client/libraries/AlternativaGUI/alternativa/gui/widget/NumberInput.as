@@ -1,11 +1,11 @@
 package alternativa.gui.widget {
 	import alternativa.gui.base.EventRepeater;
 	import alternativa.gui.container.Container;
-	import alternativa.gui.focus.IFocus;
-	import alternativa.gui.keyboard.IKeyboardListener;
-	import alternativa.gui.keyboard.KeyFiltersConfig;
-	import alternativa.gui.keyboard.keyfilter.FocusKeyFilter;
-	import alternativa.gui.keyboard.keyfilter.SimpleKeyFilter;
+	import alternativa.iointerfaces.focus.IFocus;
+	import alternativa.iointerfaces.keyboard.IKeyboardListener;
+	import alternativa.iointerfaces.keyboard.KeyFiltersConfig;
+	import alternativa.iointerfaces.keyboard.keyfilter.FocusKeyFilter;
+	import alternativa.iointerfaces.keyboard.keyfilter.SimpleKeyFilter;
 	import alternativa.gui.layout.enums.Align;
 	import alternativa.gui.layout.enums.Direction;
 	import alternativa.gui.layout.impl.CompletelyFillLayoutManager;

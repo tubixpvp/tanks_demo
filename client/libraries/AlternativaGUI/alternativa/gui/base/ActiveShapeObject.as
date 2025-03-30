@@ -1,9 +1,9 @@
 package alternativa.gui.base {
 	import alternativa.gui.init.GUI;
-	import alternativa.gui.keyboard.IKeyboardListener;
-	import alternativa.gui.keyboard.KeyFiltersConfig;
-	import alternativa.gui.mouse.ICursorActive;
-	import alternativa.gui.mouse.ICursorActiveListener;
+	import alternativa.iointerfaces.keyboard.IKeyboardListener;
+	import alternativa.iointerfaces.keyboard.KeyFiltersConfig;
+	import alternativa.iointerfaces.mouse.ICursorActive;
+	import alternativa.iointerfaces.mouse.ICursorActiveListener;
 	
 	/**
 	 * Облегченный интерактивный объект на основе <code>Shape</code>

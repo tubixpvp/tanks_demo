@@ -1,7 +1,7 @@
 package alternativa.gui.container {
 	import alternativa.gui.base.GUIObject;
 	import alternativa.gui.base.IGUIObject;
-	import alternativa.gui.focus.IFocus;
+	import alternativa.iointerfaces.focus.IFocus;
 	import alternativa.gui.init.GUI;
 	import alternativa.gui.layout.ILayoutManager;
 	import alternativa.gui.layout.enums.Direction;

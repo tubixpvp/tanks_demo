@@ -1,8 +1,8 @@
 package alternativa.gui.widget {
-	import alternativa.gui.focus.IFocus;
+	import alternativa.iointerfaces.focus.IFocus;
 	import alternativa.gui.init.GUI;
-	import alternativa.gui.mouse.ICursorActive;
-	import alternativa.gui.mouse.ICursorActiveListener;
+	import alternativa.iointerfaces.mouse.ICursorActive;
+	import alternativa.iointerfaces.mouse.ICursorActiveListener;
 	
 	import flash.text.TextField;
 	

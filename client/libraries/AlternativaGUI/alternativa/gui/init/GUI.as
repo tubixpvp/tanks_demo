@@ -1,31 +1,28 @@
-package alternativa.gui.init {
-	import alternativa.gui.focus.FocusManager;
-	import alternativa.gui.keyboard.KeyboardManager;
-	import alternativa.gui.mouse.MouseManager;
-	
+package alternativa.gui.init {	
 	import flash.display.DisplayObjectContainer;
 	import flash.display.Stage;
+	import alternativa.osgi.bundle.IBundleActivator;
+	import alternativa.init.OSGi;
+	import alternativa.init.IOInterfaces;
+	import alternativa.iointerfaces.mouse.IMouseManager;
+	import alternativa.iointerfaces.keyboard.IKeyboardManager;
+	import alternativa.iointerfaces.focus.IFocusManager;
 	
 	
-	public class GUI {
+	public class GUI implements IBundleActivator {
 		
-		public static var mouseManager:MouseManager;
-		public static var keyboardManager:KeyboardManager;
-		public static var focusManager:FocusManager;
-		
-		public static function init(stage:Stage, GUIcursorEnabled:Boolean = false, cursorContainer:DisplayObjectContainer = null) {
-			
-			// инициализация мыши
-			mouseManager = new MouseManager();
-			mouseManager.init(stage, GUIcursorEnabled, cursorContainer);
-			
-			// инициализация клавиатуры
-			keyboardManager = new KeyboardManager();
-			keyboardManager.init(stage);
-			
-			// инициализация фокуса
-			focusManager = new FocusManager();
-			focusManager.init(stage);
+		public static var mouseManager:IMouseManager;
+		public static var keyboardManager:IKeyboardManager;
+		public static var focusManager:IFocusManager;
+
+		public function start(osgi:OSGi) : void
+		{
+			mouseManager = IOInterfaces.mouseManager;
+			keyboardManager = IOInterfaces.keyboardManager;
+			focusManager = IOInterfaces.focusManager;
+		}
+		public function stop(osgi:OSGi) : void
+		{
 		}
 
 	}

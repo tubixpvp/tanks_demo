@@ -78,7 +78,8 @@ package alternativa.loader {
 			// Загружаем библиотеку
 			var context:LoaderContext = new LoaderContext();
 			context.applicationDomain = ApplicationDomain.currentDomain;
-			context.securityDomain = SecurityDomain.currentDomain;
+			//context.securityDomain = SecurityDomain.currentDomain;
+			context.allowCodeImport = true;
 			
 			//var id:String = LongToString(_id);
 			//var version:String = LongToString(_version);

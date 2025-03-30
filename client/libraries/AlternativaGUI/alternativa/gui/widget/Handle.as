@@ -1,7 +1,7 @@
 package alternativa.gui.widget {
 	import alternativa.gui.base.GUIObject;
 	import alternativa.gui.init.GUI;
-	import alternativa.gui.mouse.IMouseCoordListener;
+	import alternativa.iointerfaces.mouse.IMouseCoordListener;
 	import alternativa.gui.widget.button.ButtonEvent;
 	import alternativa.gui.widget.button.ShapeButton;
 	import alternativa.utils.MouseUtils;

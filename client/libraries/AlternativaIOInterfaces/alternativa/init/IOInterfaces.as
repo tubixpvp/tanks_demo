@@ -5,11 +5,12 @@ package alternativa.init {
 	import alternativa.iointerfaces.mouse.IMouseManager;
 	
 	import flash.display.Stage;
+	import alternativa.osgi.bundle.IBundleActivator;
 	
 	/**
 	 * Интерфейсы ввода вывода
 	 */	
-	public class IOInterfaces {
+	public class IOInterfaces implements IBundleActivator {
 		
 		/**
 		 * Менеджер мыши
@@ -36,6 +37,14 @@ package alternativa.init {
 		 */		
 		private static var _stage:Stage;
 		
+
+		public function start(osgi:OSGi) : void
+		{
+			initStage(Main.stage);
+		}
+		public function stop(osgi:OSGi) : void
+		{
+		}
 		
 		/**
 		 * Инициализация

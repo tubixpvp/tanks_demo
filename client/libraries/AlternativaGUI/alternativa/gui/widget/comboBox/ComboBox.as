@@ -1,12 +1,12 @@
 package alternativa.gui.widget.comboBox {
 	import alternativa.gui.container.Container;
 	import alternativa.gui.container.WidgetContainer;
-	import alternativa.gui.keyboard.keyfilter.FocusKeyFilter;
-	import alternativa.gui.keyboard.keyfilter.SimpleKeyFilter;
+	import alternativa.iointerfaces.keyboard.keyfilter.FocusKeyFilter;
+	import alternativa.iointerfaces.keyboard.keyfilter.SimpleKeyFilter;
 	import alternativa.gui.layout.enums.Align;
 	import alternativa.gui.layout.enums.Direction;
 	import alternativa.gui.layout.impl.CompletelyFillLayoutManager;
-	import alternativa.gui.mouse.ICursorActive;
+	import alternativa.iointerfaces.mouse.ICursorActive;
 	import alternativa.gui.skin.widget.comboBox.ComboBoxSkin;
 	import alternativa.gui.widget.list.IListRenderer;
 	import alternativa.gui.widget.list.List;

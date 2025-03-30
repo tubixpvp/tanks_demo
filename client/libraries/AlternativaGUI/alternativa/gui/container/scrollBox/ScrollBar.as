@@ -2,8 +2,8 @@ package alternativa.gui.container.scrollBox {
 	import alternativa.gui.base.EventRepeater;
 	import alternativa.gui.container.Container;
 	import alternativa.gui.layout.enums.Direction;
-	import alternativa.gui.mouse.IMouseCoordListener;
-	import alternativa.gui.mouse.IMouseWheelListener;
+	import alternativa.iointerfaces.mouse.IMouseCoordListener;
+	import alternativa.iointerfaces.mouse.IMouseWheelListener;
 	import alternativa.gui.skin.container.scrollBox.ScrollBarSkin;
 	import alternativa.gui.widget.button.ButtonEvent;
 	import alternativa.gui.widget.button.ImageButton;

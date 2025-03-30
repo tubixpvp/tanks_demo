@@ -180,7 +180,7 @@ package alternativa.init {
 				var libraryWrapper:ResourceWrapper = new ResourceWrapper(loadedLibraries[i]);
 				resourceRegister.registerResource(libraryWrapper);
 			}
-			osgi.registerService(ILoaderService, new LoaderService(/*loadedLibraries*/));
+			//osgi.registerService(ILoaderService, new LoaderService(/*loadedLibraries*/));
 			
 			// Открываем канал управления
 			controlSocket = networkClient.newConnection(Main.controlHandler);

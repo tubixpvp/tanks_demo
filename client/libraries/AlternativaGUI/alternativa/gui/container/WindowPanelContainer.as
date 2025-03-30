@@ -7,8 +7,8 @@ package alternativa.gui.container {
 	import alternativa.gui.layout.impl.CompletelyFillLayoutManager;
 	import alternativa.gui.layout.impl.PanelLayoutManager;
 	import alternativa.gui.layout.impl.SimpleWindowLayoutManager;
-	import alternativa.gui.mouse.IMouseCoordListener;
-	import alternativa.gui.mouse.dnd.DragEvent;
+	import alternativa.iointerfaces.mouse.IMouseCoordListener;
+	import alternativa.iointerfaces.mouse.dnd.DragEvent;
 	import alternativa.gui.window.WindowBase;
 	import alternativa.gui.window.panel.ResizeablePanelBase;
 	

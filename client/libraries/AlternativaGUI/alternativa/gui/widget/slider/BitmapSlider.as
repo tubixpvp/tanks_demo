@@ -1,11 +1,11 @@
 package alternativa.gui.widget.slider {
 	import alternativa.gui.init.GUI;
-	import alternativa.gui.keyboard.keyfilter.FocusKeyFilter;
-	import alternativa.gui.keyboard.keyfilter.SimpleKeyFilter;
+	import alternativa.iointerfaces.keyboard.keyfilter.FocusKeyFilter;
+	import alternativa.iointerfaces.keyboard.keyfilter.SimpleKeyFilter;
 	import alternativa.gui.layout.enums.Align;
 	import alternativa.gui.layout.enums.Direction;
-	import alternativa.gui.mouse.IMouseCoordListener;
-	import alternativa.gui.mouse.IMouseWheelListener;
+	import alternativa.iointerfaces.mouse.IMouseCoordListener;
+	import alternativa.iointerfaces.mouse.IMouseWheelListener;
 	import alternativa.gui.skin.widget.button.ImageButtonSkin;
 	import alternativa.gui.widget.Widget;
 	import alternativa.gui.widget.button.ImageButton;

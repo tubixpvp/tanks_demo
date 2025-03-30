@@ -1,13 +1,13 @@
 package alternativa.gui.base {
-	import alternativa.gui.focus.IFocus;
+	import alternativa.iointerfaces.focus.IFocus;
 	import alternativa.gui.init.GUI;
-	import alternativa.gui.keyboard.keyfilter.FocusKeyFilter;
-	import alternativa.gui.keyboard.keyfilter.SimpleKeyFilter;
+	import alternativa.iointerfaces.keyboard.keyfilter.FocusKeyFilter;
+	import alternativa.iointerfaces.keyboard.keyfilter.SimpleKeyFilter;
 	import alternativa.gui.layout.snap.ISnapable;
 	import alternativa.gui.layout.snap.Snap;
 	import alternativa.gui.layout.snap.SnapRect;
-	import alternativa.gui.mouse.ICursorActive;
-	import alternativa.gui.mouse.IMouseCoordListener;
+	import alternativa.iointerfaces.mouse.ICursorActive;
+	import alternativa.iointerfaces.mouse.IMouseCoordListener;
 	
 	import flash.geom.Point;
 	import flash.geom.Rectangle;

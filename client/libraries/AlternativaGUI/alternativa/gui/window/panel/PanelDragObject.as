@@ -1,5 +1,5 @@
 package alternativa.gui.window.panel {
-	import alternativa.gui.mouse.dnd.IDragObject;
+	import alternativa.iointerfaces.mouse.dnd.IDragObject;
 	
 	import flash.display.DisplayObject;
 	import flash.display.Shape;

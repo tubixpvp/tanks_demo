@@ -3,8 +3,8 @@ package alternativa.gui.window {
 	import alternativa.gui.base.ResizeableBase;
 	import alternativa.gui.container.Container;
 	import alternativa.gui.container.WindowContainer;
-	import alternativa.gui.focus.IFocus;
-	import alternativa.gui.focus.IFocusListener;
+	import alternativa.iointerfaces.focus.IFocus;
+	import alternativa.iointerfaces.focus.IFocusListener;
 	import alternativa.gui.init.GUI;
 	import alternativa.gui.layout.ILayoutManager;
 	import alternativa.gui.layout.IWindowLayoutManager;

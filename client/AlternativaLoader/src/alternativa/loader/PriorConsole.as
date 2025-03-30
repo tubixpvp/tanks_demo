@@ -85,8 +85,8 @@ package alternativa.loader {
 					}
 				}
 			}
-			stage.addEventListener(KeyboardEvent.KEY_UP, onStageKeyUp, true);
-			stage.addEventListener(KeyboardEvent.KEY_DOWN, onStageKeyDown, true);
+			stage.addEventListener(KeyboardEvent.KEY_UP, onStageKeyUp);
+			stage.addEventListener(KeyboardEvent.KEY_DOWN, onStageKeyDown);
 			stage.addEventListener(Event.RESIZE, onResize);
 			onResize();
 			write("Консоль загружена");

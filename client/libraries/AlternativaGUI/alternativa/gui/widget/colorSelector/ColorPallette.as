@@ -4,7 +4,7 @@ package alternativa.gui.widget.colorSelector {
 	import alternativa.gui.layout.enums.Direction;
 	import alternativa.gui.layout.enums.ScrollMode;
 	import alternativa.gui.layout.impl.SimpleGridLayoutManager;
-	import alternativa.gui.mouse.ICursorActive;
+	import alternativa.iointerfaces.mouse.ICursorActive;
 	import alternativa.gui.widget.Image;
 	import alternativa.gui.widget.button.ButtonEvent;
 	import alternativa.gui.widget.button.ShapeButton;

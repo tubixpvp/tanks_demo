@@ -1,7 +1,7 @@
 package alternativa.gui.base {
 	import alternativa.gui.init.GUI;
-	import alternativa.gui.keyboard.keyfilter.FocusKeyFilter;
-	import alternativa.gui.keyboard.keyfilter.SimpleKeyFilter;
+	import alternativa.iointerfaces.keyboard.keyfilter.FocusKeyFilter;
+	import alternativa.iointerfaces.keyboard.keyfilter.SimpleKeyFilter;
 	
 	/**
 	 * Край масштабируемого объекта

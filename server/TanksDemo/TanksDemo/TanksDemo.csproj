@@ -12,7 +12,7 @@
       <ProjectReference Include="..\Core\Core.csproj" />
       <ProjectReference Include="..\Network\Network.csproj" />
       <ProjectReference Include="..\Platform\Platform.csproj" />
-      <ProjectReference Include="..\ProdFileServer\ProdFileServer.csproj" />
+      <ProjectReference Include="..\ResourcesWebServer\ResourcesWebServer.csproj" />
       <ProjectReference Include="..\Projects.Tanks\Projects.Tanks.csproj" />
     </ItemGroup>
 

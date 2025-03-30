@@ -4,7 +4,7 @@ using Network;
 using OSGI.Services;
 using ResourcesBuilder;
 
-namespace ProdFileServer;
+namespace ResourcesWebServer;
 
 [Service]
 internal class ServerConfigXMLService

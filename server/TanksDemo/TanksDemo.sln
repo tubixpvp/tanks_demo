@@ -18,7 +18,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Projects.Tanks", "Projects.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResourcesBuilder", "ResourcesBuilder\ResourcesBuilder.csproj", "{7C9B7F98-E5B3-4613-8716-5416EA37B843}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProdFileServer", "ProdFileServer\ProdFileServer.csproj", "{B151BA3A-38BD-46C2-BE6B-F39A4AA34D0B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResourcesWebServer", "ResourcesWebServer\ResourcesWebServer.csproj", "{B151BA3A-38BD-46C2-BE6B-F39A4AA34D0B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Network", "Network\Network.csproj", "{DC45F955-6B20-4B3C-AA26-C769924C7530}"
 EndProject

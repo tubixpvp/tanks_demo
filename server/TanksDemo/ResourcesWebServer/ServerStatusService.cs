@@ -1,7 +1,7 @@
 using System.Xml.Linq;
 using OSGI.Services;
 
-namespace ProdFileServer;
+namespace ResourcesWebServer;
 
 [Service]
 internal class ServerStatusService

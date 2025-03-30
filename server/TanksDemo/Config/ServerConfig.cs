@@ -1,3 +1,4 @@
+using System.Reflection;
 using Logging;
 using Newtonsoft.Json.Linq;
 
@@ -13,7 +14,8 @@ public static class ServerConfig
     
     public static void Init()
     {
-        string configsRoot = Path.Combine(Directory.GetCurrentDirectory(), ResourcesFolder);
+        string binFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
+        string configsRoot = Path.Combine(binFolder, ResourcesFolder);
         
         _logger.Log(LogLevel.Info, 
             $"Loading configs from {configsRoot}");

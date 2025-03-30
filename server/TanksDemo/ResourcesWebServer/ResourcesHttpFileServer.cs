@@ -4,9 +4,9 @@ using Logging;
 using OSGI.Services;
 using Utils;
 
-namespace ProdFileServer;
+namespace ResourcesWebServer;
 
-public class ProductionHttpFileServer
+public class ResourcesHttpFileServer
 {
     [InjectService]
     private static LoggerService LoggerService;
@@ -26,7 +26,7 @@ public class ProductionHttpFileServer
 
     private bool _running;
     
-    public ProductionHttpFileServer(ParametersUtil launchParams)
+    public ResourcesHttpFileServer(ParametersUtil launchParams)
     {
         _logger = LoggerService.GetLogger(GetType());
         

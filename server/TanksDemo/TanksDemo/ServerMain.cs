@@ -2,7 +2,7 @@
 using Core.Model.Registry;
 using Network;
 using OSGI.Services;
-using ProdFileServer;
+using ResourcesWebServer;
 using Utils;
 
 namespace TanksDemo;
@@ -25,7 +25,7 @@ internal class ServerMain
 
         OSGi.GetService<ModelRegistry>().Init();
 
-        ProductionHttpFileServer fileServer = new ProductionHttpFileServer(launchParams);
+        ResourcesHttpFileServer fileServer = new ResourcesHttpFileServer(launchParams);
         fileServer.Start();
 
         OSGi.GetService<ClientsNetworkService>().Start().Wait();

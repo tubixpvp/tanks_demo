@@ -4,6 +4,7 @@ using Config;
 using Logging;
 using Network.Sockets;
 using OSGI.Services;
+using Utils;
 
 namespace Network;
 
@@ -24,7 +25,7 @@ public class ClientsNetworkService : IOSGiInitListener
 
     public ClientsNetworkService()
     {
-        _netConfig = ServerConfig.GetConfig<ServerNetworkConfig>("network.json");
+        _netConfig = ServerResources.GetConfig<ServerNetworkConfig>("network.json");
 
         _tcpListener = new TcpListener(IPAddress.Any, _netConfig.ClientPorts[0]);
     }
@@ -40,7 +41,7 @@ public class ClientsNetworkService : IOSGiInitListener
     public Task Start()
     {
         _running = true;
-        return Task.Run(ConnectionsAcceptTask);
+        return SafeTask.Run(ConnectionsAcceptTask);
     }
 
     private async Task ConnectionsAcceptTask()

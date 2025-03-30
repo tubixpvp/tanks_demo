@@ -24,9 +24,14 @@ public class ParametersUtil
     
     public static ParametersUtil FromRunArguments(string[] args)
     {
-        args = string.Join(' ', args).Split(' ');
+        string line = string.Join(' ', args);
         
         Dictionary<string, string> parameters = new();
+
+        if (string.IsNullOrWhiteSpace(line))
+            return new ParametersUtil(parameters);
+        
+        args = line.Split(' ');
 
         for (int i = 0; i < args.Length;)
         {

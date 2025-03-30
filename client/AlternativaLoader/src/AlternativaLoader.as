@@ -28,6 +28,12 @@ package {
 	
 	
 	public class AlternativaLoader extends Sprite {
+
+		[Embed(source="./../../socket.cfg", mimeType="application/octet-stream")]
+		private static const SOCKET_DATA_Class:Class;
+
+		private static const SOCKET_DATA:Object = JSON.parse((new SOCKET_DATA_Class()).toString());
+
 		
 		private static const initClassPath:String = "alternativa.init";
 		
@@ -112,12 +118,13 @@ package {
 				//console.hide();
 			}
 			// Определяем адрес сервера
-			server = new LocalConnection().domain;
+			//server = "http://" + new LocalConnection().domain;
+			server = SOCKET_DATA.resources;
 			
 			// Разрешаем доступ к серверу
 			Security.allowDomain("*");
 			
-			statusURL = "http://" + server + "/status.xml?rnd=" + Math.random();
+			statusURL = server + "/status.xml?rnd=" + Math.random();
 
 			if(debug)
 			{
@@ -130,7 +137,7 @@ package {
 			statusLoader.addEventListener(IOErrorEvent.IO_ERROR, onStasusLoadError);
 			statusLoader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onStasusLoadError);
 			
-			configURL = "http://" + server + "/alternativa.cfg?rnd=" + Math.random();
+			configURL = server + "/alternativa.cfg?rnd=" + Math.random();
 			
 			// Проверяем доступность сервера
 			checkServerStatus();
@@ -294,7 +301,7 @@ package {
 				if (email != null && email != "") {
 					shared.data.userEmail = email;
 				}*/
-				osgi = ApplicationDomain.currentDomain.getDefinition(initClassPath + "." + "OSGi").init(stage, mainContainer, crossdomain, ports[0], "http://" + server + "/" + resources, console, shared);
+				osgi = ApplicationDomain.currentDomain.getDefinition(initClassPath + "." + "OSGi").init(stage, mainContainer, crossdomain, ports[0], server + "/" + resources, console, shared);
 			} else {
 				if (debug) {
 					console.writeToChannel("OSGI", "initOSGi не прошел!!!");
@@ -310,7 +317,7 @@ package {
 			//console.write("makeResourceUrl resources: " + resources);
 			//var url:String = "http://" + server + "/" + resources  + "/libraries/" + Number(id).toString() + "/" + version.toString() + "/";
 			
-			var url:String = "http://" + server + "/" + resources;
+			var url:String = server + "/" + resources;
 			
 			var longId:ByteArray = longToByteArray(id);
 			

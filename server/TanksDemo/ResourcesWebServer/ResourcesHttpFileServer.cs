@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Text;
+using Config;
 using Logging;
 using OSGI.Services;
 using Utils;
@@ -24,6 +25,8 @@ public class ResourcesHttpFileServer
 
     private readonly ILogger _logger;
 
+    private readonly byte[] _crossdomainXMLData;
+
     private bool _running;
     
     public ResourcesHttpFileServer(ParametersUtil launchParams)
@@ -32,13 +35,26 @@ public class ResourcesHttpFileServer
         
         int port = launchParams.GetInt("fileServPort") ?? throw new Exception("File server port is not provided");
 
+        bool isProd = launchParams.GetBoolean("prod");
+
         _resourcesRoot = Path.GetFullPath(launchParams.GetString("resourcesPath") ?? throw new Exception("Resources path is not provided"));
 
         _logger.Log(LogLevel.Info,
             "Preparing file server for directory: " + _resourcesRoot);
         
         _listener = new HttpListener();
-        _listener.Prefixes.Add($"http://+:{port}/");
+
+        if (isProd)
+        {
+            _listener.Prefixes.Add($"http://+:{port}/");
+        }
+        else
+        {
+            _listener.Prefixes.Add($"http://localhost:{port}/");
+            _listener.Prefixes.Add($"http://127.0.0.1:{port}/");
+        }
+
+        _crossdomainXMLData = Encoding.UTF8.GetBytes(ServerResources.GetTextData("crossdomain.xml"));
     }
 
     public Task Start()
@@ -51,7 +67,7 @@ public class ResourcesHttpFileServer
     {
         _listener.Start();
         
-        _logger.Log(LogLevel.Info, "HTTP File server has started");
+        _logger.Log(LogLevel.Info, "HTTP File server has started on " + _listener.Prefixes.First());
         
         while (_running)
         {
@@ -80,13 +96,18 @@ public class ResourcesHttpFileServer
                 url = url[1..];
             }
 
+            if (url == "crossdomain.xml")
+            {
+                await SendData(response, _crossdomainXMLData);
+                continue;
+            }
+            
             if (url == "status.xml")
             {
                 await SendData(response, 
                     await ServerStatus.GetStatusXML());
                 continue;
             }
-
             if (url == "alternativa.cfg")
             {
                 await SendData(response, ServerConfigXML.GetConfigXML());

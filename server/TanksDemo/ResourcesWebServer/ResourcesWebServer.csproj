@@ -11,6 +11,10 @@
       <ProjectReference Include="..\Network\Network.csproj" />
       <ProjectReference Include="..\ResourcesBuilder\ResourcesBuilder.csproj" />
       <ProjectReference Include="..\Utils\Utils.csproj" />
+
+      <Content Include="Resources\**\*">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>

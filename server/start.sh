@@ -1,2 +1,2 @@
 cd ./TanksDemo/TanksDemo/
-dotnet run -fileServPort 80 -resourcesPath ./../../../../../../resources/ -clientDir ./../../../../../../client/
+dotnet run -fileServPort 8000 -fileServUrl /play -resourcesPath ./../../../resources/ -clientDir ./../../../client/ -prod false

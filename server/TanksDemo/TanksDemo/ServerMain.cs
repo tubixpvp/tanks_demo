@@ -19,7 +19,7 @@ internal class ServerMain
         //the server starts here
 
         ServerLaunchParams.Init(launchParams);
-        ServerConfig.Init();
+        ServerResources.Init();
         
         OSGi.Init();
 

@@ -103,9 +103,10 @@ internal class LibrariesBuilder
         {
             srcPath = Path.GetDirectoryName(taskConfig.ASConfigPath)!;
             
-            if (srcPath.StartsWith("client/"))
+            string clientPart = "client" + Path.DirectorySeparatorChar;
+            if (srcPath.StartsWith(clientPart))
             {
-                srcPath = srcPath["client/".Length..];
+                srcPath = srcPath[clientPart.Length..];
             }
         }
         

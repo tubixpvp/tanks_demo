@@ -1,6 +1,6 @@
 ﻿using Utils;
 
-namespace Network.Utils;
+namespace Network.Protocol;
 
 internal static class PacketUtil
 {

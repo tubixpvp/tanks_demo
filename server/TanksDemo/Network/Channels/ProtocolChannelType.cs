@@ -1,6 +1,6 @@
 ﻿namespace Network.Channels;
 
-internal enum ProtocolChannelType
+public enum ProtocolChannelType
 {
     Control,
     Space

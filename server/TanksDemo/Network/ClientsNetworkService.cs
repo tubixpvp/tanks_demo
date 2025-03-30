@@ -73,5 +73,7 @@ public class ClientsNetworkService : IOSGiInitListener
         NetworkSession session = new NetworkSession(netSocket);
 
         SessionsRegistry.AddSession(session);
+        
+        session.Init();
     }
 }

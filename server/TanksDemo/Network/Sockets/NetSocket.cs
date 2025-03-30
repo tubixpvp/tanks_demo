@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Sockets;
-using Network.Utils;
+using Network.Channels;
+using Network.Protocol;
 using Utils;
 
 namespace Network.Sockets;
@@ -8,6 +9,8 @@ namespace Network.Sockets;
 public class NetSocket
 {
     public string IPAddress { get; }
+
+    internal event PacketCallbackFunc OnPacketReceived;
 
     
     private readonly Socket _socket;
@@ -21,6 +24,8 @@ public class NetSocket
     private readonly ByteArray _buffer = new();
 
     private readonly ByteArray _packetBuffer = new();
+
+    private readonly ByteArray _packetDataBuffer = new();
 
     private long _packetCursor = 0;
     
@@ -49,6 +54,8 @@ public class NetSocket
 
     private void BeginRead()
     {
+        if(!_readingActive)
+            return;
         _socket.ReceiveAsync(_socketEvents);
     }
 
@@ -61,30 +68,58 @@ public class NetSocket
         }
         if (socketEvents.BytesTransferred > 0)
         {
-            ProgressData(socketEvents.BytesTransferred);
+            _buffer.Position = _buffer.Length;
+            _buffer.WriteBytes(_byteBuffer, 0, socketEvents.BytesTransferred);
+            
+            ProgressData(BeginRead);
         }
-        if (_readingActive)
+        else
         {
             BeginRead();
         }
     }
 
-    private void ProgressData(int bytesCount)
+    private void ProgressData(Action callback)
     {
-        _buffer.Position = _buffer.Length;
-        _buffer.WriteBytes(_byteBuffer, 0, bytesCount);
-
         _buffer.Position = _packetCursor;
 
-        while (_buffer.BytesAvailable > 0)
+        if (_buffer.BytesAvailable == 0)
         {
-            if (!PacketUtil.UnwrapPacket(_buffer, _packetBuffer))
-                return;
-            _packetBuffer.Position = 0;
+            _buffer.Clear();
             
-            //
-            
-            _packetBuffer.Clear();
+            callback();
+            return;
+        }
+
+        _packetBuffer.Clear();
+
+        if (!PacketUtil.UnwrapPacket(_buffer, _packetBuffer))
+        {
+            callback();
+            return;
+        }
+
+        _packetCursor = _buffer.Position;
+        
+
+        NullMap nullMap = new NullMap(); //TODO: decode
+        
+        _packetDataBuffer.Clear();
+        _packetDataBuffer.WriteBytes(_packetBuffer.ReadBytes(_packetBuffer.BytesAvailable));
+
+        NetPacket packet = new NetPacket(_packetDataBuffer, nullMap);
+        
+        Task? task = OnPacketReceived?.Invoke(packet);
+
+        if (task != null && !task.IsCompleted)
+        {
+            task.ContinueWith(_ => ProgressData(callback));
+        }
+        else
+        {
+            ProgressData(callback);
         }
     }
+    
+    internal delegate Task PacketCallbackFunc(NetPacket packet);
 }

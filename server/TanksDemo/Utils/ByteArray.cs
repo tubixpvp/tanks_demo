@@ -38,7 +38,7 @@ public class ByteArray
     public byte ReadByte() => _reader.ReadByte();
     public sbyte ReadSByte() => _reader.ReadSByte();
     
-    public byte[] ReadBytes(int count) => _reader.ReadBytes(count);
+    public byte[] ReadBytes(long count) => _reader.ReadBytes((int)count);
 
     public void Clear()
     {

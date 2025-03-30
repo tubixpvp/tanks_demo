@@ -1,5 +1,6 @@
 ﻿using Config;
 using Core.Model.Registry;
+using Network;
 using OSGI.Services;
 using ProdFileServer;
 using Utils;
@@ -25,7 +26,8 @@ internal class ServerMain
         OSGi.GetService<ModelRegistry>().Init();
 
         ProductionHttpFileServer fileServer = new ProductionHttpFileServer(launchParams);
+        fileServer.Start();
 
-        fileServer.Start().Wait();
+        OSGi.GetService<ClientsNetworkService>().Start().Wait();
     }
 }

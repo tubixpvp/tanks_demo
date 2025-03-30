@@ -41,7 +41,7 @@ public static class OSGi
      */
     public static void Init()
     {
-        //Services.Clear();
+        Services.Clear();
         InjectionPoints.Clear();
 
         //create services
@@ -67,6 +67,14 @@ public static class OSGi
                 {
                     AddInjectionPoint(field);
                 }
+            }
+        }
+
+        foreach (object serviceImpl in Services.Values)
+        {
+            if (serviceImpl is IOSGiInitListener listener)
+            {
+                listener.OnOSGiInited();
             }
         }
     }

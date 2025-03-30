@@ -3,7 +3,6 @@ using Config;
 using Network;
 using OSGI.Services;
 using ResourcesBuilder;
-using Utils;
 
 namespace ProdFileServer;
 
@@ -15,29 +14,29 @@ internal class ServerConfigXMLService
 
     [InjectService]
     private static SWFLibrariesDataService LibsDataService;
+    
 
-
-    private Dictionary<string, SWFLibraryData>? _libsData;
+    private string? _xmlString;
 
     public string GetConfigXML()
     {
-        if (_libsData == null)
-        {
-            string clientDir = ServerLaunchParams.GetLaunchParams().GetString("clientDir") ?? throw new Exception("Client dir is not provided");
+        if (_xmlString != null) 
+            return _xmlString;
+        
+        string clientDir = ServerLaunchParams.GetLaunchParams().GetString("clientDir") ?? throw new Exception("Client dir is not provided");
 
-            _libsData = LibsDataService.GetLibsData(clientDir).GetAwaiter().GetResult();
-        }
-
-        foreach (var entry in _libsData)
+        Dictionary<string, SWFLibraryData> libsData = LibsDataService.GetLibsData(clientDir).GetAwaiter().GetResult();
+            
+        /*foreach (var entry in libsData)
         {
             (int high, int low) = LongUtils.GetLongHighLow(entry.Value.ResourceId);
             
             Console.WriteLine(entry.Key + $"   ({high},{low})");
-        }
+        }*/
         
         int[] ports = NetworkService.GetNetConfig().ClientPorts;
 
-        string xml = new XElement("root",
+        _xmlString = new XElement("root",
             
             new XElement("server",
                 
@@ -50,7 +49,7 @@ internal class ServerConfigXMLService
             ),
             
             new XElement("plugins",
-                _libsData.Select(entry => 
+                libsData.Select(entry => 
                     new XElement("plugin",
                         new XAttribute("name", entry.Key),
                         new XAttribute("id", entry.Value.ResourceId),
@@ -60,8 +59,6 @@ internal class ServerConfigXMLService
             
         ).ToString();
 
-        //Console.WriteLine(xml);
-        
-        return xml;
+        return _xmlString;
     }
 }

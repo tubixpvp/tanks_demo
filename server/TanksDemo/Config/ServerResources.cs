@@ -38,11 +38,12 @@ public static class ServerResources
 
         foreach (string configPath in otherConfigsPaths.Except(configsPaths))
         {
-            string fileName = Path.GetFileName(configPath);
+            //string fileName = Path.GetFileName(configPath);
+            string fileLocalPath = Path.GetRelativePath(configsRoot, configPath).Replace('\\','/');
             
             string text = File.ReadAllText(configPath);
             
-            TextFiles.Add(fileName, text);
+            TextFiles.Add(fileLocalPath, text);
         }
     }
 
@@ -51,9 +52,9 @@ public static class ServerResources
         return Configs[fileName].ToObject<T>()!;
     }
 
-    public static string GetTextData(string fileName)
+    public static string GetTextData(string fileLocalPath)
     {
-        return TextFiles[fileName];
+        return TextFiles[fileLocalPath];
     }
     
 }

@@ -5,7 +5,7 @@ public enum ByteEndian
     BigEndian,
     LittleEndian
 }
-public class ByteArray
+public class ByteArray : IDisposable
 {
     public long Length => _stream.Length;
     public long Position {get=>_stream.Position;set=>_stream.Position=value;}
@@ -22,6 +22,13 @@ public class ByteArray
 
         _reader = endian == ByteEndian.BigEndian ? new BigEndianBinaryReader(_stream) : new BinaryReader(_stream);
         _writer = endian == ByteEndian.BigEndian ? new BigEndianBinaryWriter(_stream) : new BinaryWriter(_stream);
+    }
+
+    public void Dispose()
+    {
+        _reader.Dispose();
+        _writer.Dispose();
+        _stream.Dispose();
     }
 
     public void WriteLong(long value) => _writer.Write(value);

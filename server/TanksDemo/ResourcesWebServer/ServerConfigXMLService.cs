@@ -44,7 +44,7 @@ internal class ServerConfigXMLService
                     ports.Select(port => new XElement("port", port))
                 ),
                 
-                new XElement("ip", "127.0.0.1") //todo
+                new XAttribute("ip", "localhost") //todo
                 
             ),
             

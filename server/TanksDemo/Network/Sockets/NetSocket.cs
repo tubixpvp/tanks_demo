@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using Network.Channels;
 using Network.Protocol;
 using Utils;
@@ -10,13 +11,11 @@ public class NetSocket
 {
     public string IPAddress { get; }
 
-    internal event PacketCallbackFunc OnPacketReceived;
+    internal event PacketCallbackFunc? OnPacketReceived;
+    internal event Func<Task>? OnDisconnected; 
 
     
     private readonly Socket _socket;
-
-
-    private readonly SocketAsyncEventArgs _socketEvents = new();
     
     private readonly byte[] _byteBuffer = new byte[512];
     
@@ -31,15 +30,14 @@ public class NetSocket
     
 
     private bool _readingActive = false;
+
+    private bool _disconnected = false;
     
     internal NetSocket(Socket socket)
     {
         _socket = socket;
         
         IPAddress = (socket.RemoteEndPoint as IPEndPoint)!.Address.ToString();
-
-        _socketEvents.SetBuffer(_byteBuffer, 0, _byteBuffer.Length);
-        _socketEvents.Completed += OnReadEnd;
     }
 
     public void StartReading()
@@ -56,27 +54,39 @@ public class NetSocket
     {
         if(!_readingActive)
             return;
-        _socket.ReceiveAsync(_socketEvents);
+        try
+        {
+            _socket.BeginReceive(_byteBuffer, 0, _byteBuffer.Length, SocketFlags.None, OnReceiveEnd, null);
+        }
+        catch (Exception e)
+        {
+            OnSocketError(e);
+        }
     }
 
-    private void OnReadEnd(object? sender, SocketAsyncEventArgs socketEvents)
+    private void OnReceiveEnd(IAsyncResult result)
     {
-        if (socketEvents.SocketError != SocketError.Success)
+        int bytesCount;
+        try
         {
-            //todo handle error
+            bytesCount = _socket.EndReceive(result);
+        }
+        catch (Exception e)
+        {
+            OnSocketError(e);
             return;
         }
-        if (socketEvents.BytesTransferred > 0)
+
+        if (bytesCount == 0)
         {
-            _buffer.Position = _buffer.Length;
-            _buffer.WriteBytes(_byteBuffer, 0, socketEvents.BytesTransferred);
+            Disconnect();
+            return;
+        }
+        
+        _buffer.Position = _buffer.Length;
+        _buffer.WriteBytes(_byteBuffer, 0, bytesCount);
             
-            ProgressData(BeginRead);
-        }
-        else
-        {
-            BeginRead();
-        }
+        ProgressData(BeginRead);
     }
 
     private void ProgressData(Action callback)
@@ -91,6 +101,12 @@ public class NetSocket
             return;
         }
 
+        if (IsPolicyRequest())
+        {
+            SendPolicyData();
+            return; //policy connection usually closes right after receiving the policy data, so no need to start the reading again
+        }
+
         _packetBuffer.Clear();
 
         if (!PacketUtil.UnwrapPacket(_buffer, _packetBuffer))
@@ -100,9 +116,11 @@ public class NetSocket
         }
 
         _packetCursor = _buffer.Position;
-        
 
-        NullMap nullMap = new NullMap(); //TODO: decode
+        
+        _packetBuffer.Position = 0;
+
+        NullMap nullMap = PacketUtil.DecodeNullMap(_packetBuffer);
         
         _packetDataBuffer.Clear();
         _packetDataBuffer.WriteBytes(_packetBuffer.ReadBytes(_packetBuffer.BytesAvailable));
@@ -120,6 +138,112 @@ public class NetSocket
             ProgressData(callback);
         }
     }
+
+    private bool IsPolicyRequest()
+    {
+        if (_buffer.BytesAvailable < 23)
+            return false;
+        
+        long posBefore = _buffer.Position;
+
+        byte firstByte = _buffer.ReadByte();
+        if (firstByte == 60)
+        {
+            _buffer.Position = posBefore;
+            
+            StringBuilder requestBuilder = new();
+            
+            byte b = _buffer.ReadByte();
+            while (b != 0)
+            {
+                requestBuilder.Append((char)b);
+                b = _buffer.ReadByte();
+            }
+            
+            string request = requestBuilder.ToString();
+
+            return request.Contains(PolicyUtil.PolicyFileRequest);
+        }
+        
+        _buffer.Position = posBefore;
+
+        return false;
+    }
+
+    private void SendPolicyData()
+    {
+        //Console.WriteLine("Sending policy: " + Encoding.UTF8.GetString(PolicyUtil.PolicyData));
+        try
+        {
+            _socket.BeginSend(PolicyUtil.PolicyData, 0, PolicyUtil.PolicyData.Length, SocketFlags.None,
+                OnPolicyDataSent, null);
+        }
+        catch (Exception e)
+        {
+            OnSocketError(e);
+        }
+    }
+    private void OnPolicyDataSent(IAsyncResult result)
+    {
+        try
+        {
+            _socket.EndSend(result);
+
+            Disconnect();
+        }
+        catch (Exception e)
+        {
+            OnSocketError(e);
+        }
+    }
+
+    private void OnSocketError(Exception e)
+    {
+        Console.WriteLine("Socket error: " + e);
+        
+        Disconnect();
+    }
+
+    private void Disconnect()
+    {
+        if (_disconnected)
+            return;
+        
+        _readingActive = false;
+        
+        if (_socket.Connected)
+        {
+            try
+            {
+                _socket.Close();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+
+        _disconnected = true;
+        
+        Task? task = OnDisconnected?.Invoke();
+
+        if (task != null)
+            task.ContinueWith(_ => OnDisconnectedEventsDone());
+        else
+            OnDisconnectedEventsDone();
+        
+    }
+
+    private void OnDisconnectedEventsDone()
+    {
+        _buffer.Dispose();
+        _packetBuffer.Dispose();
+        _packetDataBuffer.Dispose();
+
+        OnPacketReceived = null;
+        OnDisconnected = null;
+    }
     
     internal delegate Task PacketCallbackFunc(NetPacket packet);
+    
 }

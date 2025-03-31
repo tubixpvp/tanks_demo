@@ -73,7 +73,21 @@ public class ClientsNetworkService : IOSGiInitListener
         NetworkSession session = new NetworkSession(netSocket);
 
         SessionsRegistry.AddSession(session);
+
+        session.Socket.OnDisconnected += () => OnConnectionClosed(session);
+
+        Task.Run(async () =>
+        {
+            await session.Init();
+        });
+    }
+
+    private Task OnConnectionClosed(NetworkSession session)
+    {
+        SessionsRegistry.RemoveSession(session);
         
-        session.Init();
+        _logger.Log(LogLevel.Info, $"Connection from IP: {session.Socket.IPAddress} closed!");
+
+        return Task.CompletedTask;
     }
 }

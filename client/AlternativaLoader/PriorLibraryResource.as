@@ -10,6 +10,8 @@ package alternativa.loader {
 	import flash.system.LoaderContext;
 	import flash.system.SecurityDomain;
 	import flash.utils.Dictionary;
+	import flash.utils.ByteArray;
+	import flash.net.URLLoaderDataFormat;
 	
 	public class PriorLibraryResource {
 		
@@ -30,6 +32,9 @@ package alternativa.loader {
 		private var librariesData:Object;
 		
 		private var mainLoader:AlternativaLoader;
+
+
+		private var _swfDataLoader:URLLoader;
 		
 		
 		
@@ -56,6 +61,13 @@ package alternativa.loader {
 			loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onLoadComplete);
 			loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onLoadIOError);
 			loader.contentLoaderInfo.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onLoadSecurityError);
+
+			_swfDataLoader = new URLLoader();
+			_swfDataLoader.dataFormat = URLLoaderDataFormat.BINARY;
+			_swfDataLoader.addEventListener(Event.COMPLETE, onSwfBytesLoaded);
+			_swfDataLoader.addEventListener(IOErrorEvent.IO_ERROR, onLoadIOError);
+			_swfDataLoader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onLoadSecurityError);
+
 		}
 		
 		public function load(url:String):void {
@@ -76,10 +88,6 @@ package alternativa.loader {
 			var infoXML:XML = new XML(URLLoader(e.target).data);
 			_name = infoXML.@name;
 			// Загружаем библиотеку
-			var context:LoaderContext = new LoaderContext();
-			context.applicationDomain = ApplicationDomain.currentDomain;
-			context.securityDomain = SecurityDomain.currentDomain;
-			context.allowCodeImport = true;
 			
 			//var id:String = LongToString(_id);
 			//var version:String = LongToString(_version);
@@ -87,10 +95,29 @@ package alternativa.loader {
 				console.writeToChannel("RESOURCE", "Загружается ресурс " + _name + " ID: " + _id + " версии " + _version +  " из " + url);
 			}
 			if (mainLoader.debug) {
-				loader.load(new URLRequest(url + "debug.swf"), context);
+				_swfDataLoader.load(new URLRequest(url + "debug.swf"));
 			} else {
-				loader.load(new URLRequest(url + "library.swf"), context);
+				_swfDataLoader.load(new URLRequest(url + "library.swf"));
 			}
+		}
+
+		private function onSwfBytesLoaded(e:Event) : void
+		{
+			_swfDataLoader.removeEventListener(Event.COMPLETE, onSwfBytesLoaded);
+			_swfDataLoader.removeEventListener(IOErrorEvent.IO_ERROR, onLoadIOError);
+			_swfDataLoader.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, onLoadSecurityError);
+
+			var data:ByteArray = _swfDataLoader.data;
+
+			_swfDataLoader = null;
+
+			
+			var context:LoaderContext = new LoaderContext();
+			context.applicationDomain = ApplicationDomain.currentDomain;
+			//context.securityDomain = SecurityDomain.currentDomain;
+			context.allowCodeImport = true;
+
+			loader.loadBytes(data, context);
 		}
 
 		private function LongToString(value:Number):String {

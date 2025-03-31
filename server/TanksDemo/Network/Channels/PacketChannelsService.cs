@@ -6,25 +6,61 @@ namespace Network.Channels;
 [Service]
 public class PacketChannelsService
 {
-    private readonly Dictionary<ProtocolChannelType, PacketHandleDelegate> _handlers = new();
+    //private readonly Dictionary<ProtocolChannelType, List<IChannelPacketHandler>> _handlers = new();
 
+    private readonly Dictionary<ProtocolChannelType, HandlerEntry> _handlers = new();
 
-    public void AddHandler(ProtocolChannelType type, PacketHandleDelegate handler)
+    public void AddHandler(ProtocolChannelType type, IChannelPacketHandler handler)
     {
-        if (!_handlers.ContainsKey(type))
+        HandlerEntry entry = GetHandler(type);
+        entry.HandlePacket += handler.HandlePacket;
+        entry.HandleConnect += handler.HandleConnect;
+        entry.HandleDisconnect += handler.HandleDisconnect;
+    }
+
+    private HandlerEntry GetHandler(ProtocolChannelType type)
+    {
+        if (!_handlers.TryGetValue(type, out var entry))
         {
-            _handlers.Add(type, handler);
-            return;
+            _handlers.Add(type, entry = new HandlerEntry());
         }
-        _handlers[type] += handler;
+        return entry;
     }
     
-    public Task? HandlePacket(NetworkSession session, NetPacket packet)
+    public async Task HandlePacket(NetworkSession session, NetPacket packet)
     {
-        PacketHandleDelegate handlerEvent = _handlers[session.ChannelType];
-        
-        return handlerEvent?.Invoke(session, packet);
+        Task? task = GetHandler(session.ChannelType).HandlePacket?.Invoke(session, packet);
+        if (task != null)
+        {
+            await task;
+        }
     }
 
-    public delegate Task PacketHandleDelegate(NetworkSession session, NetPacket packet);
+    public async Task HandleConnect(NetworkSession session)
+    {
+        Task? task = GetHandler(session.ChannelType).HandleConnect?.Invoke(session);
+        if (task != null)
+        {
+            await task;
+        }
+    }
+    public async Task HandleDisconnect(NetworkSession session)
+    {
+        Task? task = GetHandler(session.ChannelType).HandleDisconnect?.Invoke(session);
+        if (task != null)
+        {
+            await task;
+        }
+    }
+
+    class HandlerEntry
+    {
+        public HandlePacketDelegate? HandlePacket { get; set; }
+        public HandleSessionEventDelegate? HandleConnect { get; set; }
+        public HandleSessionEventDelegate? HandleDisconnect { get; set; }
+    }
+    
+    private delegate Task HandlePacketDelegate(NetworkSession session, NetPacket packet);
+    private delegate Task HandleSessionEventDelegate(NetworkSession session);
+    
 }

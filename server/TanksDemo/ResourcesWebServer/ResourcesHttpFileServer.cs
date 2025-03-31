@@ -54,7 +54,7 @@ public class ResourcesHttpFileServer
             _listener.Prefixes.Add($"http://127.0.0.1:{port}/");
         }
 
-        _crossdomainXMLData = Encoding.UTF8.GetBytes(ServerResources.GetTextData("crossdomain.xml"));
+        _crossdomainXMLData = Encoding.UTF8.GetBytes(ServerResources.GetTextData("FileServer/crossdomain.xml"));
     }
 
     public Task Start()

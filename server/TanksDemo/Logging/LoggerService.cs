@@ -13,7 +13,7 @@ public class LoggerService
     {
         if (_loggers.TryGetValue(type, out var logger))
             return logger;
-        logger = new Logger();
+        logger = new Logger(type);
         _loggers.TryAdd(type, logger);
         return logger;
     }

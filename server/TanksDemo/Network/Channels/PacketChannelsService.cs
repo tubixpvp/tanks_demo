@@ -1,13 +1,13 @@
 using Network.Session;
 using OSGI.Services;
+using Utils;
 
 namespace Network.Channels;
 
 [Service]
 public class PacketChannelsService
 {
-    //private readonly Dictionary<ProtocolChannelType, List<IChannelPacketHandler>> _handlers = new();
-
+    
     private readonly Dictionary<ProtocolChannelType, HandlerEntry> _handlers = new();
 
     public void AddHandler(ProtocolChannelType type, IChannelPacketHandler handler)
@@ -32,7 +32,7 @@ public class PacketChannelsService
         Task? task = GetHandler(session.ChannelType).HandlePacket?.Invoke(session, packet);
         if (task != null)
         {
-            await task;
+            await SafeTask.AddListeners(task);
         }
     }
 
@@ -41,7 +41,7 @@ public class PacketChannelsService
         Task? task = GetHandler(session.ChannelType).HandleConnect?.Invoke(session);
         if (task != null)
         {
-            await task;
+            await SafeTask.AddListeners(task);
         }
     }
     public async Task HandleDisconnect(NetworkSession session)
@@ -49,7 +49,7 @@ public class PacketChannelsService
         Task? task = GetHandler(session.ChannelType).HandleDisconnect?.Invoke(session);
         if (task != null)
         {
-            await task;
+            await SafeTask.AddListeners(task);
         }
     }
 

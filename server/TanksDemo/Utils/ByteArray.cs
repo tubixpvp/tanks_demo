@@ -11,6 +11,7 @@ public class ByteArray : IDisposable
     public long Position {get=>_stream.Position;set=>_stream.Position=value;}
     public long BytesAvailable => _stream.Length - _stream.Position;
     
+    
     private readonly MemoryStream _stream;
     
     private readonly BinaryReader _reader;
@@ -33,9 +34,13 @@ public class ByteArray : IDisposable
 
     public void WriteLong(long value) => _writer.Write(value);
     public void WriteInt(int value) => _writer.Write(value);
+    public void WriteByte(byte value) => _writer.Write(value);
+    public void WriteByte(int value) => _writer.Write((byte)value);
     
     public void WriteBytes(byte[] buffer) => _writer.Write(buffer);
     public void WriteBytes(byte[] buffer, int offset, int count) => _writer.Write(buffer, offset, count);
+
+    public void WriteBytes(ByteArray bytes) => _writer.Write(bytes.ToArray());
 
 
     public int ReadInt() => _reader.ReadInt32();
@@ -46,6 +51,8 @@ public class ByteArray : IDisposable
     public sbyte ReadSByte() => _reader.ReadSByte();
     
     public byte[] ReadBytes(long count) => _reader.ReadBytes((int)count);
+    
+    public byte[] ToArray() => _stream.ToArray();
 
     public void Clear()
     {

@@ -10,6 +10,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Config\Config.csproj" />
       <ProjectReference Include="..\Core\Core.csproj" />
+      <ProjectReference Include="..\NetworkCommons\NetworkCommons.csproj" />
       <ProjectReference Include="..\Network\Network.csproj" />
       <ProjectReference Include="..\Platform\Platform.csproj" />
       <ProjectReference Include="..\ResourcesWebServer\ResourcesWebServer.csproj" />

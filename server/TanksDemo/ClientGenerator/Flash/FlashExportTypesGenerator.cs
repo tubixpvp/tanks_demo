@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Core.Generator;
+using ProtocolEncoding;
 using Utils;
 
 namespace ClientGenerator.Flash;
@@ -66,6 +67,9 @@ internal class FlashExportTypesGenerator : IClientDataGenerator
         {
             Type fieldType = fieldInfo.FieldType;
             fieldType = Nullable.GetUnderlyingType(fieldType) ?? fieldType;
+            
+            if(fieldInfo.GetCustomAttribute<ProtocolIgnoreAttribute>() != null)
+                continue;
             
             generator.AddLine($"public var {FirstLetterToLower(fieldInfo.Name)}:{FlashCodeGenerator.GetFlashDeclarationTypeString(fieldType)};");
             generator.AddEmptyLine();

@@ -1,4 +1,5 @@
-﻿using Logging;
+﻿using System.Collections.Concurrent;
+using Logging;
 using Network.Channels;
 using Network.Sockets;
 using OSGI.Services;
@@ -20,6 +21,9 @@ public class NetworkSession
 
 
     private readonly ILogger _logger;
+
+
+    private readonly ConcurrentDictionary<string, object> _attributes = new();
     
     
     internal NetworkSession(NetSocket socket)
@@ -52,4 +56,9 @@ public class NetworkSession
     {
         await PacketChannels.HandleDisconnect(this);
     }
+
+
+    public void SetAttribute(string key, object value) => _attributes[key] = value;
+    public T? GetAttribute<T>(string key) => (T?)_attributes.GetValueOrDefault(key);
+    
 }

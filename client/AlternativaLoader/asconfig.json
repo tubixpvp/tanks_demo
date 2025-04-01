@@ -5,7 +5,8 @@
             "src"
         ],
         "target-player": "32.0",
-        "output": "./../bin/AlternativaLoader.swf"
+        "output": "./../bin/AlternativaLoader.swf",
+        "default-frame-rate": 60
     },
     "mainClass": "AlternativaLoader"
 }

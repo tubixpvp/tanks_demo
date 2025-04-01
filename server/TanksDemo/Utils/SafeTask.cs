@@ -5,6 +5,11 @@ public static class SafeTask
     public static Task Run(Func<Task> func)
     {
         Task task = Task.Run(func);
+        return AddListeners(task);
+    }
+
+    public static Task AddListeners(Task task)
+    {
         if (task.IsCompleted)
         {
             OnTaskCompleted(task);

@@ -26,6 +26,12 @@ public class NetSocket
 
     private readonly ByteArray _packetDataBuffer = new();
 
+
+    private readonly ByteArray _sendBuffer = new();
+
+    private readonly ByteArray _sendEncodeBuffer = new();
+    
+
     private long _packetCursor = 0;
     
 
@@ -48,6 +54,28 @@ public class NetSocket
         }
         _readingActive = true;
         BeginRead();
+    }
+
+    public async Task SendPacket(NetPacket packet, bool forceCompress = false)
+    {
+        byte[] data;
+        lock (_sendBuffer)
+        {
+            _sendEncodeBuffer.Clear();
+
+            NullMapUtil.EncodeNullMap(packet.NullMap, _sendEncodeBuffer);
+            _sendEncodeBuffer.WriteBytes(packet.PacketBuffer);
+
+            _sendEncodeBuffer.Position = 0;
+
+            _sendBuffer.Clear();
+            
+            PacketUtil.WrapPacket(_sendEncodeBuffer, _sendBuffer, forceCompress);
+
+            data = _sendBuffer.ToArray();
+        }
+        
+        await _socket.SendAsync(data, SocketFlags.None);
     }
 
     private void BeginRead()
@@ -120,17 +148,20 @@ public class NetSocket
         
         _packetBuffer.Position = 0;
 
-        NullMap nullMap = PacketUtil.DecodeNullMap(_packetBuffer);
+        NullMap nullMap = NullMapUtil.DecodeNullMap(_packetBuffer);
         
         _packetDataBuffer.Clear();
         _packetDataBuffer.WriteBytes(_packetBuffer.ReadBytes(_packetBuffer.BytesAvailable));
+        
 
         NetPacket packet = new NetPacket(_packetDataBuffer, nullMap);
         
         Task? task = OnPacketReceived?.Invoke(packet);
 
-        if (task != null && !task.IsCompleted)
+        if (task != null)
         {
+            SafeTask.AddListeners(task);
+            
             task.ContinueWith(_ => ProgressData(callback));
         }
         else
@@ -228,10 +259,16 @@ public class NetSocket
         Task? task = OnDisconnected?.Invoke();
 
         if (task != null)
+        {
+            SafeTask.AddListeners(task);
+            
             task.ContinueWith(_ => OnDisconnectedEventsDone());
+        }
         else
+        {
             OnDisconnectedEventsDone();
-        
+        }
+
     }
 
     private void OnDisconnectedEventsDone()

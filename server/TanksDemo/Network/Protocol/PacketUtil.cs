@@ -4,12 +4,12 @@ namespace Network.Protocol;
 
 internal static class PacketUtil
 {
-    
     private const byte ZippedFlag = 0x40;
     private const byte LengthFlag = 0x80;
 
-    private const byte InplaceMaskFlag = 0x80;
-    private const byte MaskLength2BytesFlag = 0x40;
+
+    private const int PackDataSizeDelimiter = 2000;
+    private const int LongSizeDelimiter = 16384;
 
 
     public static bool UnwrapPacket(ByteArray input, ByteArray output)
@@ -60,70 +60,42 @@ internal static class PacketUtil
         return true;
     }
 
-    public static NullMap DecodeNullMap(ByteArray input)
+    public static void WrapPacket(ByteArray input, ByteArray output, bool forceCompress)
     {
-        sbyte firstByte = input.ReadSByte();
-        
-        bool isLongNullMap = (firstByte & InplaceMaskFlag) != 0;
-
-        int firstByteValue;
-        int maskLength;
-        if (isLongNullMap)
+        if (!forceCompress)
         {
-            firstByteValue = (firstByte & 0x3F);
+            forceCompress = input.Length > PackDataSizeDelimiter;
+        }
 
-            bool isLength22bit = (firstByte & MaskLength2BytesFlag) != 0;
+        bool longSize = input.Length >= LongSizeDelimiter;
+        
+        if (forceCompress)
+        {
+            byte[] data = input.ToArray();
+            data = CompressionUtil.CompressZLib(data);
             
-            if (isLength22bit)
-            {
-                // размерность длины 22 бит
-                int secondByte = input.ReadByte();
-                int thirdByte = input.ReadByte();
-                maskLength = (firstByteValue << 16) + (secondByte << 8) + (thirdByte & 0xFF);
-            }
-            else
-            {
-                // размерность длины 6 бит
-                maskLength = firstByteValue;
-            }
-
-            int sizeInBits = maskLength << 3;
-            return new NullMap(sizeInBits, input.ReadBytes(maskLength));
-        }
-        
-        firstByteValue = firstByte << 3;
-		
-        maskLength = (firstByte & 0x60) >> 5;
-        
-        switch (maskLength) {
-            case 0:
-                return new NullMap(5, [(byte)firstByteValue]);
-            case 1:
-                byte secondByte = input.ReadByte();
-                return new NullMap(13, [
-                    (byte)(firstByteValue + ((secondByte & 0xFF) >>> 5)),
-                    (byte)(secondByte << 3)
-                ]);
-            case 2:
-                secondByte = input.ReadByte();
-                byte thirdByte = input.ReadByte();
-                return new NullMap(21, [
-                    (byte)((firstByteValue) + ((secondByte & 0xFF) >>> 5)),
-                    (byte)((secondByte << 3) + ((thirdByte & 0xFF) >>> 5)),
-                    (byte)(thirdByte << 3)
-                ]);
-            case 3:
-                secondByte = input.ReadByte();
-                thirdByte = input.ReadByte();
-                byte fourthByte = input.ReadByte();
-                return new NullMap(29, [
-                    (byte)((firstByteValue) + ((secondByte & 0xFF) >>> 5)),
-                    (byte)((secondByte << 3) + ((thirdByte & 0xFF) >>> 5)),
-                    (byte)((thirdByte << 3) + ((fourthByte & 0xFF) >>> 5)),
-                    (byte)(fourthByte << 3)
-                ]);
+            input.Clear();
+            input.WriteBytes(data);
         }
 
-        throw new Exception("NullMap decoding error. MaskLength=" + maskLength);
+        if (input.Length > int.MaxValue)
+        {
+            throw new Exception($"Packet is too big ({input.Length} bytes)");
+        }
+        int length = (int)input.Length;
+
+        if (longSize)
+        {
+            output.WriteInt(length + (LengthFlag << 24));
+        }
+        else
+        {
+            int hiByte = (((length & 0xFF00) >> 8) + (forceCompress ? ZippedFlag : 0));
+            int loByte = (length & 0xFF);
+            output.WriteByte(hiByte);
+            output.WriteByte(loByte);
+        }
+
+        output.WriteBytes(input);
     }
 }

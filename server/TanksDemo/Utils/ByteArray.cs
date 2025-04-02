@@ -11,6 +11,8 @@ public class ByteArray : IDisposable
     public long Position {get=>_stream.Position;set=>_stream.Position=value;}
     public long BytesAvailable => _stream.Length - _stream.Position;
     
+    public ByteEndian Endian { get; }
+    
     
     private readonly MemoryStream _stream;
     
@@ -19,6 +21,8 @@ public class ByteArray : IDisposable
     
     public ByteArray(byte[]? buffer = null, ByteEndian endian = ByteEndian.BigEndian)
     {
+        Endian = endian;
+        
         _stream = buffer != null ? new MemoryStream(buffer) : new MemoryStream();
 
         _reader = endian == ByteEndian.BigEndian ? new BigEndianBinaryReader(_stream) : new BinaryReader(_stream);

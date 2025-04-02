@@ -43,7 +43,7 @@ internal class ResourceBuilderRunner
         {
             await (new LibrariesBuilder(launchParams, this).Build());
             
-        }).Wait();
+        }, null).Wait();
     }
 
     public async Task BuildResource(long id, long version, string name, Dictionary<string, byte[]> filesData)

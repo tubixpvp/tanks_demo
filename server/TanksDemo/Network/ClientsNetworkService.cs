@@ -45,7 +45,7 @@ public class ClientsNetworkService : IOSGiInitListener
     public Task Start()
     {
         _running = true;
-        return SafeTask.Run(ConnectionsAcceptTask);
+        return SafeTask.Run(ConnectionsAcceptTask, null);
     }
 
     private async Task ConnectionsAcceptTask()

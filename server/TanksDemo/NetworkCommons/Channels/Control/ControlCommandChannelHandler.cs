@@ -1,9 +1,11 @@
 using System.Collections.Concurrent;
 using Logging;
 using Network.Channels;
+using Network.Protocol;
 using Network.Session;
 using OSGI.Services;
 using ProtocolEncoding;
+using Utils;
 
 namespace NetworkCommons.Channels.Control;
 
@@ -37,29 +39,20 @@ public class ControlCommandChannelHandler : IChannelPacketHandler, IOSGiInitList
     
     public Task HandleConnect(NetworkSession session)
     {
-        string sessionId;
-        do
-        {
-            sessionId = Guid.NewGuid().ToString("N");
-        } while (_controlSessions.ContainsKey(sessionId));
-
-        session.SetAttribute(SessionIdKey, sessionId);
-        
-        _logger.Log(LogLevel.Info, 
-            $"Connection IP:{session.Socket.IPAddress} has joined CONTROL channel with ID:{sessionId}");
-
         return Task.CompletedTask;
     }
-    public string GetSessionId(NetworkSession session)
+    public string? GetSessionId(NetworkSession session)
     {
         return session.GetAttribute<string?>(SessionIdKey)!;
     }
     
     public Task HandleDisconnect(NetworkSession session)
     {
-        string sessionId = GetSessionId(session);
-        _controlSessions.TryRemove(sessionId, out _);
-
+        string? sessionId = GetSessionId(session);
+        if (sessionId != null)
+        {
+            _controlSessions.TryRemove(sessionId, out _);
+        }
         return Task.CompletedTask;
     }
     
@@ -77,9 +70,28 @@ public class ControlCommandChannelHandler : IChannelPacketHandler, IOSGiInitList
         }
     }
 
-    internal void SendCommand(IControlCommand command)
+    internal void SendCommand(IControlCommand command, NetworkSession session)
     {
-        //TODO implement
+        SendCommand(command, [session]);
+    }
+    internal void SendCommand(IControlCommand command, IEnumerable<NetworkSession> sessions)
+    {
+        ByteArray sendBuffer = ByteArrayPool.Get();
+        NullMap nullMap = new NullMap();
+        
+        NetPacket packet = new NetPacket(sendBuffer, nullMap);
+        
+        ICustomCodec commandCodec = CodecsRegistry.GetCodec(command.GetType())!;
+
+        GeneralDataEncoder.Encode(command.CommandId, packet);
+
+        commandCodec.Encode(command, sendBuffer, nullMap);
+
+        Task task = Task.WhenAll(sessions.Select(
+            session => SafeTask.AddListeners(
+                session.Socket.SendPacket(packet), session.OnError)));
+
+        task.ContinueWith(_ => ByteArrayPool.Put(sendBuffer));
     }
 
     private IControlCommand[] DecodeCommands(NetPacket packet)
@@ -92,7 +104,7 @@ public class ControlCommandChannelHandler : IChannelPacketHandler, IOSGiInitList
 
             _logger.Log(LogLevel.Debug, "Decoding control command, id=" + commandId);
 
-            Type? commandType = ControlCommands.GetCommandType(commandId);
+            Type? commandType = ControlCommands.GetClientCommandType(commandId);
 
             if (commandType == null)
             {
@@ -105,5 +117,22 @@ public class ControlCommandChannelHandler : IChannelPacketHandler, IOSGiInitList
         }
 
         return commands.ToArray();
+    }
+
+
+    public string SetupAsControlSession(NetworkSession session)
+    {
+        string sessionId;
+        do
+        {
+            sessionId = Guid.NewGuid().ToString("N");
+        } while (_controlSessions.ContainsKey(sessionId));
+
+        session.SetAttribute(SessionIdKey, sessionId);
+        
+        _logger.Log(LogLevel.Info, 
+            $"Connection IP:{session.Socket.IPAddress} has joined CONTROL channel with ID:{sessionId}");
+
+        return sessionId;
     }
 }

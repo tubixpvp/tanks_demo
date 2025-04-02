@@ -60,7 +60,7 @@ public class ResourcesHttpFileServer
     public Task Start()
     {
         _running = true;
-        return SafeTask.Run(HandleTask);
+        return SafeTask.Run(HandleTask, null);
     }
 
     private async Task HandleTask()
@@ -124,7 +124,7 @@ public class ResourcesHttpFileServer
             
             _logger.Log(LogLevel.Debug, "filePath = " + realFilePath);
 
-            SafeTask.Run(() => SendFile(response, realFilePath));
+            SafeTask.Run(() => SendFile(response, realFilePath), null);
         }
     }
 

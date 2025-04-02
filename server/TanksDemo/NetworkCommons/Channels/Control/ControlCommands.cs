@@ -6,11 +6,12 @@ internal static class ControlCommands
 {
     private static readonly Dictionary<byte, Type> IdToCommandType = new()
     {
-        [HashRequestCommand.CommandId] = typeof(HashRequestCommand)
+        [HashRequestCommand.CommandID] = typeof(HashRequestCommand),
+        [HashAcceptedCommand.CommandID] = typeof(HashAcceptedCommand),
     };
 
 
-    public static Type? GetCommandType(byte id)
+    public static Type? GetClientCommandType(byte id)
     {
         return IdToCommandType.GetValueOrDefault(id);
     }

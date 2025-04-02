@@ -1,18 +1,24 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using Logging;
 using Network.Channels;
 using Network.Protocol;
+using OSGI.Services;
 using Utils;
 
 namespace Network.Sockets;
 
 public class NetSocket
 {
+    [InjectService]
+    private static LoggerService LoggerService;
+    
     public string IPAddress { get; }
 
     internal event PacketCallbackFunc? OnPacketReceived;
-    internal event Func<Task>? OnDisconnected; 
+    internal event Func<Task>? OnDisconnected;
+    internal event Action<Exception>? OnError;
 
     
     private readonly Socket _socket;
@@ -113,7 +119,7 @@ public class NetSocket
         
         _buffer.Position = _buffer.Length;
         _buffer.WriteBytes(_byteBuffer, 0, bytesCount);
-            
+        
         ProgressData(BeginRead);
     }
 
@@ -123,6 +129,8 @@ public class NetSocket
 
         if (_buffer.BytesAvailable == 0)
         {
+            _packetCursor = 0;
+            
             _buffer.Clear();
             
             callback();
@@ -160,7 +168,7 @@ public class NetSocket
 
         if (task != null)
         {
-            SafeTask.AddListeners(task);
+            SafeTask.AddListeners(task, OnSocketProtocolError);
             
             task.ContinueWith(_ => ProgressData(callback));
         }
@@ -235,6 +243,11 @@ public class NetSocket
         Disconnect();
     }
 
+    private void OnSocketProtocolError(Exception e)
+    {
+        OnError?.Invoke(e);
+    }
+
     private void Disconnect()
     {
         if (_disconnected)
@@ -260,7 +273,7 @@ public class NetSocket
 
         if (task != null)
         {
-            SafeTask.AddListeners(task);
+            SafeTask.AddListeners(task, OnSocketProtocolError);
             
             task.ContinueWith(_ => OnDisconnectedEventsDone());
         }

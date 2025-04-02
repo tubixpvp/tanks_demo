@@ -32,7 +32,7 @@ public class PacketChannelsService
         Task? task = GetHandler(session.ChannelType).HandlePacket?.Invoke(session, packet);
         if (task != null)
         {
-            await SafeTask.AddListeners(task);
+            await SafeTask.AddListeners(task, session.OnError);
         }
     }
 
@@ -41,7 +41,7 @@ public class PacketChannelsService
         Task? task = GetHandler(session.ChannelType).HandleConnect?.Invoke(session);
         if (task != null)
         {
-            await SafeTask.AddListeners(task);
+            await SafeTask.AddListeners(task, session.OnError);
         }
     }
     public async Task HandleDisconnect(NetworkSession session)
@@ -49,7 +49,7 @@ public class PacketChannelsService
         Task? task = GetHandler(session.ChannelType).HandleDisconnect?.Invoke(session);
         if (task != null)
         {
-            await SafeTask.AddListeners(task);
+            await SafeTask.AddListeners(task, session.OnError);
         }
     }
 

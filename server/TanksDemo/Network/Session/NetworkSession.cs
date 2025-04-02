@@ -35,6 +35,7 @@ public class NetworkSession
 
         socket.OnPacketReceived += OnPacketBytesReceived;
         socket.OnDisconnected += OnDisconnected;
+        socket.OnError += OnError;
     }
 
     public async Task Init()
@@ -55,6 +56,11 @@ public class NetworkSession
     private async Task OnDisconnected()
     {
         await PacketChannels.HandleDisconnect(this);
+    }
+
+    public void OnError(Exception e)
+    {
+        _logger.Log(LogLevel.Error, e.ToString());
     }
 
 

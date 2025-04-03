@@ -3,7 +3,7 @@
 namespace Platform.Models.Core.Parent;
 
 [Model]
-public class ParentModel() : ModelBase<object>(89128394781333)
+public class ParentModel(long id) : ModelBase<object>(id)
 {
     
 }

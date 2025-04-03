@@ -3,7 +3,7 @@
 namespace Platform.Models.General.World3d.Object3d;
 
 [Model]
-public class Object3DModel() : ModelBase<IObject3DModelClient>(673619947700175)
+public class Object3DModel(long id) : ModelBase<IObject3DModelClient>(id)
 {
     
 }

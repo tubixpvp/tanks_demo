@@ -3,10 +3,10 @@ using Core.Model.Communication;
 
 namespace Projects.Tanks.Models.Users.User;
 
+[ModelEntity(typeof(UserModelEntity))]
 [Model]
-public class UserModel() : ModelBase<IUserModelClient>(581945710177991)
+internal class UserModel(long modelId) : ModelBase<IUserModelClient>(modelId)
 {
-
     
     [NetworkMethod]
     private void LoginByName(string name)

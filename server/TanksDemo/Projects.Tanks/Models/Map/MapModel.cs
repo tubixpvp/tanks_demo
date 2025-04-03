@@ -3,7 +3,7 @@
 namespace Projects.Tanks.Models.Map;
 
 [Model]
-public class MapModel() : ModelBase<object>(4559177749190014)
+public class MapModel(long id) : ModelBase<object>(id)
 {
     
 }

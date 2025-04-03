@@ -77,7 +77,7 @@ package alternativa.object {
 		 * @param model модель поведения
 		 */
 		public function addModel(model:IModel):void {
-			models.push(model);
+			models.push(model.id);
 		}
 		
 		/**
@@ -86,7 +86,7 @@ package alternativa.object {
 		 * @param model удаляемая модель поведения
 		 */
 		public function removeModel(model:IModel):void {
-			var index:int = models.indexOf(model);
+			var index:int = models.indexOf(model.id);
 			models.splice(index, 1);
 		}
 		

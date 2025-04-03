@@ -4,7 +4,7 @@ using Core.Model.Communication;
 namespace Projects.Tanks.Models.Lobby;
 
 [Model]
-public class LobbyModel() : ModelBase<ILobbyModelClient>(1759917744118345)
+public class LobbyModel(long id) : ModelBase<ILobbyModelClient>(id)
 {
 
 

@@ -3,6 +3,7 @@ using Core.Model.Registry;
 using Network;
 using OSGI.Services;
 using ResourcesWebServer;
+using SpacesCommons;
 using Utils;
 
 namespace TanksDemo;
@@ -24,6 +25,7 @@ internal class ServerMain
         OSGi.Init();
 
         OSGi.GetService<ModelRegistry>().Init();
+        OSGi.GetService<SpacesActivatorService>().Init();
 
         ResourcesHttpFileServer fileServer = new ResourcesHttpFileServer(launchParams);
         fileServer.Start();

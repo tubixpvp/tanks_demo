@@ -24,14 +24,10 @@ public class ControlChannelHandler : IChannelPacketHandler, IOSGiInitListener
 
 
     public event Action<NetworkSession>? OnControlSessionInited;
-    public event Action<NetworkSession>? OnSpaceSessionInited; 
-
-
-    //id of control session
-    private const string SessionIdKey = "SessionId";
+    public event SessionClosedDelegate? OnControlSessionClosed;
     
-    //id of (main) control session of space session
-    private const string ControlSessionIdKey = "ControlSessionId";
+    
+    private const string SessionIdKey = "SessionId";
 
     private readonly ConcurrentDictionary<string, NetworkSession> _controlSessions = new();
 
@@ -50,16 +46,13 @@ public class ControlChannelHandler : IChannelPacketHandler, IOSGiInitListener
     {
         return Task.CompletedTask;
     }
+    
     public string? GetSessionId(NetworkSession session)
     {
-        string key = (session.ChannelType == ProtocolChannelType.Control 
-            ? SessionIdKey : ControlSessionIdKey);
-        return session.GetAttribute<string?>(key)!;
+        return session.GetAttribute<string?>(SessionIdKey)!;
     }
-
-    public NetworkSession GetControlSessionBySpace(NetworkSession spaceSession)
+    public NetworkSession GetSessionById(string sessionId)
     {
-        string sessionId = GetSessionId(spaceSession)!;
         return _controlSessions[sessionId];
     }
     
@@ -70,7 +63,10 @@ public class ControlChannelHandler : IChannelPacketHandler, IOSGiInitListener
         {
             _controlSessions.TryRemove(sessionId, out _);
         }
-        return Task.CompletedTask;
+        
+        Task? task = OnControlSessionClosed?.Invoke(session);
+        
+        return task ?? Task.CompletedTask;
     }
     
     public async Task HandlePacket(NetworkSession session, NetPacket packet)
@@ -154,18 +150,6 @@ public class ControlChannelHandler : IChannelPacketHandler, IOSGiInitListener
 
         return sessionId;
     }
-    
-    internal void SetupAsSpaceSession(NetworkSession session, string sessionId)
-    {
-        session.ChannelType = ProtocolChannelType.Space;
-        
-        session.SetAttribute(ControlSessionIdKey, sessionId);
-        
-        _logger.Log(LogLevel.Info, 
-            $"Connection IP:{session.Socket.IPAddress} has joined SPACE channel with sessionID:{sessionId}");
-        
-        OnSpaceSessionInited?.Invoke(session);
-    }
 
     internal void OnHashAccepted(NetworkSession session)
     {
@@ -176,4 +160,6 @@ public class ControlChannelHandler : IChannelPacketHandler, IOSGiInitListener
     {
         SendCommand(new OpenSpaceCommand(), session);
     }
+
+    public delegate Task SessionClosedDelegate(NetworkSession controlSession);
 }

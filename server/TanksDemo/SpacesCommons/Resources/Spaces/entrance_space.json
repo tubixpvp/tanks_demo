@@ -1,4 +1,22 @@
 {
     "id": 745566245,
-    "name": "Entrance"
+    "name": "Entrance",
+    
+    "objects": [
+
+        {
+            "name": "Root",
+            
+            "entities": {
+                "UserModelEntity": {}
+            },
+            
+            "children": [],
+            
+            "attach": true
+        }
+        
+    ],
+    
+    "templates": []
 }

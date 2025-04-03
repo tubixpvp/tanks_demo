@@ -1,4 +1,5 @@
 ﻿using ClientGenerator.Flash;
+using Config;
 using Core.Model.Registry;
 using OSGI.Services;
 using Logging;
@@ -21,7 +22,10 @@ internal class ClientDataGeneratorRunner
     public static void Main(string[] args)
     {
         ParametersUtil runParams = ParametersUtil.FromRunArguments(args);
-
+        ServerLaunchParams.Init(runParams);
+        
+        ServerResources.Init();
+        
         string? clientSrcRoot = runParams.GetString("client_src");
 
         if (clientSrcRoot == null)

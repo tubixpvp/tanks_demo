@@ -4,7 +4,7 @@ using Core.Model.Communication;
 namespace Platform.Models.Core.Quadro;
 
 [Model]
-public class QuadroModel() : ModelBase<IQuadroModelClient>(1893418631061)
+public class QuadroModel(long id) : ModelBase<IQuadroModelClient>(id)
 {
     
     [NetworkMethod]

@@ -1,6 +1,6 @@
 using OSGI.Services;
 
-namespace Core.Space;
+namespace Core.Spaces;
 
 [Service]
 public class SpaceRegistry

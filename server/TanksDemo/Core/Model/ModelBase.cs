@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Core.Model.Communication;
+﻿using Network.Session;
 
 namespace Core.Model;
 
@@ -9,42 +8,17 @@ namespace Core.Model;
 public abstract class ModelBase<CI> : ModelGlobals, IModel where CI : class
 {
     public long Id { get; }
-    public Type GetClientInterfaceType() => typeof(CI);
-    public Dictionary<byte, MethodInfo> GetServerInterfaceMethods() => _serverMethods;
-
-    /**
-     * Methods that can be called from client
-     */
-    private readonly Dictionary<byte, MethodInfo> _serverMethods = new();
-    
     
     protected ModelBase(long id)
     {
         Id = id;
-        
-        CollectServerMethods();
-    }
-
-    private void CollectServerMethods()
-    {
-        MethodInfo[] methods = GetType().GetMethods(BindingFlags.NonPublic | BindingFlags.Instance);
-
-        byte methodCounter = 0;
-
-        foreach (MethodInfo methodInfo in methods)
-        {
-            NetworkMethodAttribute? netMethodAttribute = methodInfo.GetCustomAttribute<NetworkMethodAttribute>();
-
-            if (netMethodAttribute != null)
-            {
-                _serverMethods.Add(methodCounter++, methodInfo);
-            }
-        }
     }
     
+    public Type GetClientInterfaceType() => typeof(CI);
+    
 
-    protected CI Clients(TargetClients target)
+    protected void Clients(GameObjects.GameObject gameObject, IEnumerable<NetworkSession> sessions, Action<CI> callback)
     {
-        return null;
+        ModelCommunicationService.GetSender(gameObject, sessions, callback);
     }
 }

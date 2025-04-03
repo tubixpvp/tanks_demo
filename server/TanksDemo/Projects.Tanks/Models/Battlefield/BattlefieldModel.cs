@@ -4,7 +4,7 @@ using Core.Model.Communication;
 namespace Projects.Tanks.Models.Battlefield;
 
 [Model]
-public class BattlefieldModel() : ModelBase<IBattlefieldModelClient>(491976761783110)
+public class BattlefieldModel(long id) : ModelBase<IBattlefieldModelClient>(id)
 {
 
 

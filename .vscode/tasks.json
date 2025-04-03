@@ -7,8 +7,8 @@
 			"command": "dotnet",
 			"args": [
 				"run",
-				"-client_src",
-				"${workspaceFolder}/client/"
+				"-client_src ${workspaceFolder}/client/",
+				"-models ${workspaceFolder}/server/models.json"
 			],
 			"options": {
 				"cwd": "${workspaceFolder}/server/TanksDemo/ClientGenerator"

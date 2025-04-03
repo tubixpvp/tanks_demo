@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using Core.GameObject;
+using Core.GameObjects;
 using Core.Model;
 using Core.Model.Registry;
 using OSGI.Services;
@@ -53,7 +53,7 @@ internal class FlashModelBaseGenerator : IClientDataGenerator
             "alternativa.model.IModel"
         ]);
         
-        generator.AddImport(typeof(ClientObject));
+        generator.AddImport(typeof(GameObject));
         generator.AddImport(typeof(long));
         
         generator.AddLine($"public class {className} implements IModel");
@@ -101,17 +101,20 @@ internal class FlashModelBaseGenerator : IClientDataGenerator
 
     private void GenerateModelServerInterfaceMethods(IModel model, FlashCodeGenerator generator)
     {
-        Dictionary<byte, MethodInfo> netMethods = model.GetServerInterfaceMethods();
+        MethodInfo[] netMethods = ModelUtils.GetServerInterfaceMethods(model.GetType());
+        //Dictionary<long, MethodInfo> netMethods = model.GetServerInterfaceMethods();
 
-        foreach ((byte methodId, MethodInfo methodInfo) in netMethods)
+        foreach (MethodInfo methodInfo in netMethods)
         {
             generator.AddEmptyLine();
+
+            long methodId = ModelRegistry.GetMethodId(methodInfo);
             
             GenerateModelServerInterfaceMethod(methodInfo, methodId, generator);
         }
     }
 
-    private void GenerateModelServerInterfaceMethod(MethodInfo methodInfo, byte methodId, FlashCodeGenerator generator)
+    private void GenerateModelServerInterfaceMethod(MethodInfo methodInfo, long methodId, FlashCodeGenerator generator)
     {
         generator.AddLine("protected " + GenerateFunctionDeclaration(methodInfo, generator));
         
@@ -156,7 +159,7 @@ internal class FlashModelBaseGenerator : IClientDataGenerator
         
         FlashCodeGenerator generator = new FlashCodeGenerator(packageName);
         
-        generator.AddImport(typeof(ClientObject));
+        generator.AddImport(typeof(GameObject));
         
         generator.AddLine($"public interface {className}");
         

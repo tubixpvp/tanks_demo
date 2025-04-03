@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using System.Text;
+using Core.GameObjects;
 using Core.Generator;
 
 namespace ClientGenerator.Flash;
@@ -19,6 +20,7 @@ internal class FlashCodeGenerator(string packageName, string[]? defaultImports =
             [typeof(long)] = ("alternativa.types", "Long", "Long"),
             [typeof(uint)] = ("alternativa.protocol.types", "UInt", "int"),
             [typeof(ushort)] = ("alternativa.protocol.types", "UShort", "int"),
+            [typeof(GameObject)] = ("alternativa.object", "ClientObject", "ClientObject")
         };
     
     public static string GetFlashDeclarationTypeString(Type type)

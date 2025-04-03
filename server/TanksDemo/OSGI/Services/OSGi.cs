@@ -51,7 +51,8 @@ public static class OSGi
 
         foreach (Type serviceType in servicesTypes)
         {
-            Services.Add(serviceType, Activator.CreateInstance(serviceType)!);
+            ServiceAttribute attribute = serviceType.GetCustomAttribute<ServiceAttribute>()!;
+            Services.Add(attribute.ServiceKey ?? serviceType, Activator.CreateInstance(serviceType)!);
         }
         
         //inject services

@@ -5,7 +5,7 @@ using Platform.Models.General.World3d;
 namespace Projects.Tanks.Models.Tank;
 
 [Model]
-public class TankModel() : ModelBase<ITankModelClient>(8891834178373)
+public class TankModel(long modelId) : ModelBase<ITankModelClient>(modelId)
 {
 
     [NetworkMethod]

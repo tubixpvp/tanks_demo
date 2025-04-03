@@ -1,6 +1,8 @@
 using System.Text;
 using Network.Protocol;
 using Network.Session;
+using NetworkCommons.Channels.Spaces;
+using OSGI.Services;
 using ProtocolEncoding;
 using Utils;
 
@@ -8,6 +10,10 @@ namespace NetworkCommons.Channels.Control.Commands.Client;
 
 internal class ProduceHashCommand(byte[] hashBytes) : IControlCommand
 {
+    [InjectService]
+    private static SpaceChannelHandler SpaceChannelHandler;
+    
+    
     public const byte CommandID = 0;
 
     public byte CommandId => CommandID;
@@ -23,7 +29,7 @@ internal class ProduceHashCommand(byte[] hashBytes) : IControlCommand
         
         sessionId = Encoding.UTF8.GetString(hashBytes);
 
-        channelHandler.SetupAsSpaceSession(session, sessionId);
+        SpaceChannelHandler.SetupAsSpaceSession(session, sessionId);
         
         return Task.CompletedTask;
     }

@@ -1,16 +1,14 @@
-using Logging;
+using System.Text;
 using Network.Protocol;
 using Network.Session;
-using OSGI.Services;
 using ProtocolEncoding;
 using Utils;
 
 namespace NetworkCommons.Channels.Control.Commands.Client;
 
-[CustomCodec(typeof(HashAcceptedCommand))]
-public class HashAcceptedCommand : IControlCommand, ICustomCodec
+internal class ProduceHashCommand(byte[] hashBytes) : IControlCommand
 {
-    public const byte CommandID = 4;
+    public const byte CommandID = 0;
 
     public byte CommandId => CommandID;
     
@@ -18,24 +16,29 @@ public class HashAcceptedCommand : IControlCommand, ICustomCodec
     {
         string? sessionId = channelHandler.GetSessionId(session);
 
-        if (sessionId == null) //not requested -> not got hash
+        if (sessionId != null)
         {
-            return Task.CompletedTask;
+            return Task.CompletedTask; //already inited as CONTROL session
         }
         
-        OSGi.GetService<LoggerService>().GetLogger(GetType()).Log(LogLevel.Debug, 
-            $"Client sessionId:{sessionId} accepted hash!");
+        sessionId = Encoding.UTF8.GetString(hashBytes);
 
-        channelHandler.OnHashAccepted(session);
+        channelHandler.SetupAsSpaceSession(session, sessionId);
         
         return Task.CompletedTask;
     }
-
     
+}
+
+[CustomCodec(typeof(ProduceHashCommand))]
+class ProduceHashCommandCodec : ICustomCodec
+{
     public object Decode(ByteArray input, NullMap nullMap)
     {
-        return new HashAcceptedCommand();
+        byte[] hashBytes = input.ReadBytes(32);
+        return new ProduceHashCommand(hashBytes);
     }
+
     public void Encode(object data, ByteArray output, NullMap nullMap)
     {
         throw new InvalidOperationException();

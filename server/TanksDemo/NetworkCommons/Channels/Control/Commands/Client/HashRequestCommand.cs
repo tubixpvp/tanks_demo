@@ -19,7 +19,7 @@ internal sealed class HashRequestCommand : IControlCommand, ICustomCodec
 
     public byte CommandId => CommandID;
     
-    public Task Execute(ControlCommandChannelHandler channelHandler, NetworkSession session)
+    public Task Execute(ControlChannelHandler channelHandler, NetworkSession session)
     {
         string? sessionId = channelHandler.GetSessionId(session);
 

@@ -17,7 +17,7 @@ public class NetworkSession
     
     public NetSocket Socket { get; }
 
-    internal ProtocolChannelType ChannelType { get; set; }
+    public ProtocolChannelType ChannelType { get; set; }
 
 
     private readonly ILogger _logger;
@@ -66,5 +66,6 @@ public class NetworkSession
 
     public void SetAttribute(string key, object value) => _attributes[key] = value;
     public T? GetAttribute<T>(string key) => (T?)_attributes.GetValueOrDefault(key);
+
     
 }

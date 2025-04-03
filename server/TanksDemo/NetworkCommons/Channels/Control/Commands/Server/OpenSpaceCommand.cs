@@ -5,27 +5,19 @@ using Utils;
 
 namespace NetworkCommons.Channels.Control.Commands.Server;
 
-internal sealed class HashResponseCommand(byte[] hashBytes) : IControlCommand
+[CustomCodec(typeof(OpenSpaceCommand))]
+internal class OpenSpaceCommand : IControlCommand, ICustomCodec
 {
-    public byte CommandId => 2;
-
-
-    public readonly byte[] HashBytes = hashBytes;
+    public byte CommandId => 3;
     
     public Task Execute(ControlChannelHandler channelHandler, NetworkSession session)
     {
         throw new InvalidOperationException();
     }
-}
-
-[CustomCodec(typeof(HashResponseCommand))]
-sealed class HashResponseCommandCodec : ICustomCodec
-{
+    
     public void Encode(object data, ByteArray output, NullMap nullMap)
     {
-        output.WriteBytes(((HashResponseCommand)data).HashBytes);
     }
-    
     public object Decode(ByteArray input, NullMap nullMap)
     {
         throw new InvalidOperationException();

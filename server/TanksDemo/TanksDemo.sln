@@ -28,6 +28,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetworkCommons", "NetworkCo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProtocolEncoding", "ProtocolEncoding\ProtocolEncoding.csproj", "{60209BBF-8B07-483D-8FD5-D1F8C531C43B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpacesCommons", "SpacesCommons\SpacesCommons.csproj", "{FE2ABBA5-06E0-47A3-96F2-C84647A1E9FD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -90,5 +92,9 @@ Global
 		{60209BBF-8B07-483D-8FD5-D1F8C531C43B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{60209BBF-8B07-483D-8FD5-D1F8C531C43B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{60209BBF-8B07-483D-8FD5-D1F8C531C43B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE2ABBA5-06E0-47A3-96F2-C84647A1E9FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE2ABBA5-06E0-47A3-96F2-C84647A1E9FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE2ABBA5-06E0-47A3-96F2-C84647A1E9FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE2ABBA5-06E0-47A3-96F2-C84647A1E9FD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

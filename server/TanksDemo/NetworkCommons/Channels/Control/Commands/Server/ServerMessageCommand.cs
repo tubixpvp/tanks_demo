@@ -5,12 +5,11 @@ using Utils;
 
 namespace NetworkCommons.Channels.Control.Commands.Server;
 
-internal sealed class HashResponseCommand(byte[] hashBytes) : IControlCommand
+internal sealed class ServerMessageCommand(string message) : IControlCommand
 {
-    public byte CommandId => 2;
+    public byte CommandId => 11;
 
-
-    public readonly byte[] HashBytes = hashBytes;
+    public readonly string Message = message;
     
     public Task Execute(ControlChannelHandler channelHandler, NetworkSession session)
     {
@@ -18,14 +17,14 @@ internal sealed class HashResponseCommand(byte[] hashBytes) : IControlCommand
     }
 }
 
-[CustomCodec(typeof(HashResponseCommand))]
-sealed class HashResponseCommandCodec : ICustomCodec
+[CustomCodec(typeof(ServerMessageCommand))]
+sealed class ServerMessageCommandCodec : ICustomCodec
 {
     public void Encode(object data, ByteArray output, NullMap nullMap)
     {
-        output.WriteBytes(((HashResponseCommand)data).HashBytes);
+        GeneralDataEncoder.Encode(0, output, nullMap);
+        GeneralDataEncoder.Encode(((ServerMessageCommand)data).Message, output, nullMap);
     }
-    
     public object Decode(ByteArray input, NullMap nullMap)
     {
         throw new InvalidOperationException();

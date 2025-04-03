@@ -1,4 +1,6 @@
-﻿namespace Utils;
+﻿using System.Text;
+
+namespace Utils;
 
 public enum ByteEndian
 {
@@ -43,7 +45,6 @@ public class ByteArray : IDisposable
     
     public void WriteBytes(byte[] buffer) => _writer.Write(buffer);
     public void WriteBytes(byte[] buffer, int offset, int count) => _writer.Write(buffer, offset, count);
-
     public void WriteBytes(ByteArray bytes) => _writer.Write(bytes.ToArray());
 
 
@@ -55,6 +56,8 @@ public class ByteArray : IDisposable
     public sbyte ReadSByte() => _reader.ReadSByte();
     
     public byte[] ReadBytes(long count) => _reader.ReadBytes((int)count);
+    
+    public string ReadUTFBytes(long length) => Encoding.UTF8.GetString(ReadBytes(length));
     
     public byte[] ToArray() => _stream.ToArray();
 

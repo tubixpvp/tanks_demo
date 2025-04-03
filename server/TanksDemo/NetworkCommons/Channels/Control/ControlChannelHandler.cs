@@ -3,6 +3,7 @@ using Logging;
 using Network.Channels;
 using Network.Protocol;
 using Network.Session;
+using NetworkCommons.Channels.Control.Commands.Server;
 using OSGI.Services;
 using ProtocolEncoding;
 using Utils;
@@ -10,7 +11,7 @@ using Utils;
 namespace NetworkCommons.Channels.Control;
 
 [Service]
-public class ControlCommandChannelHandler : IChannelPacketHandler, IOSGiInitListener
+public class ControlChannelHandler : IChannelPacketHandler, IOSGiInitListener
 {
     [InjectService]
     private static PacketChannelsService PacketChannelsService;
@@ -22,7 +23,15 @@ public class ControlCommandChannelHandler : IChannelPacketHandler, IOSGiInitList
     private static CodecsRegistry CodecsRegistry;
 
 
-    private const string SessionIdKey = "ControlSessionId";
+    public event Action<NetworkSession>? OnControlSessionInited;
+    public event Action<NetworkSession>? OnSpaceSessionInited; 
+
+
+    //id of control session
+    private const string SessionIdKey = "SessionId";
+    
+    //id of (main) control session of space session
+    private const string ControlSessionIdKey = "ControlSessionId";
 
     private readonly ConcurrentDictionary<string, NetworkSession> _controlSessions = new();
 
@@ -43,7 +52,15 @@ public class ControlCommandChannelHandler : IChannelPacketHandler, IOSGiInitList
     }
     public string? GetSessionId(NetworkSession session)
     {
-        return session.GetAttribute<string?>(SessionIdKey)!;
+        string key = (session.ChannelType == ProtocolChannelType.Control 
+            ? SessionIdKey : ControlSessionIdKey);
+        return session.GetAttribute<string?>(key)!;
+    }
+
+    public NetworkSession GetControlSessionBySpace(NetworkSession spaceSession)
+    {
+        string sessionId = GetSessionId(spaceSession)!;
+        return _controlSessions[sessionId];
     }
     
     public Task HandleDisconnect(NetworkSession session)
@@ -120,19 +137,43 @@ public class ControlCommandChannelHandler : IChannelPacketHandler, IOSGiInitList
     }
 
 
-    public string SetupAsControlSession(NetworkSession session)
+    internal string SetupAsControlSession(NetworkSession session)
     {
+        session.ChannelType = ProtocolChannelType.Control;
+        
         string sessionId;
         do
         {
             sessionId = Guid.NewGuid().ToString("N");
-        } while (_controlSessions.ContainsKey(sessionId));
+        } while (!_controlSessions.TryAdd(sessionId, session));
 
         session.SetAttribute(SessionIdKey, sessionId);
         
         _logger.Log(LogLevel.Info, 
-            $"Connection IP:{session.Socket.IPAddress} has joined CONTROL channel with ID:{sessionId}");
+            $"Connection IP:{session.Socket.IPAddress} has joined CONTROL channel with sessionID:{sessionId}");
 
         return sessionId;
+    }
+    
+    internal void SetupAsSpaceSession(NetworkSession session, string sessionId)
+    {
+        session.ChannelType = ProtocolChannelType.Space;
+        
+        session.SetAttribute(ControlSessionIdKey, sessionId);
+        
+        _logger.Log(LogLevel.Info, 
+            $"Connection IP:{session.Socket.IPAddress} has joined SPACE channel with sessionID:{sessionId}");
+        
+        OnSpaceSessionInited?.Invoke(session);
+    }
+
+    internal void OnHashAccepted(NetworkSession session)
+    {
+        OnControlSessionInited?.Invoke(session);
+    }
+
+    public void SendOpenSpace(NetworkSession session)
+    {
+        SendCommand(new OpenSpaceCommand(), session);
     }
 }

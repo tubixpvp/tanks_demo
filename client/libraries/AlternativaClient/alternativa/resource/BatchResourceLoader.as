@@ -183,15 +183,16 @@ package alternativa.resource {
 			var url:String = INetworkService(Main.osgi.getService(INetworkService)).resourcesPath;
 			var longId:ByteArray = LongFactory.LongToByteArray(id);
 			
-			url += "/" + longId.readInt().toString(16);
-			url += "/" + longId.readShort().toString(16);
-			url += "/" + longId.readByte().toString(16);
-			url += "/" + longId.readByte().toString(16);
+			url += "/" + longId.readUnsignedInt().toString(16);
+			url += "/" + longId.readUnsignedShort().toString(16);
+			url += "/" + longId.readUnsignedByte().toString(16);
+			url += "/" + longId.readUnsignedByte().toString(16);
+			
 			url += "/";
 			
 			var longVersion:ByteArray = LongFactory.LongToByteArray(version);
-			var versHigh:int = longVersion.readInt();
-			var versLow:int = longVersion.readInt();
+			var versHigh:uint = longVersion.readUnsignedInt();
+			var versLow:uint = longVersion.readUnsignedInt();
 			if (versHigh != 0) {
 				url += versHigh.toString(16);
 			}

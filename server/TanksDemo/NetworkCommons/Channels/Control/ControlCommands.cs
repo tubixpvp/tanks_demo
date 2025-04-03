@@ -8,6 +8,7 @@ internal static class ControlCommands
     {
         [HashRequestCommand.CommandID] = typeof(HashRequestCommand),
         [HashAcceptedCommand.CommandID] = typeof(HashAcceptedCommand),
+        [ProduceHashCommand.CommandID] = typeof(ProduceHashCommand),
     };
 
 

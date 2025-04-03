@@ -15,6 +15,7 @@
       <ProjectReference Include="..\Platform\Platform.csproj" />
       <ProjectReference Include="..\ResourcesWebServer\ResourcesWebServer.csproj" />
       <ProjectReference Include="..\Projects.Tanks\Projects.Tanks.csproj" />
+      <ProjectReference Include="..\SpacesCommons\SpacesCommons.csproj" />
     </ItemGroup>
 
 </Project>

@@ -55,6 +55,8 @@ package alternativa.model.general.dispatcher {
 					}
 					if (space != null) {
 						ISpaceService(Main.osgi.getService(ISpaceService)).setIdForSpace(space, spaceId);
+
+						Main.writeToConsole("[DispatcherModel.invoke] space id is set to " + spaceId)
 					}
 					break;
 				// Загрузка объекта

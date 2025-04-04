@@ -13,15 +13,14 @@ public static class GeneralDataEncoder
     private static CodecsRegistry CodecsRegistry;
 
 
-    public static void Encode<T>(T? value, NetPacket packet) => Encode(value, packet.PacketBuffer, packet.NullMap);
-    public static void Encode<T>(T? value, ByteArray output, NullMap nullMap)
+    public static void Encode(object? value, NetPacket packet) => Encode(value, packet.PacketBuffer, packet.NullMap);
+    public static void Encode(object? value, ByteArray output, NullMap nullMap)
     {
-        Type type = typeof(T);
-
+        Type? type = value?.GetType();
         Encode(type, value, output, nullMap);
     }
 
-    private static void Encode(Type type, object? value, ByteArray output, NullMap nullMap)
+    public static void Encode(Type? type, object? value, ByteArray output, NullMap nullMap)
     {
         EncodeOptional(type, value, nullMap, out type);
 
@@ -107,9 +106,15 @@ public static class GeneralDataEncoder
         }
     }
 
-    private static void EncodeOptional(Type type, object? value, NullMap nullMap, out Type baseType)
+    private static void EncodeOptional(Type? type, object? value, NullMap nullMap, out Type? baseType)
     {
         baseType = type;
+
+        if (type == null)
+        {
+            nullMap.AddBit(true);
+            return;
+        }
         
         Type? underlyingType = Nullable.GetUnderlyingType(type);
         

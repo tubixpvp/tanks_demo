@@ -75,7 +75,7 @@ public class GameObject
             throw new Exception("ClientObject is already loaded: " + Name);
         _loaded = true;
         
-        Adapt<ObjectListener.Load>().ObjectLoaded();
+        Events<ObjectListener.Load>().ObjectLoaded();
     }
 
     public void UnloadAndDestroy()
@@ -87,7 +87,11 @@ public class GameObject
     {
         //
 
-        Adapt<ObjectClientListener.Attached>().ObjectAttached(session);
+        Events<ObjectClientListener.Attached>().ObjectAttached(session);
+    }
+    public bool IsAttached(NetworkSession session)
+    {
+        return true;
     }
     
     public T Events<T>() where T : class
@@ -99,9 +103,9 @@ public class GameObject
             return (T)storedProxy;
         }
 
-        T proxy = GameObjectAdaptProxy.Create<T>(this,
+        T proxy = GameObjectAdaptProxy.Create(this,
             ModelsIds.Select(modelId => ModelRegistry.GetModelById(modelId))
-            .OfType<T>().ToArray())!;
+            .OfType<T>().ToArray());
         
         _eventProxies.TryAdd(type, proxy);
 
@@ -119,8 +123,8 @@ public class GameObject
         
         long? modelId = ModelsIds.FirstOrDefault(id => ModelRegistry.GetModelById(id) is T);
 
-        if (modelId == null)
-            throw new Exception("Model that implements interface is not found: " + nameof(T));
+        if (modelId == 0 || modelId == null)
+            throw new Exception("Model that implements interface is not found: " +type.FullName);
         
         IModel model = ModelRegistry.GetModelById(modelId.Value);
 
@@ -136,4 +140,10 @@ public class GameObject
     public T? GetData<T>(Type key) => (T?)_runtimeData.GetValueOrDefault(key);
     public T? ClearData<T>(Type key) => _runtimeData.TryRemove(key, out object? data) ? (T?)data : default;
 
+
+    public override string ToString()
+    {
+        return $"{nameof(GameObject)}(name={Name}, id={Id})";
+    }
+    
 }

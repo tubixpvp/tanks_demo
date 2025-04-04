@@ -76,11 +76,11 @@ public class Space
         }
     }
 
-    public GameObject GetObject(long id)
+    public GameObject? GetObject(long id)
     {
         lock (_gameObjectsById)
         {
-            return _gameObjectsById[id];
+            return _gameObjectsById.GetValueOrDefault(id);
         }
     }
 
@@ -90,8 +90,14 @@ public class Space
         {
             _sessions.Add(spaceSession);
         }
-        
-        
+
+        lock (_gameObjectsById)
+        {
+            foreach (GameObject gameObject in _gameObjectsById.Values)
+            {
+                gameObject.Attach(spaceSession);
+            }
+        }
     }
 
     public void RemoveSession(NetworkSession spaceSession)

@@ -54,6 +54,7 @@ public class ByteArray : IDisposable
     public ushort ReadUShort() => _reader.ReadUInt16();
     public byte ReadByte() => _reader.ReadByte();
     public sbyte ReadSByte() => _reader.ReadSByte();
+    public long ReadLong() => _reader.ReadInt64();
     
     public byte[] ReadBytes(long count) => _reader.ReadBytes((int)count);
     

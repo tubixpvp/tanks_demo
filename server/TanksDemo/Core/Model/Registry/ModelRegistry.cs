@@ -1,5 +1,7 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using Config;
+using Core.Model.Communication;
 using Logging;
 using Newtonsoft.Json;
 using OSGI.Services;
@@ -26,7 +28,7 @@ public class ModelRegistry
     private readonly Dictionary<MethodInfo, long> _methodsIds = new();
 
     
-    private readonly Dictionary<long, (long modelId, MethodInfo method)> _serverMethods = new();
+    private readonly Dictionary<long, (long modelId, MethodInfo method, bool isAsync)> _serverMethods = new();
     
 
     private readonly Type[] _modelsTypes;
@@ -115,15 +117,24 @@ public class ModelRegistry
         {
             string methodName = methodInfo.Name;
 
-            if (!modelConfig.ServerMethods.TryGetValue(methodName, out long methodId))
+            NetworkMethodAttribute netMethodAttribute = methodInfo.GetCustomAttribute<NetworkMethodAttribute>()!;
+
+            long methodId;
+            if (netMethodAttribute.MethodId != null)
+            {
+                methodId = netMethodAttribute.MethodId.Value;
+            }
+            else if (!modelConfig.ServerMethods.TryGetValue(methodName, out methodId))
             {
                 methodId = Random.NextInt64(long.MinValue, long.MaxValue);
                 modelConfig.ServerMethods.Add(methodName, methodId);
             }
 
             _methodsIds.Add(methodInfo, methodId);
+
+            bool isAsync = methodInfo.GetCustomAttribute<AsyncStateMachineAttribute>() != null;
             
-            _serverMethods.Add(methodId, (modelId, methodInfo));
+            _serverMethods.Add(methodId, (modelId, methodInfo, isAsync));
         }
         
         //init model & entities
@@ -149,7 +160,14 @@ public class ModelRegistry
         {
             string methodName = methodInfo.Name;
 
-            if (!modelConfig.ClientMethods.TryGetValue(methodName, out long methodId))
+            NetworkMethodAttribute? netMethodAttribute = methodInfo.GetCustomAttribute<NetworkMethodAttribute>();
+
+            long methodId;
+            if (netMethodAttribute != null && netMethodAttribute.MethodId != null)
+            {
+                methodId = netMethodAttribute.MethodId.Value;
+            }
+            else if (!modelConfig.ClientMethods.TryGetValue(methodName, out methodId))
             {
                 methodId = Random.NextInt64(long.MinValue, long.MaxValue);
                 modelConfig.ClientMethods.Add(methodName, methodId);
@@ -158,12 +176,12 @@ public class ModelRegistry
             _methodsIds.Add(methodInfo, methodId);
         }
 
-        //_logger.Log(LogLevel.Debug, "Registered model " + modelType.Name);
+        Console.WriteLine("Registered model " + modelType.Name + " with id: " + model.Id);
     }
     
-    public IModel GetModelById(long id) => _idToModel[id];
-    public IModel GetModelByEntityType(Type entityType) => _entityToModel.GetValueOrDefault(entityType)
-                                                           ?? throw new Exception("Entity not found: " + entityType.Name);
+    internal IModel GetModelById(long id) => _idToModel[id];
+    internal IModel GetModelByEntityType(Type entityType) => _entityToModel.GetValueOrDefault(entityType)
+                                                             ?? throw new Exception("Entity not found: " + entityType.Name);
     
     public Type GetEntityTypeByName(string name) => _entityTypeByName.GetValueOrDefault(name) 
                                                     ?? throw new Exception("Entity not found: " + name);
@@ -171,5 +189,12 @@ public class ModelRegistry
     public IModel[] GetAllModels() => _idToModel.Values.ToArray();
     
     public long GetMethodId(MethodInfo methodInfo) => _methodsIds[methodInfo];
+
+    public (MethodInfo methodInfo, IModel model, bool isAsync) GetModelAndMethodById(long methodId)
+    {
+        (long modelId, MethodInfo methodInfo, bool isAsync) = _serverMethods[methodId];
+        IModel model = GetModelById(modelId);
+        return (methodInfo, model, isAsync);
+    }
     
 }

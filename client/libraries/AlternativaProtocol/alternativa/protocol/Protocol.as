@@ -71,7 +71,7 @@ package alternativa.protocol {
 			dataWriter.position = 0;
 			nullmapEncoded.position = 0;
 				
-			IConsoleService(ProtocolActivator.osgi.getService(IConsoleService)).writeToConsole("Protocol encode");
+			/*IConsoleService(ProtocolActivator.osgi.getService(IConsoleService)).writeToConsole("Protocol encode");
 			IConsoleService(ProtocolActivator.osgi.getService(IConsoleService)).writeToConsole("   nullMap: ");
 			while (nullmapEncoded.bytesAvailable) {
 				IConsoleService(ProtocolActivator.osgi.getService(IConsoleService)).writeToConsole("   " + nullmapEncoded.readByte());
@@ -79,7 +79,7 @@ package alternativa.protocol {
 			IConsoleService(ProtocolActivator.osgi.getService(IConsoleService)).writeToConsole("   data: ");
 			while (dataWriter.bytesAvailable) {
 				IConsoleService(ProtocolActivator.osgi.getService(IConsoleService)).writeToConsole("   " + dataWriter.readByte());
-			}
+			}*/
 		}
 		
 		/**

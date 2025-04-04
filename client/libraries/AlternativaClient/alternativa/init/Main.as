@@ -123,12 +123,13 @@ package alternativa.init {
 			//spaceRegister = controlHandler.spaceRegister;
 			
 			// Регистрация диспетчер модели
-			var long1:Long = LongFactory.getLong(0, 1);
-			var long2:Long = LongFactory.getLong(0, 2);
-			var long3:Long = LongFactory.getLong(0, 3);
-			modelsRegister.register(long1, long1);
-			modelsRegister.register(long1, long2);
-			modelsRegister.register(long1, long3);
+			var dispatcherModelId:Long = LongFactory.getLong(0, 1);
+			var method1:Long = LongFactory.getLong(0, 0);
+			var method2:Long = LongFactory.getLong(0, 1);
+			var method3:Long = LongFactory.getLong(0, 2);
+			modelsRegister.register(dispatcherModelId, method1);
+			modelsRegister.register(dispatcherModelId, method2);
+			modelsRegister.register(dispatcherModelId, method3);
 			var model:IModel = new DispatcherModel();
 			modelsRegister.add(model, new Array([IModel]));
 			

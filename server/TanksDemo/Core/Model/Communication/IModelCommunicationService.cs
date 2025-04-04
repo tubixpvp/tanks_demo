@@ -9,4 +9,5 @@ public interface IModelCommunicationService
         GameObject gameObject,
         IEnumerable<NetworkSession> sessions,
         Action<CI> callback);
+    public Task InvokeServerMethod(ModelContext context, long methodId);
 }

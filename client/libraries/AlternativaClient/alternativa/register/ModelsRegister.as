@@ -112,11 +112,12 @@ package alternativa.register {
 			var modelId:Long = Long(modelByMethod[methodId]);
 			var model:IModel = IModel(modelInstances[modelId]);
 			
-			//Main.writeToConsole(" ");
-			//Main.writeToConsole("ModelsRegister invoke methodId: " + methodId, 0x0000ff);
-			//Main.writeToConsole("ModelsRegister invoke clientObjectId: " + clientObject.id, 0x0000ff);
-			//Main.writeToConsole("ModelsRegister invoke modelId: " + modelId, 0x0000ff);
-			//Main.writeToConsole("ModelsRegister invoke model: " + model, 0x0000ff);
+			Main.writeToConsole(" ");
+			Main.writeToConsole("ModelsRegister invoke methodId: " + methodId, 0x0000ff);
+			Main.writeToConsole("ModelsRegister invoke clientObjectId: " + clientObject.id, 0x0000ff);
+			Main.writeToConsole("ModelsRegister invoke modelId: " + modelId, 0x0000ff);
+			Main.writeToConsole("ModelsRegister invoke model: " + model, 0x0000ff);
+			
 			model.invoke(clientObject, methodId, Main.codecFactory, params, nullMap);
 		}
 		

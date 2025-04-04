@@ -22,19 +22,19 @@ internal class GameObjectAdaptProxy : DispatchProxy
 
         object? returnValue = null;
 
-        lock (ModelContext.Lock)
+        ModelContext context = new ModelContext(_gameObject, ModelGlobals.Context?.Session);
+        
+        ModelContext.RunLocked(() =>
         {
-            ModelContext context = new ModelContext(_gameObject, ModelGlobals.Context?.Session);
-
             ModelGlobals.PutContext(context);
 
             foreach (object handler in _handlers)
             {
-                targetMethod.Invoke(handler, args);
+                returnValue = targetMethod.Invoke(handler, args);
             }
 
             ModelGlobals.PopContext();
-        }
+        });
 
         return returnValue;
     }

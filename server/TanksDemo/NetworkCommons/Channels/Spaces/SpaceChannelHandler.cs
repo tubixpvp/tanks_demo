@@ -1,9 +1,14 @@
+using Core.GameObjects;
+using Core.Model;
+using Core.Model.Communication;
 using Core.Spaces;
 using Logging;
 using Network.Channels;
 using Network.Session;
 using NetworkCommons.Channels.Control;
 using OSGI.Services;
+using ProtocolEncoding;
+using Utils;
 
 namespace NetworkCommons.Channels.Spaces;
 
@@ -18,9 +23,9 @@ public class SpaceChannelHandler : IChannelPacketHandler, IOSGiInitListener
 
     [InjectService]
     private static ControlChannelHandler ControlChannelHandler;
-    
-    
-    public event Action<NetworkSession>? OnSpaceSessionInited;
+
+    [InjectService]
+    private static IModelCommunicationService ModelCommunicationService;
     
     
     private const string ControlSessionIdKey = "ControlSessionId";
@@ -42,11 +47,34 @@ public class SpaceChannelHandler : IChannelPacketHandler, IOSGiInitListener
         ControlChannelHandler.OnControlSessionClosed += OnControlSessionClosed;
     }
     
-    public async Task HandlePacket(NetworkSession session, NetPacket packet)
+    public async Task HandlePacket(NetworkSession spaceSession, NetPacket packet)
     {
-        //todo
-        
-        _logger.Log(LogLevel.Debug, "New space packet");
+        ByteArray buffer = packet.PacketBuffer;
+
+        if (buffer.BytesAvailable == 0)
+            return;
+
+        SessionSpacesData spacesData = GetControlSessionData(GetControlSessionBySpace(spaceSession));
+        Space space = spacesData.ConnectedSpaces[spaceSession];
+
+        ModelContext? context = null;
+
+        while (buffer.BytesAvailable > 0)
+        {
+            long objectId = GeneralDataDecoder.Decode<long>(packet);
+            long methodId = GeneralDataDecoder.Decode<long>(packet);
+            
+            _logger.Log(LogLevel.Debug, $"New space packet: objectId={objectId}, methodId={methodId}");
+
+            GameObject gameObject = space.GetObject(objectId)!;
+
+            if (context == null)
+                context = new ModelContext(gameObject, spaceSession);
+            else
+                context.Set(gameObject, spaceSession);
+
+            await ModelCommunicationService.InvokeServerMethod(context, methodId);
+        }
     }
 
     public Task HandleConnect(NetworkSession spaceSession)
@@ -187,8 +215,33 @@ public class SpaceChannelHandler : IChannelPacketHandler, IOSGiInitListener
         
         _logger.Log(LogLevel.Info, 
             $"Connection IP:{session.Socket.IPAddress} has joined SPACE channel with sessionID:{sessionId}");
+
+        HandleConnect(session);
+    }
+
+
+    internal void SendCommand(SpaceCommand command, IEnumerable<NetworkSession> sessions)
+    {
+        ByteArray sendBuffer = ByteArrayPool.Get();
+        NetPacket packet = new NetPacket(sendBuffer, command.NullMap);
+
+        GeneralDataEncoder.Encode(command.ObjectId, packet);
+        GeneralDataEncoder.Encode(command.MethodId, packet);
+
+        sendBuffer.WriteBytes(command.DataBuffer);
+
+        _logger.Log(LogLevel.Debug, 
+            $"Sending space command: objectId={command.ObjectId}, methodId={command.MethodId}, dataBuffLen={command.DataBuffer.Length}, sendBuffLen={sendBuffer.Length}, nullMapSize={packet.NullMap.GetSize()}");
         
-        OnSpaceSessionInited?.Invoke(session);
+        Task task = Task.WhenAll(sessions.Select(
+            session => SafeTask.AddListeners(
+                session.Socket.SendPacket(packet), session.OnError)));
+
+        task.ContinueWith(_ =>
+        {
+            command.Dispose();
+            ByteArrayPool.Put(sendBuffer);
+        });
     }
     
 }

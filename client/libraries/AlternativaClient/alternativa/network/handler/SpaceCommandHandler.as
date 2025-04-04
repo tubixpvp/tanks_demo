@@ -74,7 +74,7 @@ package alternativa.network.handler {
 				var objectId:Long = Long(longCodec.decode(data, nullMap, true));
 				var methodId:Long = Long(longCodec.decode(data, nullMap, true));
 				if (methodId.high == 0) {
-					if (methodId.low == 1 || methodId.low == 2) {
+					if (methodId.low == 0 || methodId.low == 1 || methodId.low == 2) {
 						// Если вызван метод загрузки или выгрузки объекта, для DispatcherModel устанавливается реестр объектов текущего спейса.
 						var dispatcherModel:DispatcherModel = modelRegister.getModel(LongFactory.getLong(0, 1)) as DispatcherModel;
 						dispatcherModel.objectRegister = _objectRegister;

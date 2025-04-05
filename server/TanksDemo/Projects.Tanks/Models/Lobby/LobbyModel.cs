@@ -1,11 +1,57 @@
-﻿using Core.Model;
+﻿using Core.GameObjects;
+using Core.Model;
 using Core.Model.Communication;
+using Projects.Tanks.Models.Lobby.Struct;
 
 namespace Projects.Tanks.Models.Lobby;
 
+[ModelEntity(typeof(LobbyEntity))]
 [Model]
-public class LobbyModel(long id) : ModelBase<ILobbyModelClient>(id)
+internal class LobbyModel(long id) : ModelBase<ILobbyModelClient>(id), ObjectListener.Load
 {
+
+    
+    public void ObjectLoaded()
+    {
+        Clients(Context.Object, [], client => 
+            client.InitObject([
+                new ArmyStruct()
+                {
+                    ArmyId = 100,
+                    ArmyName = "testarmy"
+                }
+            ],
+                100,
+                101,
+                102,
+                [
+                    new MapStruct()
+                    {
+                        Id = 101,
+                        Name = "testmap",
+                        Description = "the test map",
+                        TanksOnline = 0,
+                        MaxTanksOnline = 10,
+                        PreviewResourceId = 0
+                    }
+                ],
+                10,
+                true,
+                [
+                    new TankStruct()
+                    {
+                        Id = 102,
+                        Name = "testtank"
+                    }
+                ],
+                [
+                    new TopRecord()
+                    {
+                        Name = "testuser",
+                        Score = 1000
+                    }
+                ]));
+    }
 
 
     [NetworkMethod]

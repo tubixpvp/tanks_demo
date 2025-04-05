@@ -10,7 +10,7 @@ internal class FlashCodeGenerator(string packageName, string[]? defaultImports =
     private static readonly Dictionary<Type, (string? package, string flashImportName, string flashDeclarationName)> PredefinedTypes =
         new ()
         {
-            [typeof(int)] = (null, "Int", "int"),
+            [typeof(int)] = (null, "int", "int"),
             [typeof(float)] = ("alternativa.protocol.type", "Float", "Number"),
             [typeof(double)] = (null, "Number", "Number"),
             [typeof(string)] = (null, "String", "String"),
@@ -33,6 +33,19 @@ internal class FlashCodeGenerator(string packageName, string[]? defaultImports =
         if (type.IsArray)
         {
             //return $"Vector.<{GetFlashDeclarationTypeString(type.GetElementType()!)}>";
+            return "Array";
+        }
+        return type.Name;
+    }
+    public static string GetFlashImportTypeString(Type type)
+    {
+        if (PredefinedTypes.TryGetValue(type, out var data))
+        {
+            return data.flashImportName;
+        }
+
+        if (type.IsArray)
+        {
             return "Array";
         }
         return type.Name;

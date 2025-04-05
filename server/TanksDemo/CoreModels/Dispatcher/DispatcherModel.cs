@@ -2,6 +2,7 @@ using Core.GameObjects;
 using Core.Model;
 using Network.Protocol;
 using Network.Session;
+using Newtonsoft.Json;
 using ProtocolEncoding;
 using Utils;
 
@@ -46,7 +47,13 @@ internal class DispatcherModel(long modelId) : ModelBase<IDispatcherModelClient>
                     {
                         if(entry.modelParams == null)
                             continue;
-                        GeneralDataEncoder.Encode(entry.modelParams, buffer, nullMap);
+                        int paramsNum = entry.modelParams.ParametersInfo.Length;
+                        for (int i = 0; i < paramsNum; i++)
+                        {
+                            GeneralDataEncoder.Encode(entry.modelParams.ParametersInfo[i].ParameterType,
+                                entry.modelParams.ArgumentsData[i],
+                                buffer, nullMap);
+                        }
                     }
                 }
 

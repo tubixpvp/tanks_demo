@@ -50,7 +50,8 @@ internal class FlashModelBaseGenerator : IClientDataGenerator
             "alternativa.protocol.factory.ICodecFactory",
             "flash.utils.IDataInput",
             "alternativa.protocol.codec.NullMap",
-            "alternativa.model.IModel"
+            "alternativa.model.IModel",
+            "alternativa.protocol.codec.ICodec"
         ]);
         
         generator.AddImport(typeof(GameObject));
@@ -137,11 +138,71 @@ internal class FlashModelBaseGenerator : IClientDataGenerator
 
     private void GenerateInitObjectFunction(FlashCodeGenerator generator, Type clientInterfaceType)
     {
+        MethodInfo? initMethodInfo = clientInterfaceType.GetMethod(ModelUtils.InitObjectFunc);
+        
         generator.AddLine("public function _initObject(clientObject:ClientObject, codecFactory:ICodecFactory, dataInput:IDataInput, nullMap:NullMap):void");
         generator.OpenCurvedBrackets();
-        
-        //todo
-        
+
+        if (initMethodInfo != null)
+        {
+            ParameterInfo[] initFuncParams = initMethodInfo.GetParameters();
+
+            generator.AddLine("var codec:ICodec;");
+
+            Type? previousCodecType = null;
+
+            foreach (ParameterInfo paramInfo in initFuncParams)
+            {
+                Type fieldType = paramInfo.ParameterType;
+                Type? underlyingType = Nullable.GetUnderlyingType(fieldType);
+                bool optional = underlyingType != null;
+                if (underlyingType != null)
+                    fieldType = underlyingType;
+
+                //set codec:
+                //string line = $"var {paramInfo.Name}_codec:ICodec = ";
+                string line = "codec = ";
+
+                if (previousCodecType != fieldType)
+                {
+                    previousCodecType = fieldType;
+
+                    if (fieldType.IsArray)
+                    {
+                        Type elementType = fieldType.GetElementType()!;
+                        Type? elementUnderlyingType = Nullable.GetUnderlyingType(elementType);
+                        bool optionalElements = elementUnderlyingType != null;
+                        if (elementUnderlyingType != null)
+                            elementType = elementUnderlyingType;
+
+                        generator.AddImport(elementType);
+
+                        line +=
+                            $"codecFactory.getArrayCodec({FlashCodeGenerator.GetFlashImportTypeString(elementType)}, {(!optionalElements).ToString().ToLower()}, 1);";
+                    }
+                    else
+                    {
+                        generator.AddImport(fieldType);
+
+                        line += $"codecFactory.getCodec({FlashCodeGenerator.GetFlashImportTypeString(fieldType)});";
+                    }
+
+                    generator.AddLine(line);
+                }
+
+                //decode:
+                string flashDeclarationName = FlashCodeGenerator.GetFlashDeclarationTypeString(fieldType);
+                generator.AddLine(
+                    $"var {paramInfo.Name}:{flashDeclarationName} = codec.decode(dataInput, nullMap, {(!optional).ToString().ToLower()}) as {flashDeclarationName};");
+            }
+
+            string callLine = "client.initObject(clientObject, ";
+
+            callLine += string.Join(", ", initFuncParams.Select(funcParam => funcParam.Name));
+
+            generator.AddLine(callLine + ");");
+        }
+
         generator.CloseCurvedBrackets();
     }
 

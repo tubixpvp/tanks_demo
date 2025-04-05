@@ -249,7 +249,7 @@ package alternativa.tanks.gui.lobby {
 				var mapName:String = MapStruct(maps[i]).name;
 				var mapDescription:String = MapStruct(maps[i]).description;
 				var mapMaxPlayersNum:int = MapStruct(maps[i]).maxTanksOnline;
-				var mapPreview:BitmapData = TextureResource(Main.resourceRegister.getResource(MapStruct(maps[i]).previewResourceId)).data.bitmapData;
+				var mapPreview:BitmapData = new BitmapData(100,100);// TextureResource(Main.resourceRegister.getResource(MapStruct(maps[i]).previewResourceId)).data.bitmapData;
 				var button:LobbyMapIcon = new LobbyMapIcon(mapName, mapDescription, mapPreview, mapMaxPlayersNum);
 				button.playersNum = MapStruct(maps[i]).tanksOnline;
 				if (mapMaxPlayersNum == MapStruct(maps[i]).tanksOnline) {

@@ -1,6 +1,7 @@
 using System.Reflection;
 using Network.Channels;
 using Network.Protocol;
+using Newtonsoft.Json;
 using OSGI.Services;
 using Utils;
 
@@ -57,7 +58,7 @@ public static class GeneralDataEncoder
 
     private static void EncodeClass(Type type, object value, ByteArray output, NullMap nullMap)
     {
-        FieldInfo[] fields = type.GetFields(BindingFlags.Public);
+        FieldInfo[] fields = type.GetFields(BindingFlags.Public | BindingFlags.Instance);
 
         foreach (FieldInfo fieldInfo in fields)
         {

@@ -16,7 +16,8 @@ internal class ClientDataGeneratorRunner
     private static readonly List<IClientDataGenerator> Generators = 
     [
         new FlashModelBaseGenerator(),
-        new FlashExportTypesGenerator()
+        new FlashExportTypesGenerator(),
+        new FlashExportTypesCodecsGenerator()
     ];
     
     public static void Main(string[] args)

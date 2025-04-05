@@ -160,40 +160,15 @@ internal class FlashModelBaseGenerator : IClientDataGenerator
                     fieldType = underlyingType;
 
                 //set codec:
-                //string line = $"var {paramInfo.Name}_codec:ICodec = ";
-                string line = "codec = ";
-
                 if (previousCodecType != fieldType)
                 {
                     previousCodecType = fieldType;
 
-                    if (fieldType.IsArray)
-                    {
-                        Type elementType = fieldType.GetElementType()!;
-                        Type? elementUnderlyingType = Nullable.GetUnderlyingType(elementType);
-                        bool optionalElements = elementUnderlyingType != null;
-                        if (elementUnderlyingType != null)
-                            elementType = elementUnderlyingType;
-
-                        generator.AddImport(elementType);
-
-                        line +=
-                            $"codecFactory.getArrayCodec({FlashCodeGenerator.GetFlashImportTypeString(elementType)}, {(!optionalElements).ToString().ToLower()}, 1);";
-                    }
-                    else
-                    {
-                        generator.AddImport(fieldType);
-
-                        line += $"codecFactory.getCodec({FlashCodeGenerator.GetFlashImportTypeString(fieldType)});";
-                    }
-
-                    generator.AddLine(line);
+                    generator.AddLine("codec = " + FlashGenerationUtils.MakeGetCodecCodeFragment(fieldType, generator));
                 }
 
                 //decode:
-                string flashDeclarationName = FlashCodeGenerator.GetFlashDeclarationTypeString(fieldType);
-                generator.AddLine(
-                    $"var {paramInfo.Name}:{flashDeclarationName} = codec.decode(dataInput, nullMap, {(!optional).ToString().ToLower()}) as {flashDeclarationName};");
+                generator.AddLine($"var {paramInfo.Name}:{FlashCodeGenerator.GetFlashDeclarationTypeString(fieldType)} = " + FlashGenerationUtils.MakeTypeDecodeCodeFragment(fieldType, optional));
             }
 
             string callLine = "client.initObject(clientObject, ";
@@ -247,7 +222,7 @@ internal class FlashModelBaseGenerator : IClientDataGenerator
 
     private string GenerateFunctionDeclaration(MethodInfo methodInfo, FlashCodeGenerator generator)
     {
-        string functionStr = $"function {FirstLetterToLower(methodInfo.Name)}(object:ClientObject";
+        string functionStr = $"function {FlashGenerationUtils.FirstLetterToLower(methodInfo.Name)}(object:ClientObject";
 
         ParameterInfo[] parameters = methodInfo.GetParameters();
 
@@ -271,10 +246,5 @@ internal class FlashModelBaseGenerator : IClientDataGenerator
     {
         string filePath = Path.Combine(fileDir, modelName + "BaseServer.as");
         
-    }
-
-    private static string FirstLetterToLower(string str)
-    {
-        return str[0].ToString().ToLower() + str.Substring(1);
     }
 }

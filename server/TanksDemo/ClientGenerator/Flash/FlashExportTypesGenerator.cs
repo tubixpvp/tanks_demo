@@ -65,11 +65,11 @@ internal class FlashExportTypesGenerator : IClientDataGenerator
 
         foreach (FieldInfo fieldInfo in fields)
         {
-            Type fieldType = fieldInfo.FieldType;
-            fieldType = Nullable.GetUnderlyingType(fieldType) ?? fieldType;
-            
             if(fieldInfo.GetCustomAttribute<ProtocolIgnoreAttribute>() != null)
                 continue;
+            
+            Type fieldType = fieldInfo.FieldType;
+            fieldType = Nullable.GetUnderlyingType(fieldType) ?? fieldType;
             
             generator.AddLine($"public var {FirstLetterToLower(fieldInfo.Name)}:{FlashCodeGenerator.GetFlashDeclarationTypeString(fieldType)};");
             generator.AddEmptyLine();
@@ -93,11 +93,16 @@ internal class FlashExportTypesGenerator : IClientDataGenerator
         string[] keys = type.GetEnumNames();
         Array values = type.GetEnumValuesAsUnderlyingType();
 
+        keys = keys.Select(GetFlashKeyName).ToArray();
+
         for (int i = 0; i < keys.Length; i++)
         {
-            generator.AddLine($"public static const {GetFlashKeyName(keys[i])}:{type.Name} = new {type.Name}({values.GetValue(i)});");
+            generator.AddLine($"public static const {keys[i]}:{type.Name} = new {type.Name}({values.GetValue(i)});");
             generator.AddEmptyLine();
         }
+
+        generator.AddLine("public static const ENUM_VALUES:Array = [" + string.Join(", ", keys) + "];");
+        generator.AddEmptyLine();
 
         Type underlyingType = Enum.GetUnderlyingType(type);
         generator.AddImport(underlyingType);
@@ -112,6 +117,7 @@ internal class FlashExportTypesGenerator : IClientDataGenerator
         generator.OpenCurvedBrackets();
         generator.AddLine("this.value = value;");
         generator.CloseCurvedBrackets();
+        generator.AddEmptyLine();
 
         return;
 

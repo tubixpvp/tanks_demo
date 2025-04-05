@@ -27,7 +27,7 @@ package alternativa.protocol.codec.primitive {
 		 * @param object кодируемый объект
 		 */		
 		override protected function doEncode(dest:IDataOutput, object:Object, nullmap:NullMap, notnull:Boolean):void {
-			dest.writeUnsignedInt(int(object));
+			dest.writeUnsignedInt(uint(object));
 		}
 
 	}

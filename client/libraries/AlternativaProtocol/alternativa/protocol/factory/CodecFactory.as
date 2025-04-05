@@ -17,7 +17,6 @@ package alternativa.protocol.factory {
 	import flash.utils.Dictionary;
 	import alternativa.protocol.type.UShort;
 	import alternativa.protocol.codec.primitive.UShortCodec;
-	import alternativa.protocol.type.UInt;
 	import alternativa.protocol.codec.primitive.UIntCodec;
 	
 	
@@ -36,7 +35,7 @@ package alternativa.protocol.factory {
 			registerCodec(Short, new ShortCodec());
 			registerCodec(Byte, new ByteCodec());
 			registerCodec(UShort, new UShortCodec());
-			registerCodec(UInt, new UIntCodec());
+			registerCodec(uint, new UIntCodec());
 			
 			registerCodec(Number, new DoubleCodec());
 			registerCodec(Float, new FloatCodec());

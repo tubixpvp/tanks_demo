@@ -7,7 +7,8 @@
         "external-library-path": [
             "./../bin/AlternativaClient/library.swc",
             "./../bin/AlternativaProtocol/library.swc",
-            "./../bin/AlternativaTypes/library.swc"
+            "./../bin/AlternativaTypes/library.swc",
+            "./../bin/AlternativaOSGI/library.swc"
         ],
         "target-player": "32.0",
         "output": "./../bin/ClientBase/library.swc"

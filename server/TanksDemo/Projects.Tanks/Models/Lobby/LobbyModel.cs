@@ -35,7 +35,7 @@ internal class LobbyModel(long id) : ModelBase<ILobbyModelClient>(id), ObjectLis
                         PreviewResourceId = 0
                     }
                 ],
-                10,
+                100000,
                 true,
                 [
                     new TankStruct()
@@ -49,6 +49,11 @@ internal class LobbyModel(long id) : ModelBase<ILobbyModelClient>(id), ObjectLis
                     {
                         Name = "testuser",
                         Score = 1000
+                    },
+                    new TopRecord()
+                    {
+                        Name = "testuser2",
+                        Score = 1001
                     }
                 ]));
     }

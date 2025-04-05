@@ -18,7 +18,7 @@ internal class FlashCodeGenerator(string packageName, string[]? defaultImports =
             [typeof(short)] = ("alternativa.protocol.type", "Short", "int"),
             [typeof(byte)] = ("alternativa.protocol.type", "Byte", "int"),
             [typeof(long)] = ("alternativa.types", "Long", "Long"),
-            [typeof(uint)] = ("alternativa.protocol.types", "UInt", "int"),
+            [typeof(uint)] = (null, "uint", "uint"),
             [typeof(ushort)] = ("alternativa.protocol.types", "UShort", "int"),
             [typeof(GameObject)] = ("alternativa.object", "ClientObject", "ClientObject")
         };
@@ -54,6 +54,7 @@ internal class FlashCodeGenerator(string packageName, string[]? defaultImports =
     private readonly StringBuilder _builder = new();
 
     private readonly List<Type> _imports = new();
+    private readonly List<string> _stringImports = new();
 
     private int _tabsNum = 0;
 
@@ -148,6 +149,11 @@ internal class FlashCodeGenerator(string packageName, string[]? defaultImports =
 
             throw new Exception("Flash type not found: " + type.Namespace + "." + type.Name);
         }
+
+        foreach (string importStr in _stringImports)
+        {
+            AddLine($"import {importStr};");
+        }
     }
 
     public void AddImport(Type type)
@@ -155,6 +161,13 @@ internal class FlashCodeGenerator(string packageName, string[]? defaultImports =
         if (!_imports.Contains(type))
         {
             _imports.Add(type);
+        }
+    }
+    public void AddImport(string importStr)
+    {
+        if (!_stringImports.Contains(importStr))
+        {
+            _stringImports.Add(importStr);
         }
     }
 }

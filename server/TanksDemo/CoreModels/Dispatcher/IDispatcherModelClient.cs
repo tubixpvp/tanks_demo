@@ -1,6 +1,6 @@
 using Core.Model.Communication;
 
-namespace Core.Models.Dispatcher;
+namespace CoreModels.Dispatcher;
 
 internal interface IDispatcherModelClient
 {

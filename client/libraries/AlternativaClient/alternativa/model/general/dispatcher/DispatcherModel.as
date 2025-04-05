@@ -111,11 +111,11 @@ package alternativa.model.general.dispatcher {
 					if (model == null) {
 						Main.writeToConsole("Model with id [" + modelIds[idx] + "] not found in registry", 0xFF0000);
 					} else {
-						/*Main.writeToConsole(" ");
+						Main.writeToConsole(" ");
 						Main.writeToConsole("DispatcherModel initObject model: " + model);
 						Main.writeToConsole("DispatcherModel initObject data length: " + dataInput.bytesAvailable);
 						Main.writeToConsole("DispatcherModel initObject nullMap size: " + nullMap.getSize());
-						Main.writeToConsole(" ");*/
+						Main.writeToConsole(" ");
 						model._initObject(object, codecFactory, dataInput, nullMap);
 					}
 				}

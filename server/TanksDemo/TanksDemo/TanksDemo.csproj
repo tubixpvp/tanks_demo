@@ -9,6 +9,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Config\Config.csproj" />
+      <ProjectReference Include="..\CoreModels\CoreModels.csproj" />
       <ProjectReference Include="..\Core\Core.csproj" />
       <ProjectReference Include="..\NetworkCommons\NetworkCommons.csproj" />
       <ProjectReference Include="..\Network\Network.csproj" />

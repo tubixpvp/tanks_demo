@@ -1,5 +1,5 @@
 using Core.GameObjects;
-using Core.Models.Dispatcher;
+using Core.Model.Registry;
 using Logging;
 using Network.Session;
 using OSGI.Services;
@@ -10,6 +10,9 @@ public class Space
 {
     [InjectService]
     private static LoggerService LoggerService;
+
+    [InjectService]
+    private static ModelRegistry ModelRegistry;
 
 
     private static readonly Random Random = new();
@@ -37,7 +40,14 @@ public class Space
 
     private void CreateRootObject()
     {
-        CreateObject("root", [new DispatcherEntity()], null, 0);
+        Type dispatcherEntityType = ModelRegistry.GetEntityTypeByName("DispatcherEntity");
+        object dispatcherEntityInstance = Activator.CreateInstance(dispatcherEntityType)!;
+        
+        CreateObject("root", [dispatcherEntityInstance], null, 0);
+    }
+    public GameObject GetRootObject()
+    {
+        return GetObject(0)!;
     }
 
     public GameObject CreateObject(string name, IEnumerable<object>? entities, long? parentId, long? objectId = null)
@@ -66,7 +76,9 @@ public class Space
 
                 GameObject? parentObject = parentId != null ? GetObject((long)parentId) : null;
 
-                GameObject gameObject = new GameObject(id, parentObject, name, this, entities ?? []);
+                IEnumerable<object> systemEntities = [CreateObjectLoaderEntity()];
+                
+                GameObject gameObject = new GameObject(id, parentObject, name, this, entities?.Concat(systemEntities) ?? systemEntities);
                 
                 _gameObjectsById.Add(id, gameObject);
                 _gameObjectsByName.Add(name, gameObject);
@@ -74,6 +86,12 @@ public class Space
                 return gameObject;
             }
         }
+    }
+
+    private object CreateObjectLoaderEntity()
+    {
+        Type objectLoaderEntity = ModelRegistry.GetEntityTypeByName("GameObjectLoaderEntity");
+        return Activator.CreateInstance(objectLoaderEntity)!;
     }
 
     public GameObject? GetObject(long id)

@@ -3,6 +3,7 @@ using Core.GameObjects;
 using Core.Model;
 using Core.Model.Communication;
 using Core.Model.Registry;
+using Network.Protocol;
 using Network.Session;
 using OSGI.Services;
 using ProtocolEncoding;
@@ -21,6 +22,7 @@ public class ModelCommunicationServiceImpl : IModelCommunicationService
     
     public void GetSender<CI>(
         GameObject gameObject, 
+        IModel model,
         IEnumerable<NetworkSession> sessions, 
         Action<CI> callback)
     {
@@ -37,7 +39,7 @@ public class ModelCommunicationServiceImpl : IModelCommunicationService
 
         lock (proxy)
         {
-            proxy.Init(gameObject.Id, sessions);
+            proxy.Init(gameObject, model, sessions);
             
             callback(proxyT);
         }
@@ -67,16 +69,32 @@ public class ModelCommunicationServiceImpl : IModelCommunicationService
         });
     }
 
+    public void SendSpaceCommand(
+        long objectId, 
+        long methodId, 
+        IEnumerable<NetworkSession> sessions, 
+        Action<ByteArray, NullMap> encodeCallback)
+    {
+        SpaceCommand command = new SpaceCommand(objectId, methodId);
+
+        encodeCallback(command.DataBuffer, command.NullMap);
+        
+        SpaceChannelHandler.SendCommand(command, sessions);
+    }
+
 
     class SendProxy : DispatchProxy
     {
-        private long _objectId;
+        private GameObject _object;
+
+        private IModel _model;
         
         private IEnumerable<NetworkSession> _sessions;
 
-        public void Init(long objectId, IEnumerable<NetworkSession> sessions)
+        public void Init(GameObject gameObject, IModel model, IEnumerable<NetworkSession> sessions)
         {
-            _objectId = objectId;
+            _object = gameObject;
+            _model = model;
             _sessions = sessions;
         }
         
@@ -85,9 +103,16 @@ public class ModelCommunicationServiceImpl : IModelCommunicationService
             if (targetMethod == null)
                 return null;
 
+            if (targetMethod.Name == ModelUtils.InitObjectFunc)
+            {
+                _object.PutClientInitParams(_model.Id, new ModelInitParams(args!, targetMethod.GetParameters()));
+                
+                return null;
+            }
+
             long methodId = ModelRegistry.GetMethodId(targetMethod);
 
-            SpaceCommand command = new SpaceCommand(_objectId, methodId);
+            SpaceCommand command = new SpaceCommand(_object.Id, methodId);
 
             if (args != null)
             {

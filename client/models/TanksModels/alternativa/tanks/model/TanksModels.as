@@ -17,6 +17,7 @@ package alternativa.tanks.model {
 	import projects.tanks.models.users.user.IUserModelBase;
 	import alternativa.osgi.bundle.IBundleActivator;
 	import alternativa.init.OSGi;
+	import flash.text.Font;
 	
 	
 	public class TanksModels implements IBundleActivator {
@@ -24,10 +25,10 @@ package alternativa.tanks.model {
 		[Embed(source="../resources/lobby_bg.jpg")] private static const backBitmap:Class;
 		private static const backBd:BitmapData = new backBitmap().bitmapData;
 		
-		/*[Embed(source="../font/STMPRBRK.ttf", fontName="Stamper", mimeType="application/x-font-truetype")]
+		[Embed(source="../font/STMPRBRK.ttf", fontName="Stamper", mimeType="application/x-font", embedAsCFF="false")]
 		private static const stamperTTFNormal:Class;
 		
-		[Embed(source="../font/AlternativaNormal.ttf", fontName="Alternativa", mimeType="application/x-font-truetype")]
+		/*[Embed(source="../font/AlternativaNormal.ttf", fontName="Alternativa", mimeType="application/x-font-truetype")]
 		private static const alternativaTTFNormal:Class;
 
 		[Embed(source="../font/AlternativaBold.ttf", fontName="Alternativa", mimeType='application/x-font', fontWeight="bold")]
@@ -45,6 +46,8 @@ package alternativa.tanks.model {
 		public function start(osgi:OSGi):void 
 		{
 			//Main.console.write("TankModels init");
+
+			Font.registerFont(stamperTTFNormal);
 			
 			windowContainer = new WindowContainer();
 			windowContainer.rootObject = windowContainer;

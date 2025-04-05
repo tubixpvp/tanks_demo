@@ -1,4 +1,4 @@
-namespace Core.Models.Dispatcher;
+namespace CoreModels.Dispatcher;
 
 internal class DispatcherEntity
 {

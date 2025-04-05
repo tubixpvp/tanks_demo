@@ -4,10 +4,10 @@ package alternativa.init {
 	
 	public class AlternativaFont implements IBundleActivator {
 		
-		[Embed(source="../font/AlternativaNormal.ttf", fontName="Alternativa", mimeType='application/x-font')]
+		[Embed(source="../font/AlternativaNormal.ttf", fontName="Alternativa", mimeType='application/x-font', embedAsCFF="false")]
 		private static const ttfNormal:Class;
 
-		[Embed(source="../font/AlternativaBold.ttf", fontName="Alternativa", mimeType='application/x-font', fontWeight="bold")]
+		[Embed(source="../font/AlternativaBold.ttf", fontName="Alternativa", mimeType='application/x-font', fontWeight="bold", embedAsCFF="false")]
 		private static const ttfBold:Class;
 
 

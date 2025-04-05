@@ -1,4 +1,6 @@
-﻿namespace Core.Model;
+﻿using System.Reflection;
+
+namespace Core.Model;
 
 public interface IModel
 {

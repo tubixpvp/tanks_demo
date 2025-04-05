@@ -1,4 +1,5 @@
-﻿using Network.Session;
+﻿using Core.GameObjects;
+using Network.Session;
 
 namespace Core.Model;
 
@@ -15,10 +16,10 @@ public abstract class ModelBase<CI> : ModelGlobals, IModel where CI : class
     }
     
     public Type GetClientInterfaceType() => typeof(CI);
-    
 
-    protected void Clients(GameObjects.GameObject gameObject, IEnumerable<NetworkSession> sessions, Action<CI> callback)
+
+    protected void Clients(GameObject gameObject, IEnumerable<NetworkSession> sessions, Action<CI> callback)
     {
-        ModelCommunicationService.GetSender(gameObject, sessions, callback);
+        ModelCommunicationService.GetSender(gameObject, this, sessions, callback);
     }
 }

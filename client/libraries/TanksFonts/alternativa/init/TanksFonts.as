@@ -7,7 +7,7 @@ package alternativa.init {
 	
 	public class TanksFonts implements IBundleActivator {
 
-		[Embed(source="../tanks/font/MyriadPro-Regular6.ttf", fontName="MyriadPro", mimeType='application/x-font')]
+		[Embed(source="../tanks/font/MyriadPro-Regular6.ttf", fontName="MyriadPro", mimeType='application/x-font', embedAsCFF="false")]
 		private static const MyriadPro:Class;
 //		[Embed(source="../tanks/font/rouble.ttf", fontName="Rubl", mimeType='application/x-font')]
 //		private static const Rubl:Class;

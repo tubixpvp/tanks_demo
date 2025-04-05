@@ -37,7 +37,7 @@ public static class GeneralDataEncoder
 
         if (type.IsArray)
         {
-            EncodeArray(type, value, output, nullMap, false);
+            EncodeArray(type, value, output, nullMap);
             return;
         }
 
@@ -79,11 +79,18 @@ public static class GeneralDataEncoder
         CodecsRegistry.GetCodec(baseType)!.Encode(index, output, nullMap);
     }
 
-    private static void EncodeArray(Type type, object value, ByteArray output, NullMap nullMap, bool optionalElements)
+    private static void EncodeArray(Type type, object value, ByteArray output, NullMap nullMap)
     {
         Array array = (Array)value;
         
         Type elementType = type.GetElementType()!;
+
+        Type? underlyingType = Nullable.GetUnderlyingType(elementType);
+        
+        bool optionalItems = underlyingType != null;
+        
+        if (underlyingType != null)
+            elementType = underlyingType;
 
         int length = array.Length;
         
@@ -94,7 +101,11 @@ public static class GeneralDataEncoder
         for (int i = 0; i < length; i++)
         {
             object? elementValue = array.GetValue(i);
-            EncodeOptional(elementType, elementValue, nullMap, out _);
+
+            if (optionalItems)
+            {
+                nullMap.AddBit(elementValue == null);
+            }
             
             if(elementValue == null)
                 continue;

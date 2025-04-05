@@ -28,6 +28,9 @@ public class ModelRegistry
     private readonly Dictionary<MethodInfo, long> _methodsIds = new();
 
     
+    private readonly Dictionary<long, bool> _modelIdToIsServerOnly = new();
+
+    
     private readonly Dictionary<long, (long modelId, MethodInfo method, bool isAsync)> _serverMethods = new();
     
 
@@ -97,6 +100,8 @@ public class ModelRegistry
     
     private void AddModel(Type modelType, ModelsConfig modelsConfig)
     {
+        //TODO: split this into few functions & move to separate file
+        
         //get model cache
         if (!modelsConfig.Models.TryGetValue(modelType.Name, out ModelConfig? modelConfig))
         {
@@ -139,14 +144,19 @@ public class ModelRegistry
         
         //init model & entities
         IModel model = (Activator.CreateInstance(modelType, new object[] {modelId}) as IModel)!;
+
+        modelId = model.Id;
         
-        _idToModel.Add(model.Id, model);
+        _idToModel.Add(modelId, model);
 
         foreach (ModelEntityAttribute entityAttribute in modelType
                      .GetCustomAttributes<ModelEntityAttribute>(false))
         {
             _entityToModel.Add(entityAttribute.EntityType, model);
         }
+        
+        ModelAttribute modelAttribute = modelType.GetCustomAttribute<ModelAttribute>()!;
+        _modelIdToIsServerOnly.Add(modelId, modelAttribute.ServerOnly);
         
         //init client methods:
         Type clientInterfaceType = model.GetClientInterfaceType();
@@ -196,5 +206,7 @@ public class ModelRegistry
         IModel model = GetModelById(modelId);
         return (methodInfo, model, isAsync);
     }
-    
+
+    public bool IsServerOnlyModel(long modelId) => _modelIdToIsServerOnly[modelId];
+
 }

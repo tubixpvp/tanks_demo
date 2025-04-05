@@ -189,7 +189,7 @@ internal class FlashExportTypesCodecsGenerator : IClientDataGenerator
         
         generator.AddLine("var codec:ICodec = " + FlashGenerationUtils.MakeGetCodecCodeFragment(enumBaseType, generator));
         
-        generator.AddLine(FlashGenerationUtils.MakeTypeEncodeCodeFragment(false, "object.value"));
+        generator.AddLine(FlashGenerationUtils.MakeTypeEncodeCodeFragment(false, "object.value", "dest"));
     }
 
     private void GenerateClassEncoder(Type type, FlashCodeGenerator generator, bool encoding)
@@ -231,7 +231,7 @@ internal class FlashExportTypesCodecsGenerator : IClientDataGenerator
 
             if (encoding)
             {
-                generator.AddLine(FlashGenerationUtils.MakeTypeEncodeCodeFragment(optional, "data." + paramName));
+                generator.AddLine(FlashGenerationUtils.MakeTypeEncodeCodeFragment(optional, "data." + paramName, "dest"));
             }
             else
             {

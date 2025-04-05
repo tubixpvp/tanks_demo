@@ -32,9 +32,9 @@ internal static class FlashGenerationUtils
         return $"codec.decode(dataInput, nullMap, {(!optional).ToString().ToLower()}) as {flashDeclarationName};";
     }
 
-    public static string MakeTypeEncodeCodeFragment(bool optional, string varName)
+    public static string MakeTypeEncodeCodeFragment(bool optional, string varName, string destBuffName)
     {
-        return $"codec.encode(dest, {varName}, nullMap, {(!optional).ToString().ToLower()});";
+        return $"codec.encode({destBuffName}, {varName}, nullMap, {(!optional).ToString().ToLower()});";
     }
     
     public static string FirstLetterToLower(string str)

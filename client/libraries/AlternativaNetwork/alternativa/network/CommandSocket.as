@@ -61,7 +61,7 @@ package alternativa.network {
 		 */		
 		public function sendCommand(command:Object, zipped:Boolean = false):void {
 			//trace("sendCommand " + this);
-			try {
+			//try {
 				var encoded:ByteArray = new ByteArray();
 				protocol.encode(encoded, command);
 				encoded.position = 0;
@@ -78,9 +78,9 @@ package alternativa.network {
 					packet.wrapUnzippedPacket(encoded, this);
 				}
 				flush();
-			} catch (error:Error) {
-				trace("sendCommand error: " + error + " " + this);
-			}
+			//} catch (error:Error) {
+			//	trace("sendCommand error: " + error + " " + this);
+			//}
 		}
 		
 		/**

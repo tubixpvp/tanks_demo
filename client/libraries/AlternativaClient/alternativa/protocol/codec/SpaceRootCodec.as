@@ -45,10 +45,11 @@ package alternativa.protocol.codec {
 		   			byteCodec.encode(dest, hash.readByte(), nullmap, true);
 		   		}
 		   	} else {
+				var c:SpaceCommand = SpaceCommand(object);
+				
 		   		Main.writeToConsole("encode SpaceCommand");
 		   		Main.writeToConsole("   objectId: " + c.objectId);
 		   		Main.writeToConsole("   methodId: " + c.methodId);
-		   		var c:SpaceCommand = SpaceCommand(object);
 		   		
 		   		var longCodec:ICodec = codecFactory.getCodec(Long);
 		   		longCodec.encode(dest, c.objectId, nullmap, true);

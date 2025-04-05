@@ -1,13 +1,15 @@
 {
-    "name": "Entrance",
+    "name": "Lobby",
     
     "objects": [
-
+        
         {
             "name": "Root",
             
             "entities": {
-                "UserModelEntity": {}
+                "LobbyEntity": {
+                    
+                }
             },
             
             "children": [],

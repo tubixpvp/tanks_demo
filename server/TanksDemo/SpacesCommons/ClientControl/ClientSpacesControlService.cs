@@ -7,7 +7,7 @@ using OSGI.Services;
 namespace SpacesCommons.ClientControl;
 
 [Service]
-public class ClientSpacesActivator : IOSGiInitListener
+public class ClientSpacesControlService : IOSGiInitListener
 {
     [InjectService]
     private static ControlChannelHandler ControlChannelHandler;
@@ -25,7 +25,20 @@ public class ClientSpacesActivator : IOSGiInitListener
 
     private void OnControlSessionOpened(NetworkSession controlSession)
     {
-        Space space = SpaceRegistry.GetSpaceByName("Entrance");
+        ConnectTo(controlSession, "Entrance");
+    }
+
+    public void SwitchSpace(NetworkSession spaceSession, string newSpaceName)
+    {
+        NetworkSession controlSession = SpaceChannelHandler.GetControlSessionBySpace(spaceSession);
+
+        SpaceChannelHandler.DisconnectFromSpace(controlSession, spaceSession);
+
+        ConnectTo(controlSession, newSpaceName);
+    }
+    private void ConnectTo(NetworkSession controlSession, string spaceName)
+    {
+        Space space = SpaceRegistry.GetSpaceByName(spaceName);
 
         SpaceChannelHandler.ConnectToSpace(controlSession, space);
     }

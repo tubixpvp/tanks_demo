@@ -51,7 +51,10 @@ internal class FlashModelBaseGenerator : IClientDataGenerator
             "flash.utils.IDataInput",
             "alternativa.protocol.codec.NullMap",
             "alternativa.model.IModel",
-            "alternativa.protocol.codec.ICodec"
+            "alternativa.protocol.codec.ICodec",
+            "flash.utils.ByteArray",
+            "alternativa.network.command.SpaceCommand",
+            "alternativa.init.Main"
         ]);
         
         generator.AddImport(typeof(GameObject));
@@ -65,6 +68,10 @@ internal class FlashModelBaseGenerator : IClientDataGenerator
         //class contents
         generator.AddLine($"private var client:I{className};");
         generator.AddEmptyLine();
+        
+        
+        generator.AddLine("private const sendBuffer:ByteArray = new ByteArray();");
+        
         
         generator.AddLine($"public function {className}()");
         generator.OpenCurvedBrackets();
@@ -121,7 +128,39 @@ internal class FlashModelBaseGenerator : IClientDataGenerator
         
         generator.OpenCurvedBrackets();
         
-        //todo
+        generator.AddLine("sendBuffer.clear();");
+        generator.AddLine("var nullMap:NullMap = new NullMap();");
+        
+        ParameterInfo[] parameters = methodInfo.GetParameters();
+        
+        generator.AddLine("var codecFactory:ICodecFactory = Main.codecFactory;");
+        generator.AddLine("var codec:ICodec;");
+
+        Type? previousParamType = null;
+        
+        foreach(ParameterInfo parameter in parameters)
+        {
+            Type parameterType = parameter.ParameterType;
+            
+            Type? underlyingType = Nullable.GetUnderlyingType(parameterType);
+            bool optional = underlyingType != null;
+            if (underlyingType != null)
+                parameterType = underlyingType;
+
+            if (previousParamType != parameterType)
+            {
+                previousParamType = parameterType;
+                
+                generator.AddLine("codec = " + FlashGenerationUtils.MakeGetCodecCodeFragment(parameterType, generator));
+            }
+            
+            generator.AddLine(FlashGenerationUtils.MakeTypeEncodeCodeFragment(optional, parameter.Name!, "sendBuffer"));
+        }
+        
+        (long methodIdHigh, long methodIdLow) = LongUtils.GetLongHighLow(methodId);
+        
+        generator.AddLine($"var command:SpaceCommand = new SpaceCommand(clientObject.id, LongFactory.getLong({methodIdHigh}, {methodIdLow}), sendBuffer, nullMap);");
+        generator.AddLine("clientObject.handler.commandSender.sendCommand(command);");
         
         generator.CloseCurvedBrackets();
     }
@@ -189,9 +228,6 @@ internal class FlashModelBaseGenerator : IClientDataGenerator
         
         Type clientInterfaceType = model.GetClientInterfaceType();
         
-        //remove constructor
-        //methods = methods.Where(method => method.Name != "InitObject").ToArray();
-        
         
         FlashCodeGenerator generator = new FlashCodeGenerator(packageName);
         
@@ -222,7 +258,7 @@ internal class FlashModelBaseGenerator : IClientDataGenerator
 
     private string GenerateFunctionDeclaration(MethodInfo methodInfo, FlashCodeGenerator generator)
     {
-        string functionStr = $"function {FlashGenerationUtils.FirstLetterToLower(methodInfo.Name)}(object:ClientObject";
+        string functionStr = $"function {FlashGenerationUtils.FirstLetterToLower(methodInfo.Name)}(clientObject:ClientObject";
 
         ParameterInfo[] parameters = methodInfo.GetParameters();
 
@@ -241,10 +277,5 @@ internal class FlashModelBaseGenerator : IClientDataGenerator
         functionStr += "):void";
         return functionStr;
     }
-
-    private async Task GenerateModelBaseServer(IModel model, string fileDir, string modelName)
-    {
-        string filePath = Path.Combine(fileDir, modelName + "BaseServer.as");
-        
-    }
+    
 }

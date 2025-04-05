@@ -3,6 +3,7 @@ using Core.GameObjects;
 using Core.Model;
 using Core.Model.Communication;
 using Core.Model.Registry;
+using Network.Channels;
 using Network.Protocol;
 using Network.Session;
 using OSGI.Services;
@@ -45,13 +46,22 @@ public class ModelCommunicationServiceImpl : IModelCommunicationService
         }
     }
 
-    public async Task InvokeServerMethod(ModelContext context, long methodId)
+    public async Task InvokeServerMethod(ModelContext context, long methodId, NetPacket packet)
     {
         (MethodInfo methodInfo, IModel model, bool isAsync) = ModelRegistry.GetModelAndMethodById(methodId);
 
+        ParameterInfo[] parameters = methodInfo.GetParameters();
+        int length = parameters.Length;
+        object?[] args = new object[length];
+
+        for (int i = 0; i < length; i++)
+        {
+            args[i] = GeneralDataDecoder.Decode(parameters[i].ParameterType, packet.PacketBuffer, packet.NullMap);
+        }
+        
         if (isAsync)
         {
-            Task? task = (Task?)methodInfo.Invoke(model, [ context ]);
+            Task? task = (Task?)methodInfo.Invoke(model, new object?[]{context}.Append(args).ToArray());
 
             if (task != null)
                 await SafeTask.AddListeners(task, context.Session!.OnError);
@@ -62,8 +72,8 @@ public class ModelCommunicationServiceImpl : IModelCommunicationService
         ModelContext.RunLocked(() =>
         {
             ModelGlobals.PutContext(context);
-            
-            methodInfo.Invoke(model, []);
+
+            methodInfo.Invoke(model, args);
             
             ModelGlobals.PopContext();
         });

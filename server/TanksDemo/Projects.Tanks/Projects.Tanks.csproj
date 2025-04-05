@@ -9,6 +9,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Core\Core.csproj" />
       <ProjectReference Include="..\Platform\Platform.csproj" />
+      <ProjectReference Include="..\SpacesCommons\SpacesCommons.csproj" />
     </ItemGroup>
 
 </Project>

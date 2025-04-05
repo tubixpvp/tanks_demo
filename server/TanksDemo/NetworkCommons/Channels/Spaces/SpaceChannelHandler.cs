@@ -49,6 +49,8 @@ public class SpaceChannelHandler : IChannelPacketHandler, IOSGiInitListener
     
     public async Task HandlePacket(NetworkSession spaceSession, NetPacket packet)
     {
+        packet.ResetPosition();
+        
         ByteArray buffer = packet.PacketBuffer;
 
         if (buffer.BytesAvailable == 0)
@@ -73,7 +75,7 @@ public class SpaceChannelHandler : IChannelPacketHandler, IOSGiInitListener
             else
                 context.Set(gameObject, spaceSession);
 
-            await ModelCommunicationService.InvokeServerMethod(context, methodId);
+            await ModelCommunicationService.InvokeServerMethod(context, methodId, packet);
         }
     }
 
@@ -187,6 +189,11 @@ public class SpaceChannelHandler : IChannelPacketHandler, IOSGiInitListener
         spacesData.ConnectingSpace = space;
         
         ControlChannelHandler.SendOpenSpace(controlSession);
+    }
+
+    public void DisconnectFromSpace(NetworkSession controlSession, NetworkSession spaceSession)
+    {
+        spaceSession.Socket.Disconnect();
     }
 
     private static SessionSpacesData GetControlSessionData(NetworkSession controlSession)

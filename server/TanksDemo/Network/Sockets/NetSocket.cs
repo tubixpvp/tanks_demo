@@ -248,23 +248,20 @@ public class NetSocket
         OnError?.Invoke(e);
     }
 
-    private void Disconnect()
+    public void Disconnect()
     {
         if (_disconnected)
             return;
         
         _readingActive = false;
         
-        if (_socket.Connected)
+        try
         {
-            try
-            {
-                _socket.Close();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
+            _socket.Close();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
         }
 
         _disconnected = true;
@@ -288,7 +285,7 @@ public class NetSocket
     {
         _buffer.Dispose();
         _packetBuffer.Dispose();
-        _packetDataBuffer.Dispose();
+        //_packetDataBuffer.Dispose();
 
         OnPacketReceived = null;
         OnDisconnected = null;

@@ -99,9 +99,10 @@ package alternativa.network.handler {
 					switch (controlCommand.id) {
 						case ControlCommand.OPEN_SPACE:
 							Main.writeToConsole("[ControlCommandHandler.executeCommand] OPEN SPACE NEW", 0x0000cc);
-							var handler:ICommandHandler = new SpaceCommandHandler(hashCode, _modelRegister, librariesPath);
+							var handler:SpaceCommandHandler = new SpaceCommandHandler(hashCode, _modelRegister, librariesPath);
 							var spaceSocket:ICommandSender = ICommandSender(spaceClient.newConnection(handler));
 							var info:SpaceInfo = new SpaceInfo(handler, spaceSocket, SpaceCommandHandler(handler).objectRegister);
+							handler.spaceInfo = info;
 							ISpaceService(Main.osgi.getService(ISpaceService)).addSpace(info);
 							break;
 						case ControlCommand.LOAD_RESOURCE:

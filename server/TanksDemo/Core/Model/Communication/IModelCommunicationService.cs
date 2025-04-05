@@ -1,4 +1,5 @@
 using Core.GameObjects;
+using Network.Channels;
 using Network.Protocol;
 using Network.Session;
 using Utils;
@@ -12,7 +13,8 @@ public interface IModelCommunicationService
         IModel model,
         IEnumerable<NetworkSession> sessions,
         Action<CI> callback);
-    public Task InvokeServerMethod(ModelContext context, long methodId);
+
+    public Task InvokeServerMethod(ModelContext context, long methodId, NetPacket packet);
 
     public void SendSpaceCommand(long objectId, long methodId,
         IEnumerable<NetworkSession> sessions,

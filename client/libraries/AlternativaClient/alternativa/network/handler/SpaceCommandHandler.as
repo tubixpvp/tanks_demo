@@ -13,11 +13,18 @@ package alternativa.network.handler {
 	
 	import flash.utils.ByteArray;
 	import flash.utils.IDataInput;
+
+	import alternativa.service.ISpaceService;
+	import alternativa.register.SpaceInfo;
+	import flash.utils.Dictionary;
+	import alternativa.object.ClientObject;
 	
 	/**
 	 * Обработчик команд спейса.
 	 */
 	public class SpaceCommandHandler implements ICommandHandler {
+
+		public var spaceInfo:SpaceInfo;
 		
 		private var sender:ICommandSender;
 		
@@ -58,7 +65,19 @@ package alternativa.network.handler {
 		/**
 		 * Рассылка события "соединение закрыто".  
 		 */
-		public function close():void {}
+		public function close():void 
+		{
+			//not original code:
+			var spaceRegister:ISpaceService = Main.osgi.getService(ISpaceService) as ISpaceService;
+			spaceRegister.removeSpace(spaceInfo);
+
+			var objects:Dictionary = _objectRegister.getObjects();
+
+			for(var id:Long in objects)
+			{
+				_objectRegister.destroyObject(id);
+			}
+		}
 		
 		/**
 		 * Обработка команды.

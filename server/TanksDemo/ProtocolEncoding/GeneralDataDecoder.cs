@@ -23,6 +23,14 @@ public static class GeneralDataDecoder
         return (T?)Decode(type, bytes, nullMap, optional);
     }
 
+    public static object? Decode(Type type, ByteArray bytes, NullMap nullMap)
+    {
+        Type? underlyingType = Nullable.GetUnderlyingType(type);
+        bool optional = underlyingType != null;
+        type = underlyingType ?? type;
+        return Decode(type, bytes, nullMap, optional);
+    }
+
     public static object? Decode(Type type, ByteArray bytes, NullMap nullMap, bool optional)
     {
         if (IsNull(nullMap, optional))

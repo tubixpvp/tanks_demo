@@ -16,16 +16,19 @@ public class SpacesActivatorService
 
     [InjectService]
     private static ModelRegistry ModelRegistry;
+
+    private static readonly Random Random = new();
     
     public void Init()
     {
         SpaceConfigJson[] configs = [
-            ServerResources.GetConfig<SpaceConfigJson>("entrance_space.json")
+            ServerResources.GetConfig<SpaceConfigJson>("entrance_space.json"),
+            ServerResources.GetConfig<SpaceConfigJson>("lobby_space.json")
         ];
 
         foreach (SpaceConfigJson config in configs)
         {
-            Space space = SpaceRegistry.CreateSpace(config.Id, config.Name);
+            Space space = SpaceRegistry.CreateSpace(Random.NextInt64(long.MinValue,long.MaxValue), config.Name);
 
             foreach (ObjectDataJson objectData in config.Objects)
             {
@@ -60,9 +63,6 @@ public class SpacesActivatorService
 
     class SpaceConfigJson
     {
-        [JsonProperty("id")]
-        public long Id;
-
         [JsonProperty("name")]
         public string Name;
 

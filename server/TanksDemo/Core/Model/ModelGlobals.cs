@@ -1,5 +1,6 @@
 ﻿using Core.Model.Communication;
 using Core.Model.Registry;
+using Logging;
 using OSGI.Services;
 
 namespace Core.Model;
@@ -10,6 +11,9 @@ public abstract class ModelGlobals
     
     [InjectService]
     protected static IModelCommunicationService ModelCommunicationService;
+
+    [InjectService]
+    protected static LoggerService LoggerService;
 
 
     public static ModelContext Context => _currentContext;

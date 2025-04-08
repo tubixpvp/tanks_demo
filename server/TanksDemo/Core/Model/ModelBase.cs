@@ -28,4 +28,9 @@ public abstract class ModelBase<CI> : ModelGlobals, IModel where CI : class
     {
         return LoggerService.GetLogger(GetType());
     }
+
+    protected T GetEntity<T>()
+    {
+        return Context.Object.GetModelEntity<T>(Id);
+    }
 }

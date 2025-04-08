@@ -32,6 +32,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpacesCommons", "SpacesComm
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreModels", "CoreModels\CoreModels.csproj", "{F2BD1B94-302B-4E33-9A30-DE948894527E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameResources", "GameResources\GameResources.csproj", "{1CBAFD78-F9F2-46D9-AD64-DBF5335A6B14}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -102,5 +104,9 @@ Global
 		{F2BD1B94-302B-4E33-9A30-DE948894527E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F2BD1B94-302B-4E33-9A30-DE948894527E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F2BD1B94-302B-4E33-9A30-DE948894527E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1CBAFD78-F9F2-46D9-AD64-DBF5335A6B14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CBAFD78-F9F2-46D9-AD64-DBF5335A6B14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CBAFD78-F9F2-46D9-AD64-DBF5335A6B14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CBAFD78-F9F2-46D9-AD64-DBF5335A6B14}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

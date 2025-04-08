@@ -66,10 +66,12 @@ internal class LibrariesBuilder
 
         //await Task.WhenAll(libs.Select(
         //    libName => BuildLibrary(libName, libIndex++, libsData)));
-        foreach (string taskName in tasks)
+        /*foreach (string taskName in tasks)
         {
             await BuildLibrary(taskName, libIndex++, libsData);
-        }
+        }*/
+        await Task.WhenAll(tasks.Select(
+            taskName => BuildLibrary(taskName, libIndex++, libsData)));
 
         await LibsDataService.WriteLibsData(_clientRootDir, libsData);
 

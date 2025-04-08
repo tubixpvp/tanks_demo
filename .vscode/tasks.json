@@ -25,7 +25,8 @@
 				"-tasks ${workspaceFolder}/.vscode/tasks.json",
 				"-build_task Game Client Build",
 				"-output ${workspaceFolder}/file_server_data/",
-				"-debug true"
+				"-debug true",
+				"-resCacheDir ${workspaceFolder}/server/resources_cache/"
 			],
 			"options": {
 				"cwd": "${workspaceFolder}/server/TanksDemo/ResourcesBuilder"

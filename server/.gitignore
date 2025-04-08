@@ -2,3 +2,4 @@ bin
 .idea
 obj
 /models.json
+/resources_cache

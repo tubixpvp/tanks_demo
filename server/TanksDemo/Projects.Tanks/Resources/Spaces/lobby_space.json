@@ -1,0 +1,36 @@
+{
+    "name": "Lobby",
+    
+    "objects": [
+        
+        {
+            "name": "Root",
+            
+            "entities": {
+                "LobbyEntity": {
+                    "Armies": ["Green","Desert","Blue-gray"],
+                    "DefaultArmy": "Green",
+                    
+                    "Tanks": ["Heavy","Middle","Light"],
+                    "DefaultTank": "Light",
+                    
+                    "Maps": [
+                        {
+                            "Name": "Tankograd",
+                            "Description": "description",
+                            "MaxTanks": 10,
+                            "PreviewId": "level.preview"
+                        }
+                    ]
+                }
+            },
+            
+            "children": [],
+            
+            "attach": true
+        }
+        
+    ],
+    
+    "templates": []
+}

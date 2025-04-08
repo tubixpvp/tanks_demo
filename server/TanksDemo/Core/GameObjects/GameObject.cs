@@ -144,6 +144,8 @@ public class GameObject
     public void PutClientInitParams(long modelId, ModelInitParams initParams) => _modelsClientInitParams[modelId] = initParams;
     public ModelInitParams? GetClientInitParams(long modelId) => _modelsClientInitParams.GetValueOrDefault(modelId);
 
+    public T GetModelEntity<T>(long modelId) => (T)_entities[modelId].First(entity => entity is T);
+    
     public override string ToString()
     {
         return $"{nameof(GameObject)}(name={Name}, id={Id})";

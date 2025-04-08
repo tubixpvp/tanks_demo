@@ -11,6 +11,7 @@
       <ProjectReference Include="..\Config\Config.csproj" />
       <ProjectReference Include="..\CoreModels\CoreModels.csproj" />
       <ProjectReference Include="..\Core\Core.csproj" />
+      <ProjectReference Include="..\GameResources\GameResources.csproj" />
       <ProjectReference Include="..\NetworkCommons\NetworkCommons.csproj" />
       <ProjectReference Include="..\Network\Network.csproj" />
       <ProjectReference Include="..\Platform\Platform.csproj" />

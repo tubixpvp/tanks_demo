@@ -7,11 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Core\Core.csproj" />
-      <ProjectReference Include="..\GameResources\GameResources.csproj" />
-      <ProjectReference Include="..\Platform\Platform.csproj" />
-      <ProjectReference Include="..\SpacesCommons\SpacesCommons.csproj" />
-        
+      <ProjectReference Include="..\Config\Config.csproj" />
+      <ProjectReference Include="..\OSGI\OSGI.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Resources" />
         <Content Include="Resources\**\*">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>

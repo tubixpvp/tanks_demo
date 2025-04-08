@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using System.Xml.Linq;
+using Config;
 using Logging;
 using Utils;
 
@@ -26,6 +27,9 @@ internal class ResourceBuilderRunner
     {
         _logger.Log(LogLevel.Info, "Starting resource generator");
 
+        ServerLaunchParams.Init(launchParams);
+        
+
         DebugMode = launchParams.GetBoolean("debug");
 
         _resourcesOutputDir = launchParams.GetString("output") ?? throw new Exception("Output directory is not provided");
@@ -38,12 +42,13 @@ internal class ResourceBuilderRunner
             Directory.Delete(_resourcesOutputDir, true);
         }
         Directory.CreateDirectory(_resourcesOutputDir);
-        
-        SafeTask.Run(async () =>
-        {
-            await (new LibrariesBuilder(launchParams, this).Build());
+
+        SafeTask.Run(() => Task.WhenAll([
+            new LibrariesBuilder(launchParams, this).Build(),
             
-        }, null).Wait();
+            new GameResourcesBuilder(launchParams, this).Build()
+        ]), null).Wait();
+        
     }
 
     public async Task BuildResource(long id, long version, string name, Dictionary<string, byte[]> filesData)

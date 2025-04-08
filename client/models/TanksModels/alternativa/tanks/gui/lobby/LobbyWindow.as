@@ -187,7 +187,7 @@ package alternativa.tanks.gui.lobby {
 			
 			regButton = new LobbyImageButton(regButtonNormalBd, regButtonNormalBd, regButtonPressBd, regButtonNormalBd);
 			regButton.addEventListener(ButtonEvent.CLICK, onRegButtonPress);
-			//rightContainer.addObject(regButton);
+			rightContainer.addObject(regButton);
 			
 			tabIndexes = new Array(startButton);
 			
@@ -249,7 +249,7 @@ package alternativa.tanks.gui.lobby {
 				var mapName:String = MapStruct(maps[i]).name;
 				var mapDescription:String = MapStruct(maps[i]).description;
 				var mapMaxPlayersNum:int = MapStruct(maps[i]).maxTanksOnline;
-				var mapPreview:BitmapData = new BitmapData(100,100);// TextureResource(Main.resourceRegister.getResource(MapStruct(maps[i]).previewResourceId)).data.bitmapData;
+				var mapPreview:BitmapData = TextureResource(Main.resourceRegister.getResource(MapStruct(maps[i]).previewResourceId)).data.bitmapData;
 				var button:LobbyMapIcon = new LobbyMapIcon(mapName, mapDescription, mapPreview, mapMaxPlayersNum);
 				button.playersNum = MapStruct(maps[i]).tanksOnline;
 				if (mapMaxPlayersNum == MapStruct(maps[i]).tanksOnline) {
@@ -329,15 +329,15 @@ package alternativa.tanks.gui.lobby {
 		}
 		
 		public function showRegisterButton():void {
-			/*if (!rightContainer.contains(regButton)) {
+			if (!rightContainer.contains(regButton)) {
 				rightContainer.addObject(regButton);
 				rightContainer.repaintCurrentSize();
-			}*/
+			}
 		}
 		public function hideRegisterButton():void {
-			/*if (rightContainer.contains(regButton)) {
+			if (rightContainer.contains(regButton)) {
 				rightContainer.removeObject(regButton);
-			}*/
+			}
 		}
 		
 		private function onTankModelSelect(e:ButtonEvent):void {

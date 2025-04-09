@@ -25,6 +25,9 @@ internal class FlashModelBaseGenerator : IClientDataGenerator
     {
         Type modelType = model.GetType();
 
+        if (modelType.GetCustomAttribute<ModelAttribute>()!.ServerOnly)
+            return;
+
         string packageName = modelType.Namespace!.ToLower();
         string fileDir = Path.Combine(baseSrcRoot, FlashGenerationUtils.GetDirectoryByNamespace(modelType.Namespace!));
 

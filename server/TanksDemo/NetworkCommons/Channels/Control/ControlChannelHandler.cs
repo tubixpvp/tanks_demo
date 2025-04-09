@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using GameResources;
 using Logging;
 using Network.Channels;
 using Network.Protocol;
@@ -95,7 +96,7 @@ public class ControlChannelHandler : IChannelPacketHandler, IOSGiInitListener
         NetPacket packet = new NetPacket(sendBuffer, nullMap);
         
         ICustomCodec commandCodec = CodecsRegistry.GetCodec(command.GetType())!;
-
+        
         GeneralDataEncoder.Encode(command.CommandId, packet);
 
         commandCodec.Encode(command, sendBuffer, nullMap);
@@ -159,6 +160,11 @@ public class ControlChannelHandler : IChannelPacketHandler, IOSGiInitListener
     public void SendOpenSpace(NetworkSession session)
     {
         SendCommand(new OpenSpaceCommand(), session);
+    }
+
+    public void SendLoadResources(NetworkSession session, int batchId, ResourceInfo[][] resources)
+    {
+        SendCommand(new LoadResourcesCommand(batchId, resources), [session]);
     }
 
     public delegate Task SessionClosedDelegate(NetworkSession controlSession);

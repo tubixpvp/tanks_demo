@@ -135,6 +135,24 @@ public class GameObject
 
         return proxy;
     }
+
+
+    public Action GetObjectWrapper(Action func, NetworkSession? session = null)
+    {
+        return () =>
+        {
+            if (!_loaded)
+                return;
+            ModelContext.RunLocked(() =>
+            {
+                ModelGlobals.PutContext(new ModelContext(this, session));
+
+                func();
+                
+                ModelGlobals.PopContext();
+            });
+        };
+    }
     
     
     public void PutData(Type key, object data) => _runtimeData[key] = data;

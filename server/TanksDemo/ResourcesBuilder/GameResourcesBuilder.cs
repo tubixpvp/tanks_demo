@@ -30,6 +30,8 @@ internal class GameResourcesBuilder
         
         _resourceBuilder = resourceBuilder;
         
+        ResourceRegistry.OnOSGiInited(); //init service
+        
         _resources = ResourceRegistry.GetAllResources();
     }
 
@@ -49,7 +51,7 @@ internal class GameResourcesBuilder
         Dictionary<string, string> resourceHashes = resourceFiles.ToDictionary(
             pair => pair.Key, pair => HashUtil.GetBase64SHA256String(pair.Value));
 
-        ResourceFilesCache resourceCache = await ResourceRegistry.LoadResourceCache(resourceInfo.Id);
+        ResourceFilesCache resourceCache = resourceInfo.Cache;// await ResourceRegistry.LoadResourceCache(resourceInfo.Id);
 
         bool changed = false;
         foreach ((string fileName, string fileHash) in resourceHashes)

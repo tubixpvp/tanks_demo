@@ -1,6 +1,7 @@
 ﻿using Core.GameObjects;
 using Core.Model;
 using Core.Model.Communication;
+using CoreModels.GameObjectLoader;
 using GameResources;
 using OSGI.Services;
 using Projects.Tanks.Models.Lobby.Struct;
@@ -9,7 +10,7 @@ namespace Projects.Tanks.Models.Lobby;
 
 [ModelEntity(typeof(LobbyEntity))]
 [Model]
-internal class LobbyModel(long id) : ModelBase<ILobbyModelClient>(id), ObjectListener.Load
+internal class LobbyModel(long id) : ModelBase<ILobbyModelClient>(id), ObjectListener.Load, IResourceRequire
 {
     [InjectService]
     private static ResourceRegistry ResourceRegistry;
@@ -63,6 +64,12 @@ internal class LobbyModel(long id) : ModelBase<ILobbyModelClient>(id), ObjectLis
                 true,
                 tanks,
                 []));
+    }
+    
+    public void CollectGameResources(List<string> resourcesIds)
+    {
+        resourcesIds.AddRange(GetEntity<LobbyEntity>().Maps.Select(
+            mapInfo => mapInfo.PreviewId));
     }
 
 

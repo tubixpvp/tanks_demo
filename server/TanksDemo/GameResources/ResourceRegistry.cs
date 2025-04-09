@@ -6,7 +6,7 @@ using OSGI.Services;
 namespace GameResources;
 
 [Service]
-public class ResourceRegistry
+public class ResourceRegistry : IOSGiInitListener
 {
     public const string ResourceInfoFile = "info.json";
     
@@ -14,19 +14,22 @@ public class ResourceRegistry
     private static readonly Random Random = new();
     
     
-    private readonly Dictionary<string, ResourceInfo> _resources = new();
-
-    private readonly ResourceInfo[] _resourcesArray;
-
-    
     private readonly string _resourcesCacheDir;
+    
+    
+    private readonly Dictionary<string, ResourceInfo> _resources = new();
+    
+    private ResourceInfo[] _resourcesArray;
     
     
     public ResourceRegistry()
     {
         _resourcesCacheDir = ServerLaunchParams.GetLaunchParams().GetString("resCacheDir") ?? throw new Exception("Resources cache directory is not provided");
         _resourcesCacheDir = Path.GetFullPath(_resourcesCacheDir);
-
+    }
+    
+    public void OnOSGiInited()
+    {
         if (!Directory.Exists(_resourcesCacheDir))
         {
             Directory.CreateDirectory(_resourcesCacheDir);
@@ -49,16 +52,17 @@ public class ResourceRegistry
             _resources.Add(json.Id, new ResourceInfo()
             {
                 Id = json.Id,
-                NumericId = cache.NumericId,
                 Type = json.Type,
-                FilesPath = resourceRootDir
+                FilesPath = resourceRootDir,
+                DependenciesIds = json.Dependencies ?? [],
+                Cache = cache
             });
         }
         
         _resourcesArray = _resources.Values.ToArray();
     }
 
-    public async Task<ResourceFilesCache> LoadResourceCache(string resourceId)
+    private async Task<ResourceFilesCache> LoadResourceCache(string resourceId)
     {
         string path = Path.Combine(_resourcesCacheDir, resourceId + ".json");
         
@@ -106,5 +110,8 @@ public class ResourceRegistry
 
         [JsonProperty("description")]
         public string Description;
+
+        [JsonProperty("dependencies")]
+        public string[]? Dependencies;
     }
 }

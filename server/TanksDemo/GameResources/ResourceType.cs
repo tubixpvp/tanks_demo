@@ -2,5 +2,5 @@ namespace GameResources;
 
 public enum ResourceType
 {
-    Texture
+    Texture = 4
 }

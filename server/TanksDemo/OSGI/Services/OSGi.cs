@@ -70,7 +70,10 @@ public static class OSGi
                 }
             }
         }
+    }
 
+    public static void CallInitedEvent()
+    {
         foreach (object serviceImpl in Services.Values)
         {
             if (serviceImpl is IOSGiInitListener listener)

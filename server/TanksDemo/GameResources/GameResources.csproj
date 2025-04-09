@@ -9,6 +9,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Config\Config.csproj" />
       <ProjectReference Include="..\OSGI\OSGI.csproj" />
+      <ProjectReference Include="..\ProtocolEncoding\ProtocolEncoding.csproj" />
     </ItemGroup>
 
     <ItemGroup>

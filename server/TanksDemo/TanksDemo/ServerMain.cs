@@ -23,6 +23,7 @@ internal class ServerMain
         ServerResources.Init();
         
         OSGi.Init();
+        OSGi.CallInitedEvent();
 
         OSGi.GetService<ModelRegistry>().Init();
         OSGi.GetService<SpacesActivatorService>().Init();

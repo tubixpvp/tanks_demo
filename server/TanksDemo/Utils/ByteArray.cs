@@ -40,6 +40,7 @@ public class ByteArray : IDisposable
 
     public void WriteLong(long value) => _writer.Write(value);
     public void WriteInt(int value) => _writer.Write(value);
+    public void WriteShort(short value) => _writer.Write(value);
     public void WriteByte(byte value) => _writer.Write(value);
     public void WriteByte(int value) => _writer.Write((byte)value);
     

@@ -1,8 +1,9 @@
+using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using Core.GameObjects;
 using Core.Model;
 using Network.Protocol;
 using Network.Session;
-using Newtonsoft.Json;
 using ProtocolEncoding;
 using Utils;
 
@@ -50,9 +51,12 @@ internal class DispatcherModel(long modelId) : ModelBase<IDispatcherModelClient>
                         int paramsNum = entry.modelParams.ParametersInfo.Length;
                         for (int i = 0; i < paramsNum; i++)
                         {
-                            GeneralDataEncoder.Encode(entry.modelParams.ParametersInfo[i].ParameterType,
+                            ParameterInfo paramInfo = entry.modelParams.ParametersInfo[i];
+                            GeneralDataEncoder.Encode(paramInfo.ParameterType,
                                 entry.modelParams.ArgumentsData[i],
-                                buffer, nullMap);
+                                buffer, nullMap,
+                                Nullable.GetUnderlyingType(paramInfo.ParameterType) != null
+                                || paramInfo.GetCustomAttribute<MaybeNullAttribute>() != null);
                         }
                     }
                 }

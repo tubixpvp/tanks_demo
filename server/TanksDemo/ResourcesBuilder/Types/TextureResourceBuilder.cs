@@ -6,22 +6,17 @@ namespace ResourcesBuilder.Types;
 
 internal class TextureResourceBuilder : ResourceTypeBuilderBase
 {
-    private static readonly string[] DiffuseFileNames = [
-        "texture.png", "texture.jpg", "texture.gif"
-    ];
-    private static readonly string[] AlphaFileNames = [
-        "alpha.png", "alpha.jpg", "alpha.gif"
-    ];
+    private static readonly string[] DiffuseFileNames = ["texture","image"];
+    private static readonly string[] AlphaFileNames = ["alpha"];
     
-    private static readonly string[] FileExtensions = ["png", "jpg", "gif"];
+    private static readonly string[] FileExtensions = ["png", "jpg", "jpeg", "gif"];
     
-    public override async Task CollectFiles(ResourceInfo resourceInfo, string[] resourceFiles, Dictionary<string, byte[]> outputFiles)
+    public override async Task<string> CollectFiles(ResourceInfo resourceInfo, string[] resourceFiles, Dictionary<string, byte[]> outputFiles)
     {
-        outputFiles["texture.jpg"] = await LoadFirstWithName(resourceInfo.FilesPath, DiffuseFileNames)
-                                     ?? await LoadFirstWithExtension(resourceFiles, FileExtensions)
+        outputFiles["texture.jpg"] = await LoadFirst(resourceInfo.FilesPath, DiffuseFileNames, FileExtensions)
                                      ?? throw new Exception("No texture found: " + resourceInfo.FilesPath);
 
-        byte[]? alphaData = await LoadFirstWithName(resourceInfo.FilesPath, AlphaFileNames);
+        byte[]? alphaData = await LoadFirst(resourceInfo.FilesPath, AlphaFileNames, FileExtensions);
 
         if (alphaData != null)
         {
@@ -31,6 +26,8 @@ internal class TextureResourceBuilder : ResourceTypeBuilderBase
         outputFiles["texture.xml"] = Encoding.UTF8.GetBytes(new XElement("texture",
             new XAttribute("alpha", (alphaData != null).ToString().ToLower())
         ).ToString());
+
+        return string.Empty;
     }
     
 }

@@ -13,6 +13,7 @@ internal class GameResourcesBuilder
     private static readonly Dictionary<ResourceType, ResourceTypeBuilderBase> ResourceTypeBuilders = new()
     {
         [ResourceType.Texture] = new TextureResourceBuilder(),
+        [ResourceType.A3D] = new A3DResourceBuilder()
     };
 
 
@@ -37,7 +38,7 @@ internal class GameResourcesBuilder
 
     public async Task Build()
     {
-        await Task.WhenAll(_resources.Select(BuildResource));
+        await SafeTask.AddListeners(Task.WhenAll(_resources.Select(BuildResource)), null);
     }
 
     private async Task BuildResource(ResourceInfo resourceInfo)
@@ -46,7 +47,7 @@ internal class GameResourcesBuilder
         _logger.Log(LogLevel.Info, 
             $"Building resource {resourceInfo.Id} from {resourceInfo.FilesPath}");
         
-        Dictionary<string, byte[]> resourceFiles = await CollectFiles(resourceInfo);
+        (Dictionary<string, byte[]> resourceFiles, string resourceName) = await CollectFiles(resourceInfo);
 
         Dictionary<string, string> resourceHashes = resourceFiles.ToDictionary(
             pair => pair.Key, pair => HashUtil.GetBase64SHA256String(pair.Value));
@@ -71,11 +72,11 @@ internal class GameResourcesBuilder
             await ResourceRegistry.SaveResourceCache(resourceInfo.Id, resourceCache);
         }
 
-        await _resourceBuilder.BuildResource(resourceInfo.NumericId, resourceCache.Version, "r", resourceFiles);
+        await _resourceBuilder.BuildResource(resourceInfo.NumericId, resourceCache.Version, resourceName, resourceFiles);
 
     }
 
-    private async Task<Dictionary<string, byte[]>> CollectFiles(ResourceInfo resourceInfo)
+    private async Task<(Dictionary<string, byte[]>, string)> CollectFiles(ResourceInfo resourceInfo)
     {
         ResourceTypeBuilderBase typeBuilder = ResourceTypeBuilders[resourceInfo.Type];
         
@@ -87,9 +88,9 @@ internal class GameResourcesBuilder
 
         Dictionary<string, byte[]> resourceFiles = new();
 
-        await typeBuilder.CollectFiles(resourceInfo, files, resourceFiles);
+        string resourceName = await typeBuilder.CollectFiles(resourceInfo, files, resourceFiles);
 
-        return resourceFiles;
+        return (resourceFiles, resourceName);
     }
     
 }

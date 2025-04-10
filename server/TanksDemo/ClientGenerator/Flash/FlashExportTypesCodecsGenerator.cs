@@ -1,6 +1,6 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Core.Generator;
-using Newtonsoft.Json;
 using ProtocolEncoding;
 using Utils;
 
@@ -10,59 +10,25 @@ internal class FlashExportTypesCodecsGenerator : IClientDataGenerator
 {
     public async Task Generate(string baseSrcRoot)
     {
-        Type[] exportTypes = AttributesUtil.GetTypesWithAttribute(typeof(ClientExportAttribute));
-
-        exportTypes = exportTypes
-            .Where(type => type.GetCustomAttribute<ClientExportAttribute>()!.GenerateCodec)
-            .ToArray();
+        Type[] exportTypes = GetExportTypes();
 
         string codecsSrcRoot = Path.Combine(baseSrcRoot, "codecs");
         
         await Task.WhenAll(exportTypes.Select(type => GenerateCodec(type, codecsSrcRoot)));
-
-        await GenerateCodecsActivator(codecsSrcRoot, exportTypes);
-
-        await WriteManifest(baseSrcRoot);
     }
 
-    private async Task WriteManifest(string baseSrcRoot)
+    private static Type[] GetExportTypes()
     {
-        string filePath =Path.Combine(baseSrcRoot, "manifest.json");
+        Type[] exportTypes = AttributesUtil.GetTypesWithAttribute(typeof(ClientExportAttribute));
 
-        await File.WriteAllTextAsync(filePath, JsonConvert.SerializeObject(new
-        {
-            activator = "codecs.osgi.CodecsActivator"
-        }));
+        return exportTypes
+            .Where(type => type.GetCustomAttribute<ClientExportAttribute>()!.GenerateCodec)
+            .ToArray();
     }
 
-    private async Task GenerateCodecsActivator(string baseSrcRoot, Type[] exportTypes)
+    public void GenerateActivator(FlashCodeGenerator generator)
     {
-        string className = "CodecsActivator";
-        string classPackage = "codecs.osgi";
-        
-        string fileDir = Path.Combine(baseSrcRoot, FlashGenerationUtils.GetDirectoryByNamespace(classPackage));
-        
-        if (!Directory.Exists(fileDir))
-            Directory.CreateDirectory(fileDir);
-        
-        string filePath = Path.Combine(fileDir, className + ".as");
-
-        
-        FlashCodeGenerator generator = new FlashCodeGenerator(classPackage, [
-            "alternativa.osgi.bundle.IBundleActivator",
-            "alternativa.protocol.factory.ICodecFactory",
-            "alternativa.init.OSGi",
-            "alternativa.init.Main"
-        ]);
-        
-        generator.AddLine("public class CodecsActivator implements IBundleActivator");
-        
-        generator.OpenCurvedBrackets();
-        //class content:
-        
-        generator.AddLine("public function start(osgi:OSGi) : void");
-        generator.OpenCurvedBrackets();
-        //start func:
+        Type[] exportTypes = GetExportTypes();
         
         generator.AddLine("var codecFactory:ICodecFactory = Main.codecFactory;");
 
@@ -78,18 +44,6 @@ internal class FlashExportTypesCodecsGenerator : IClientDataGenerator
 
             generator.AddImport(package + ".Codec" + exportType.Name);
         }
-        
-        generator.CloseCurvedBrackets(); //start func end
-        
-        
-        generator.AddLine("public function stop(osgi:OSGi) : void");
-        generator.OpenCurvedBrackets();
-        generator.CloseCurvedBrackets();
-        
-        
-        generator.CloseCurvedBrackets(); //class content end
-        
-        await File.WriteAllTextAsync(filePath, generator.GetResult());
     }
 
     private async Task GenerateCodec(Type type, string codecsSrcRoot)
@@ -216,7 +170,7 @@ internal class FlashExportTypesCodecsGenerator : IClientDataGenerator
             
             Type fieldType = fieldInfo.FieldType;
             Type? underlyingType = Nullable.GetUnderlyingType(fieldType);
-            bool optional = underlyingType != null;
+            bool optional = underlyingType != null || fieldInfo.GetCustomAttribute<MaybeNullAttribute>() != null;
             if (underlyingType != null)
                 fieldType = underlyingType;
             

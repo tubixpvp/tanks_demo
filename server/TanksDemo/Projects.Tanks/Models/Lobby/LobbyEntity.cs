@@ -1,3 +1,5 @@
+using Projects.Tanks.Models.Lobby.Configs;
+
 namespace Projects.Tanks.Models.Lobby;
 
 internal class LobbyEntity
@@ -5,7 +7,7 @@ internal class LobbyEntity
     public string[] Armies;
     public string DefaultArmy;
 
-    public string[] Tanks;
+    public TankInfo[] Tanks;
     public string DefaultTank;
 
     public MapInfo[] Maps;

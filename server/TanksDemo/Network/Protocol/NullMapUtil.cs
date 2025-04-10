@@ -2,7 +2,7 @@ using Utils;
 
 namespace Network.Protocol;
 
-internal static class NullMapUtil
+public static class NullMapUtil
 {
     private const byte InplaceMaskFlag = 0x80;
     private const byte MaskLength2BytesFlag = 0x40;

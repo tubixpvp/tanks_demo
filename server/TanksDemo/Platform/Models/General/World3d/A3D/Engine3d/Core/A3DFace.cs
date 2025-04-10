@@ -8,7 +8,7 @@ public class A3DFace
 {
     public int[] Vertices;
 
-    [MaybeNull] public A3DVector2D AUV;
-    [MaybeNull] public A3DVector2D BUV;
-    [MaybeNull] public A3DVector2D CUV;
+    [MaybeNull] public A3DVector2D? AUV;
+    [MaybeNull] public A3DVector2D? BUV;
+    [MaybeNull] public A3DVector2D? CUV;
 }

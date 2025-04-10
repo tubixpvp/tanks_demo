@@ -1,11 +1,10 @@
-﻿using Core.Generator;
+﻿using System.Diagnostics.CodeAnalysis;
+using Core.Generator;
 
 namespace Platform.Models.General.World3d.A3D.Engine3d.Materials;
 
 [ClientExport]
-public class A3DTextureMaterial
+public class A3DTextureMaterial : A3DMaterial
 {
-    public A3DResourceLink Texture;
-
-    public float Alpha;
+    [MaybeNull] public A3DResourceLink? Texture;
 }

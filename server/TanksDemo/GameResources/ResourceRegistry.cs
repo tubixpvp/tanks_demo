@@ -36,7 +36,7 @@ public class ResourceRegistry : IOSGiInitListener
         }
         
         string appRootPath = Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!;
-        string resourcesPath = Path.Combine(appRootPath, "Resources/Game");
+        string resourcesPath = Path.Combine(appRootPath, "GameResources");
 
         string[] resourceInfoFiles = Directory.GetFiles(resourcesPath, ResourceInfoFile, SearchOption.AllDirectories);
 

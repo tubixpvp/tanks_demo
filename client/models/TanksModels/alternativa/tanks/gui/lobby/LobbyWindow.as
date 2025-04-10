@@ -28,6 +28,9 @@ package alternativa.tanks.gui.lobby {
 	import projects.tanks.models.lobby.struct.TankStruct;
 	import projects.tanks.models.lobby.struct.ArmyStruct;
 	import projects.tanks.models.lobby.struct.TopRecord;
+	import alternativa.engine3d.core.Object3D;
+	import alternativa.engine3d.core.Mesh;
+	import alternativa.engine3d.materials.TextureMaterial;
 	
 	
 	public class LobbyWindow extends WindowBase {
@@ -276,8 +279,19 @@ package alternativa.tanks.gui.lobby {
 			(Main.osgi.getService(IConsoleService) as IConsoleService).writeToConsole(message);
 		}
 		
-		public function showTank(resource:A3DResource):void {
-			tankPreview.setModel(resource.object);
+		public function showTank(modelResource:A3DResource, textureResource:TextureResource):void {
+			var object:Object3D = modelResource.object;
+
+			var material:TextureMaterial = new TextureMaterial(textureResource.data);
+
+			object.forEach(function(child:Object3D):void{
+				if(child is Mesh)
+				{
+					(child as Mesh).cloneMaterialToAllSurfaces(material);
+				}
+			});
+
+			tankPreview.setModel(object);
 		}
 		
 		public function updateMap(mapIndex:int, playersCount:int):void {

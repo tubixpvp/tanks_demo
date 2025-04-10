@@ -137,7 +137,7 @@ public class GameObject
     }
 
 
-    public Action GetObjectWrapper(Action func, NetworkSession? session = null)
+    public Action GetFunctionWrapper(Action func, NetworkSession? session = null)
     {
         return () =>
         {

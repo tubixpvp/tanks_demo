@@ -52,9 +52,21 @@ public class ClientResourcesService : IClientResourceLoadListener, IOSGiInitList
 
         SessionResourcesData sessionData = GetSessionData(session);
 
+        lock (sessionData.LoadedResources)
+        {
+            resources = resources.Except(sessionData.LoadedResources).ToArray();
+        }
+
+        if (resources.Length == 0)
+        {
+            resourcesLoadedCallback();
+            return;
+        }
+
         int loadId = sessionData.LoadCounter++;
 
         sessionData.LoadCallbacks.TryAdd(loadId, resourcesLoadedCallback);
+        sessionData.LoadingResources.TryAdd(loadId, resources);
 
         ResourceInfo[][] batches = BuildBatches(resources);
         
@@ -155,6 +167,14 @@ public class ClientResourcesService : IClientResourceLoadListener, IOSGiInitList
     public void OnResourceLoaded(NetworkSession controlSession, int batchId)
     {
         SessionResourcesData sessionData = GetSessionData(controlSession);
+
+        if (sessionData.LoadingResources.TryRemove(batchId, out ResourceInfo[]? resources))
+        {
+            lock (sessionData.LoadedResources)
+            {
+                sessionData.LoadedResources.AddRange(resources);
+            }
+        }
 
         if (sessionData.LoadCallbacks.TryGetValue(batchId, out Action? loadCallback))
         {

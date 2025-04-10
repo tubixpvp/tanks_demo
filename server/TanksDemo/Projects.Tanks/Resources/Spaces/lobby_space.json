@@ -8,16 +8,44 @@
             
             "entities": {
                 "LobbyEntity": {
-                    "Armies": ["Green","Desert","Blue-gray"],
+                    "Armies": ["Blue-gray","Green","Desert"],
                     "DefaultArmy": "Green",
                     
-                    "Tanks": ["Heavy","Middle","Light"],
+                    "Tanks": [
+                        {
+                            "Name": "Light",
+                            "ModelId": "tanks.light.model",
+                            "Textures": {
+                                "Blue-gray": "tanks.light.bluegray",
+                                "Green": "tanks.light.green",
+                                "Desert": "tanks.light.desert"
+                            }
+                        },
+                        {
+                            "Name": "Medium",
+                            "ModelId": "tanks.medium.model",
+                            "Textures": {
+                                "Blue-gray": "tanks.medium.bluegray",
+                                "Green": "tanks.medium.green",
+                                "Desert": "tanks.medium.desert"
+                            }
+                        },
+                        {
+                            "Name": "Heavy",
+                            "ModelId": "tanks.heavy.model",
+                            "Textures": {
+                                "Blue-gray": "tanks.heavy.bluegray",
+                                "Green": "tanks.heavy.green",
+                                "Desert": "tanks.heavy.desert"
+                            }
+                        }
+                    ],
                     "DefaultTank": "Light",
                     
                     "Maps": [
                         {
                             "Name": "Tankograd",
-                            "Description": "description",
+                            "Description": "Urban deathmatch",
                             "MaxTanks": 10,
                             "PreviewId": "level.preview"
                         }

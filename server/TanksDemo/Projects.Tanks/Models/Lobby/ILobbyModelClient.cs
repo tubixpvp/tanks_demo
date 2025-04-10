@@ -14,6 +14,7 @@ public interface ILobbyModelClient
         TankStruct[] tanks,
         TopRecord[] top10
     );
-    
-    
+
+    public void ShowTank(long modelId, long textureId);
+
 }

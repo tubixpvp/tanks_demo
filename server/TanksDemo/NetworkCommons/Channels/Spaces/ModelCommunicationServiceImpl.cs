@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Core.GameObjects;
 using Core.Model;
@@ -131,8 +132,11 @@ public class ModelCommunicationServiceImpl : IModelCommunicationService
 
                 for (int i = 0; i < argsNum; i++)
                 {
-                    Type paramType = parameters[i].ParameterType;
-                    GeneralDataEncoder.Encode(paramType, args[i], command.DataBuffer, command.NullMap);
+                    ParameterInfo paramInfo = parameters[i];
+                    Type paramType = paramInfo.ParameterType;
+                    GeneralDataEncoder.Encode(paramType, args[i], command.DataBuffer, command.NullMap,
+                        Nullable.GetUnderlyingType(paramType) != null
+                        || paramInfo.GetCustomAttribute<MaybeNullAttribute>() != null);
                 }
             }
 

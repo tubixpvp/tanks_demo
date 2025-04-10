@@ -34,6 +34,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreModels", "CoreModels\Co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameResources", "GameResources\GameResources.csproj", "{1CBAFD78-F9F2-46D9-AD64-DBF5335A6B14}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "A3DConverter", "A3DConverter\A3DConverter.csproj", "{6678EFA7-EFCC-4C0D-BCE5-8F89B817B2E7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -108,5 +110,9 @@ Global
 		{1CBAFD78-F9F2-46D9-AD64-DBF5335A6B14}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1CBAFD78-F9F2-46D9-AD64-DBF5335A6B14}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1CBAFD78-F9F2-46D9-AD64-DBF5335A6B14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6678EFA7-EFCC-4C0D-BCE5-8F89B817B2E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6678EFA7-EFCC-4C0D-BCE5-8F89B817B2E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6678EFA7-EFCC-4C0D-BCE5-8F89B817B2E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6678EFA7-EFCC-4C0D-BCE5-8F89B817B2E7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

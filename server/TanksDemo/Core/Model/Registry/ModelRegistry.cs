@@ -25,6 +25,7 @@ public class ModelRegistry
 
     private readonly Dictionary<string, Type> _entityTypeByName = new();
 
+    
     private readonly Dictionary<MethodInfo, long> _methodsIds = new();
 
     
@@ -32,6 +33,9 @@ public class ModelRegistry
 
     
     private readonly Dictionary<long, (long modelId, MethodInfo method, bool isAsync)> _serverMethods = new();
+
+
+    private readonly Dictionary<long, long[]> _clientModelToMethodsIds = new();
     
 
     private readonly Type[] _modelsTypes;
@@ -166,6 +170,8 @@ public class ModelRegistry
             method.Name != ModelUtils.InitObjectFunc
             && method.DeclaringType != typeof(object)).ToArray();
 
+        List<long> methodsIds = new();
+        
         foreach (MethodInfo methodInfo in clientMethods)
         {
             string methodName = methodInfo.Name;
@@ -184,7 +190,10 @@ public class ModelRegistry
             }
             
             _methodsIds.Add(methodInfo, methodId);
+            methodsIds.Add(methodId);
         }
+
+        _clientModelToMethodsIds.Add(modelId, methodsIds.ToArray());
 
         Console.WriteLine("Registered model " + modelType.Name + " with id: " + model.Id);
     }
@@ -208,5 +217,7 @@ public class ModelRegistry
     }
 
     public bool IsServerOnlyModel(long modelId) => _modelIdToIsServerOnly[modelId];
+
+    public long[] GetMethodsIdsOfModel(long modelId) => _clientModelToMethodsIds[modelId];
 
 }

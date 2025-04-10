@@ -13,8 +13,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Resources" />
-        <Content Include="Resources\**\*">
+      <Folder Include="GameResources\" />
+        <Content Include="GameResources\**\*">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
     </ItemGroup>

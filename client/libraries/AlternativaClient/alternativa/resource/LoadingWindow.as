@@ -16,11 +16,11 @@ package alternativa.resource {
 		[Embed(source="images/loading_window.png")] private static const backBitmap:Class;
 		private static const backBd:BitmapData = new backBitmap().bitmapData;
 		
-		/*[Embed(source="sounds/load.mp3")]
-        public var soundClass:Class;*/
+		[Embed(source="sounds/load.mp3")]
+        public var soundClass:Class;
 		
-		//private var loadingSound:Sound;
-		//private var soundLoaded:Boolean;
+		private var loadingSound:Sound;
+		private var soundLoaded:Boolean;
 		
 		private var back:Bitmap;
 		
@@ -72,15 +72,15 @@ package alternativa.resource {
 			
 			repaint();
 			
-			/*loadingSound = new soundClass() as Sound;
+			loadingSound = new soundClass() as Sound;
 			if (loadingSound != null) {
 				soundLoaded = true;
-			}*/
+			}
 		}
 		
 		public function changeStatus(value:String):void {
-			//statusLabel.text = value;
-			//statusLabel.x = (_currentSize.x - statusLabel.textWidth)*0.5;
+			statusLabel.text = value;
+			statusLabel.x = (_currentSize.x - statusLabel.textWidth)*0.5;
 		}
 		
 		public function changeProgress(value:Number):void {
@@ -88,9 +88,9 @@ package alternativa.resource {
 			if (progressBar.value != progress) {
 				progressBar.value = progress;
 				// запуск звука
-				/*if (soundLoaded) {
+				if (soundLoaded) {
 					loadingSound.play(0);
-				}*/
+				}
 			}
 		}
 		

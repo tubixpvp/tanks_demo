@@ -23,6 +23,10 @@ public abstract class ModelBase<CI> : ModelGlobals, IModel where CI : class
     {
         ModelCommunicationService.GetSender(gameObject, this, sessions, callback);
     }
+    protected void Clients(ModelContext context, Action<CI> callback)
+    {
+        Clients(context.Object, [context.Session!], callback);
+    }
 
     protected ILogger GetLogger()
     {

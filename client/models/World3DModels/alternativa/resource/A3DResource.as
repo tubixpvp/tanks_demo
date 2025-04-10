@@ -14,6 +14,7 @@ package alternativa.resource {
 	import flash.net.URLRequest;
 	import flash.utils.ByteArray;
 	import platform.models.general.world3d.a3d.A3D;
+	import alternativa.engine3d.loaders.Parser3DS;
 	
 	/**
 	 * Ресурс хранит трёхмерную модель Alternativa3D.
@@ -56,19 +57,36 @@ package alternativa.resource {
 		 */
 		override protected function onInfoLoad(e:Event):void {
 			super.onInfoLoad(e);
-			loader.load(new URLRequest(url + "object.a3d"));
+			loader.load(new URLRequest(url + "object." + _name));
 		}
 
 		/**
 		 * Метод декодирует бинарный формат и выполняет преобразование серверной 3д-модели в клиентскую.
 		 */
-		protected function onLoadComplete(e:Event = null):void {
-			var packet:Packet = new Packet();
-			var a3dData:ByteArray = new ByteArray();
+		protected function onLoadComplete(e:Event = null):void 
+		{
 			Main.writeToConsole("A3DResource onLoadComplete loaded data size: " + (loader.data as ByteArray).length);
 			var data:ByteArray = loader.data as ByteArray;
 			Main.writeToConsole("raw data: " + data.readByte().toString(16) + " " + data.readByte().toString(16) + " " + data.readByte().toString(16) + " " + data.readByte().toString(16));
 			data.position = 0;
+			
+			if(_name == "a3d")
+			{
+				parseA3D(data);
+			}
+			else
+			{
+				parse3DS(data);
+			}
+
+			completeLoading();
+		}
+
+		private function parseA3D(data:ByteArray) : void
+		{
+			var packet:Packet = new Packet();
+			var a3dData:ByteArray = new ByteArray();
+
 			packet.unwrapPacket(data, a3dData);
 			a3dData.position = 0;
 			Main.writeToConsole("A3DResource onLoadComplete a3dData size: " + a3dData.length);
@@ -80,7 +98,13 @@ package alternativa.resource {
 
 			var parser:A3DParser = new A3DParser(protocol.decode(a3dData) as A3D);
 			_object = parser.parse();
-			completeLoading();
+		}
+
+		private function parse3DS(data:ByteArray) : void
+		{
+			var parser:Parser3DS = new Parser3DS();
+			parser.parse(data);
+			_object = parser.content;
 		}
 		
 	}

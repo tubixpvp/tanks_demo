@@ -3,6 +3,7 @@ using Config;
 using Core.Model.Registry;
 using OSGI.Services;
 using Logging;
+using Newtonsoft.Json;
 using Utils;
 
 namespace ClientGenerator;
@@ -13,16 +14,25 @@ internal class ClientDataGeneratorRunner
     private static LoggerService LoggerService;
     
     
-    private static readonly List<IClientDataGenerator> Generators = 
+    private static readonly IClientDataGenerator[] Generators = 
     [
         new FlashModelBaseGenerator(),
         new FlashExportTypesGenerator(),
         new FlashExportTypesCodecsGenerator()
     ];
+
+    private static readonly FlashActivatorGenerator _flashActivatorGenerator = new();
     
     public static void Main(string[] args)
     {
         ParametersUtil runParams = ParametersUtil.FromRunArguments(args);
+
+        _ = new ClientDataGeneratorRunner(runParams);
+    }
+
+
+    private ClientDataGeneratorRunner(ParametersUtil runParams)
+    {
         ServerLaunchParams.Init(runParams);
         
         ServerResources.Init();
@@ -57,7 +67,10 @@ internal class ClientDataGeneratorRunner
         logger.Log(LogLevel.Info, "Working in directory: " + baseSrcRoot);
         
         Task.WaitAll(Generators.Select(generator => generator.Generate(baseSrcRoot)));
+
+        SafeTask.AddListeners(_flashActivatorGenerator.Generate(baseSrcRoot, Generators), null).Wait();
         
         logger.Log(LogLevel.Info, "Client generator finished");
     }
+    
 }

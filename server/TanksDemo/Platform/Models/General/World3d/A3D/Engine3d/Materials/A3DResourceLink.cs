@@ -6,4 +6,5 @@ namespace Platform.Models.General.World3d.A3D.Engine3d.Materials;
 public class A3DResourceLink
 {
     public long Id;
+    public long Version;
 }

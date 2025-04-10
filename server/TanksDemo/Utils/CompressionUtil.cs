@@ -4,25 +4,25 @@ namespace Utils;
 
 public static class CompressionUtil
 {
-    public static byte[] UncompressZLib(byte[] bytes)
+    public static byte[] CompressZLib(byte[] data)
     {
-        return OperateZLib(bytes, CompressionMode.Decompress);
+        using MemoryStream memoryStream = new MemoryStream();
+        using (ZLibStream deflateStream = new ZLibStream(memoryStream, CompressionMode.Compress))
+        {
+            deflateStream.Write(data, 0, data.Length);
+        }
+        return memoryStream.ToArray();
     }
-
-    public static byte[] CompressZLib(byte[] bytes)
+    public static byte[] DecompressZLib(byte[] data)
     {
-        return OperateZLib(bytes, CompressionMode.Compress);
-    }
-
-    private static byte[] OperateZLib(byte[] bytes, CompressionMode mode)
-    {
-        using MemoryStream inputStream = new MemoryStream(bytes);
-        using ZLibStream zLibStream = new ZLibStream(inputStream, mode);
-
-        byte[] outputBuffer = new byte[zLibStream.Length];
-
-        zLibStream.ReadExactly(outputBuffer, 0, outputBuffer.Length);
-
-        return outputBuffer;
+        using MemoryStream decompressedStream = new MemoryStream();
+        using (MemoryStream compressStream = new MemoryStream(data))
+        {
+            using (ZLibStream deflateStream = new ZLibStream(compressStream, CompressionMode.Decompress))
+            {
+                deflateStream.CopyTo(decompressedStream);
+            }
+        }
+        return decompressedStream.ToArray();
     }
 }

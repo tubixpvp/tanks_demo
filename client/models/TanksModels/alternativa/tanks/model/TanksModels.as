@@ -27,6 +27,16 @@ package alternativa.tanks.model {
 		
 		[Embed(source="../font/STMPRBRK.ttf", fontName="Stamper", mimeType="application/x-font", embedAsCFF="false")]
 		private static const stamperTTFNormal:Class;
+
+		//'Sign' font is lost, so I had to replace it
+		[Embed(source="../font/STMPRBRK.ttf", fontName="Sign", mimeType="application/x-font", embedAsCFF="false")]
+		private static const signTTFNormal:Class;
+
+		[Embed(source="../font/Chicago.ttf", fontName="Chicago", mimeType='application/x-font', embedAsCFF="false")]
+		private static const chicagoTTFNormal:Class;
+
+		[Embed(source="../font/Digital.ttf", fontName="Digital", mimeType='application/x-font', embedAsCFF="false")]
+		private static const digitalTTFNormal:Class;
 		
 		/*[Embed(source="../font/AlternativaNormal.ttf", fontName="Alternativa", mimeType="application/x-font-truetype")]
 		private static const alternativaTTFNormal:Class;
@@ -48,6 +58,9 @@ package alternativa.tanks.model {
 			//Main.console.write("TankModels init");
 
 			Font.registerFont(stamperTTFNormal);
+			Font.registerFont(signTTFNormal);
+			Font.registerFont(chicagoTTFNormal);
+			Font.registerFont(digitalTTFNormal);
 			
 			windowContainer = new WindowContainer();
 			windowContainer.rootObject = windowContainer;

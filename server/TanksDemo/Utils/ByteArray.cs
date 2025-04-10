@@ -43,6 +43,7 @@ public class ByteArray : IDisposable
     public void WriteShort(short value) => _writer.Write(value);
     public void WriteByte(byte value) => _writer.Write(value);
     public void WriteByte(int value) => _writer.Write((byte)value);
+    public void WriteFloat(float value) => _writer.Write(value);
     
     public void WriteBytes(byte[] buffer) => _writer.Write(buffer);
     public void WriteBytes(byte[] buffer, int offset, int count) => _writer.Write(buffer, offset, count);
@@ -56,6 +57,7 @@ public class ByteArray : IDisposable
     public byte ReadByte() => _reader.ReadByte();
     public sbyte ReadSByte() => _reader.ReadSByte();
     public long ReadLong() => _reader.ReadInt64();
+    public float ReadFloat() => _reader.ReadSingle();
     
     public byte[] ReadBytes(long count) => _reader.ReadBytes((int)count);
     

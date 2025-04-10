@@ -16,6 +16,7 @@ package alternativa.tanks.model {
 	
 	import projects.tanks.models.lobby.LobbyModelBase;
 	import projects.tanks.models.lobby.ILobbyModelBase;
+	import alternativa.resource.TextureResource;
 	
 	
 	public class LobbyModel extends LobbyModelBase implements ILobbyModelBase, IObjectLoadListener {
@@ -135,13 +136,17 @@ package alternativa.tanks.model {
 		
 		 /**
 	     * Показать танк
-	     * @param resourceId id ресурса
-	     * @param version версия ресурса
+	     * @param modelId id ресурса танка
+		 * @param textureId id ресурса текстуры
 	     */
-	    public function showTank(clientObject:ClientObject, resourceId:Long, version:Number):void {
-	    	var resource:A3DResource = A3DResource(Main.resourceRegister.getResource(resourceId));
-	    	if (resource != null) {
-	    		lobbyWindow.showTank(resource);
+	    public function showTank(clientObject:ClientObject, modelId:Long, textureId:Long):void {
+	    	var modelResource:A3DResource = Main.resourceRegister.getResource(modelId) as A3DResource;
+			var textureResource:TextureResource = Main.resourceRegister.getResource(textureId) as TextureResource;
+
+	    	if (modelResource != null && textureResource != null) {
+	    		lobbyWindow.showTank(modelResource, textureResource);
+
+				Main.loadingProgress.closeLoadingWindow();
 	    	}
 	    }
 	    

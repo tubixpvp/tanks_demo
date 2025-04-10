@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using Core.GameObjects;
 using Core.Model;
 using Core.Model.Registry;
@@ -15,18 +16,40 @@ internal class FlashModelBaseGenerator : IClientDataGenerator
     
     public async Task Generate(string baseSrcRoot)
     {
-        IModel[] models = ModelRegistry.GetAllModels();
+        IModel[] models = GetClientModels();
 
         await Task.WhenAll(models.Select(
             model => GenerateModelBaseFiles(model, baseSrcRoot)));
     }
 
+    private IModel[] GetClientModels()
+    {
+        return ModelRegistry.GetAllModels().Where(
+            model => !model.GetType().GetCustomAttribute<ModelAttribute>()!.ServerOnly).ToArray();
+    }
+
+    public void GenerateActivator(FlashCodeGenerator generator)
+    {
+        generator.AddLine("var modelRegistry:IModelService = Main.modelsRegister;");
+
+        foreach (long modelId in GetClientModels().Select(model => model.Id))
+        {
+            (long modelIdHigh, long modelIdLow) = LongUtils.GetLongHighLow(modelId);
+
+            long[] methodsIds = ModelRegistry.GetMethodsIdsOfModel(modelId);
+
+            foreach (long methodId in methodsIds)
+            {
+                (long methodIdHigh, long methodIdLow) = LongUtils.GetLongHighLow(methodId);
+                
+                generator.AddLine($"modelRegistry.register(LongFactory.getLong({modelIdHigh}, {modelIdLow}), LongFactory.getLong({methodIdHigh}, {methodIdLow}));");
+            }
+        }
+    }
+
     private async Task GenerateModelBaseFiles(IModel model, string baseSrcRoot)
     {
         Type modelType = model.GetType();
-
-        if (modelType.GetCustomAttribute<ModelAttribute>()!.ServerOnly)
-            return;
 
         string packageName = modelType.Namespace!.ToLower();
         string fileDir = Path.Combine(baseSrcRoot, FlashGenerationUtils.GetDirectoryByNamespace(modelType.Namespace!));
@@ -146,7 +169,7 @@ internal class FlashModelBaseGenerator : IClientDataGenerator
             Type parameterType = parameter.ParameterType;
             
             Type? underlyingType = Nullable.GetUnderlyingType(parameterType);
-            bool optional = underlyingType != null;
+            bool optional = underlyingType != null || parameter.GetCustomAttribute<MaybeNullAttribute>() != null;
             if (underlyingType != null)
                 parameterType = underlyingType;
 
@@ -172,10 +195,45 @@ internal class FlashModelBaseGenerator : IClientDataGenerator
     {
         generator.AddLine("public function invoke(clientObject:ClientObject, methodId:Long, codecFactory:ICodecFactory, dataInput:IDataInput, nullMap:NullMap):void");
         generator.OpenCurvedBrackets();
+        //func:
         
-        //todo
+        generator.AddLine("var codec:ICodec;");
         
-        generator.CloseCurvedBrackets();
+        MethodInfo[] methods = GetClientMethods(clientInterfaceType);
+
+        foreach (MethodInfo methodInfo in methods)
+        {
+            if (methodInfo.Name == ModelUtils.InitObjectFunc)
+                continue;
+            
+            long methodId = ModelRegistry.GetMethodId(methodInfo);
+            (long methodIdHigh, long methodIdLow) = LongUtils.GetLongHighLow(methodId);
+            
+            generator.AddLine($"if (methodId == LongFactory.getLong({methodIdHigh}, {methodIdLow}))");
+            generator.OpenCurvedBrackets();
+            //if:
+
+            ParameterInfo[] parameters = methodInfo.GetParameters();
+            
+            Type? previousCodecType = null;
+
+            foreach (ParameterInfo parameter in parameters)
+            {
+                GenerateDecodeChunk(generator, parameter, ref previousCodecType);
+            }
+            
+            
+            string paramsStr = string.Join(", ", parameters.Select(p => p.Name));
+            if (!string.IsNullOrEmpty(paramsStr))
+                paramsStr = ", " + paramsStr;
+            
+            generator.AddLine($"client.{FlashGenerationUtils.FirstLetterToLower(methodInfo.Name)}(clientObject{paramsStr});");
+            
+            generator.AddLine("return;");
+            generator.CloseCurvedBrackets(); //if end
+        }
+        
+        generator.CloseCurvedBrackets(); //func end
     }
 
     private void GenerateInitObjectFunction(FlashCodeGenerator generator, Type clientInterfaceType)
@@ -195,22 +253,7 @@ internal class FlashModelBaseGenerator : IClientDataGenerator
 
             foreach (ParameterInfo paramInfo in initFuncParams)
             {
-                Type fieldType = paramInfo.ParameterType;
-                Type? underlyingType = Nullable.GetUnderlyingType(fieldType);
-                bool optional = underlyingType != null;
-                if (underlyingType != null)
-                    fieldType = underlyingType;
-
-                //set codec:
-                if (previousCodecType != fieldType)
-                {
-                    previousCodecType = fieldType;
-
-                    generator.AddLine("codec = " + FlashGenerationUtils.MakeGetCodecCodeFragment(fieldType, generator));
-                }
-
-                //decode:
-                generator.AddLine($"var {paramInfo.Name}:{FlashCodeGenerator.GetFlashDeclarationTypeString(fieldType)} = " + FlashGenerationUtils.MakeTypeDecodeCodeFragment(fieldType, optional));
+                GenerateDecodeChunk(generator, paramInfo, ref previousCodecType);
             }
 
             string callLine = "client.initObject(clientObject, ";
@@ -221,6 +264,26 @@ internal class FlashModelBaseGenerator : IClientDataGenerator
         }
 
         generator.CloseCurvedBrackets();
+    }
+
+    private void GenerateDecodeChunk(FlashCodeGenerator generator, ParameterInfo paramInfo, ref Type? previousCodecType)
+    {
+        Type fieldType = paramInfo.ParameterType;
+        Type? underlyingType = Nullable.GetUnderlyingType(fieldType);
+        bool optional = underlyingType != null || paramInfo.GetCustomAttribute<MaybeNullAttribute>() != null;;
+        if (underlyingType != null)
+            fieldType = underlyingType;
+
+        //set codec:
+        if (previousCodecType != fieldType)
+        {
+            previousCodecType = fieldType;
+
+            generator.AddLine("codec = " + FlashGenerationUtils.MakeGetCodecCodeFragment(fieldType, generator));
+        }
+
+        //decode:
+        generator.AddLine($"var {paramInfo.Name}:{FlashCodeGenerator.GetFlashDeclarationTypeString(fieldType)} = " + FlashGenerationUtils.MakeTypeDecodeCodeFragment(fieldType, optional));
     }
 
 
@@ -241,22 +304,28 @@ internal class FlashModelBaseGenerator : IClientDataGenerator
         generator.OpenCurvedBrackets();
         //interface contents:
 
-        if (clientInterfaceType != typeof(object)) //object -> model doesn't have CI
+        MethodInfo[] methods = GetClientMethods(clientInterfaceType);
+
+        foreach (MethodInfo methodInfo in methods)
         {
-            MethodInfo[] methods = clientInterfaceType.GetMethods(BindingFlags.Instance | BindingFlags.Public);
+            generator.AddEmptyLine();
 
-            foreach (MethodInfo methodInfo in methods)
-            {
-                generator.AddEmptyLine();
-
-                generator.AddLine(GenerateFunctionDeclaration(methodInfo, generator) + ";");
-            }
+            generator.AddLine(GenerateFunctionDeclaration(methodInfo, generator) + ";");
         }
 
         generator.CloseCurvedBrackets(); //interface contents end
         
         
         await File.WriteAllTextAsync(filePath, generator.GetResult());
+    }
+
+    private MethodInfo[] GetClientMethods(Type clientInterfaceType)
+    {
+        if (clientInterfaceType == typeof(object)) //object -> model doesn't have CI
+        {
+            return [];
+        }
+        return clientInterfaceType.GetMethods(BindingFlags.Instance | BindingFlags.Public);
     }
 
     private string GenerateFunctionDeclaration(MethodInfo methodInfo, FlashCodeGenerator generator)

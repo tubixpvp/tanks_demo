@@ -16,6 +16,10 @@ internal class FlashExportTypesGenerator : IClientDataGenerator
             .Select(type => GenerateTypeFile(type, baseSrcRoot)));
     }
 
+    public void GenerateActivator(FlashCodeGenerator generator)
+    {
+    }
+
     private async Task GenerateTypeFile(Type type, string baseSrcRoot)
     {
         string fileDir = Path.Combine(baseSrcRoot, FlashGenerationUtils.GetDirectoryByNamespace(type.Namespace!));

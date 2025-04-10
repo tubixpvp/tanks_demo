@@ -10,7 +10,7 @@ public static class GeneralDataDecoder
 {
 
     [InjectService]
-    private static CodecsRegistry CodecsRegistry;
+    public static CodecsRegistry CodecsRegistry;
 
 
     public static T? Decode<T>(NetPacket packet) => Decode<T>(packet.PacketBuffer, packet.NullMap);
@@ -68,8 +68,8 @@ public static class GeneralDataDecoder
     private static object DecodeClass(Type type, ByteArray bytes, NullMap nullMap)
     {
         object instance = Activator.CreateInstance(type)!;
-        
-        FieldInfo[] fields = type.GetFields(BindingFlags.Public);
+
+        FieldInfo[] fields = type.GetFields(BindingFlags.Public | BindingFlags.Instance);
 
         foreach (FieldInfo fieldInfo in fields)
         {

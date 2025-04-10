@@ -2,7 +2,7 @@
 
 namespace Network.Protocol;
 
-internal static class PacketUtil
+public static class PacketUtil
 {
     private const byte ZippedFlag = 0x40;
     private const byte LengthFlag = 0x80;
@@ -52,7 +52,7 @@ internal static class PacketUtil
         
         if (zipped)
         {
-            packetBytes = CompressionUtil.UncompressZLib(packetBytes);
+            packetBytes = CompressionUtil.DecompressZLib(packetBytes);
         }
 
         output.WriteBytes(packetBytes);

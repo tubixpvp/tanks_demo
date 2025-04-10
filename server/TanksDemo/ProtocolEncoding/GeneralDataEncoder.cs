@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Network.Channels;
 using Network.Protocol;
@@ -10,19 +11,27 @@ public static class GeneralDataEncoder
 {
 
     [InjectService]
-    private static CodecsRegistry CodecsRegistry;
+    public static CodecsRegistry CodecsRegistry;
 
 
     public static void Encode(object? value, NetPacket packet) => Encode(value, packet.PacketBuffer, packet.NullMap);
     public static void Encode(object? value, ByteArray output, NullMap nullMap)
     {
         Type? type = value?.GetType();
-        Encode(type, value, output, nullMap);
+        Encode(type, value, output, nullMap, value == null
+            || Nullable.GetUnderlyingType(type!) != null);
     }
 
-    public static void Encode(Type? type, object? value, ByteArray output, NullMap nullMap)
+    public static void Encode(Type? type, object? value, ByteArray output, NullMap nullMap, bool optional)
     {
-        EncodeOptional(type, value, nullMap, out type);
+        if (optional)
+        {
+            nullMap.AddBit(value == null);
+        }
+        else if (value == null)
+        {
+            throw new Exception("Cannot encode NULL as NOT-NULL value!");
+        }
 
         if (value == null)
             return;
@@ -66,7 +75,9 @@ public static class GeneralDataEncoder
 
             object? fieldValue = fieldInfo.GetValue(value);
 
-            Encode(fieldInfo.FieldType, fieldValue, output, nullMap);
+            Encode(fieldInfo.FieldType, fieldValue, output, nullMap,
+                Nullable.GetUnderlyingType(fieldInfo.FieldType) != null
+                || fieldInfo.GetCustomAttribute<MaybeNullAttribute>() != null);
         }
     }
 
@@ -113,31 +124,7 @@ public static class GeneralDataEncoder
             if (customCodec != null)
                 customCodec.Encode(elementValue, output, nullMap);
             else
-                Encode(elementType, elementValue, output, nullMap);
-        }
-    }
-
-    private static void EncodeOptional(Type? type, object? value, NullMap nullMap, out Type? baseType)
-    {
-        baseType = type;
-
-        if (type == null)
-        {
-            nullMap.AddBit(true);
-            return;
-        }
-        
-        Type? underlyingType = Nullable.GetUnderlyingType(type);
-        
-        if (underlyingType != null)
-        {
-            baseType = underlyingType;
-            
-            nullMap.AddBit(value == null);
-        }
-        else if (value == null)
-        {
-            throw new Exception("Cannot encode NULL as NOT-NULL value!");
+                Encode(elementType, elementValue, output, nullMap, optionalItems);
         }
     }
     

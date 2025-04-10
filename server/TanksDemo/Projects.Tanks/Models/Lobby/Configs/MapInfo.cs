@@ -1,4 +1,4 @@
-namespace Projects.Tanks.Models.Lobby;
+namespace Projects.Tanks.Models.Lobby.Configs;
 
 internal class MapInfo
 {

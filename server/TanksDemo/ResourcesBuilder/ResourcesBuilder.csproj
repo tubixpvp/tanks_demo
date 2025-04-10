@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\A3DConverter\A3DConverter.csproj" />
       <ProjectReference Include="..\GameResources\GameResources.csproj" />
       <ProjectReference Include="..\Logging\Logging.csproj" />
       <ProjectReference Include="..\Utils\Utils.csproj" />

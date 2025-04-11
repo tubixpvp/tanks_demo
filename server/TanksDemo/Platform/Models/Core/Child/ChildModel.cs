@@ -27,10 +27,10 @@ internal class ChildModel(long id) : ModelBase<IChildModelClient>(id), IChild, O
         ChildModelEntity entity = GetEntity<ChildModelEntity>();
 
         GameObject oldParent = entity.Parent;
-        oldParent.GetModelEntity<ParentEntity>().Children.TryRemove(childObject.Name, out _);
+        oldParent.GetModelEntity<ParentEntity>().Children.TryRemove(childObject.Id, out _);
 
         entity.Parent = newParent;
-        newParent.GetModelEntity<ParentEntity>().Children.TryAdd(childObject.Name, childObject);
+        newParent.GetModelEntity<ParentEntity>().Children.TryAdd(childObject.Id, childObject);
         
         Clients(Context.Object, Context.Space.GetDeployedSessions(Context.Object),
             client => client.ChangeParent(newParent.Id));

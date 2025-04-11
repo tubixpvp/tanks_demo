@@ -5,6 +5,7 @@ using Core.Spaces;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OSGI.Services;
+using Platform.Models.Core.Child;
 using Platform.Models.Core.Parent;
 
 namespace SpacesCommons;
@@ -35,24 +36,46 @@ public class SpacesActivatorService
         }
     }
 
-    private void InitObjects(ObjectDataJson[] objectsData, GameObjectsStorage objectsStorage, GameObject? parentObject)
+    private GameObject[] InitObjects(ObjectDataJson[] objectsData, GameObjectsStorage objectsStorage, GameObject? parentObject)
     {
-        foreach (ObjectDataJson objectData in objectsData)
-        {
-            object[] entities = ConvertEntities(objectData.Entities);
-
-            if (objectData.Children.Length > 0)
+        return objectsData.Select(
+            objectData =>
             {
-                entities = entities.Append(new ParentEntity()).ToArray();
-            }
-            
-            GameObject gameObject = objectsStorage.CreateObject(objectData.Name, entities);
-            gameObject.Params.AutoAttach = objectData.AutoAttach;
-
-            InitObjects(objectData.Children, objectsStorage, parentObject);
                 
-            gameObject.Load();
-        }
+                object[] entities = ConvertEntities(objectData.Entities);
+
+                ParentEntity? parentEntity = null;
+                if (objectData.Children.Length > 0)
+                {
+                    entities = entities.Append(parentEntity = new ParentEntity()).ToArray();
+                }
+
+                if (parentObject != null)
+                {
+                    entities = entities.Append(new ChildModelEntity()
+                    {
+                        Parent = parentObject
+                    }).ToArray();
+                }
+
+                GameObject gameObject = objectsStorage.CreateObject(objectData.Name, entities);
+                gameObject.Params.AutoAttach = objectData.AutoAttach;
+
+                GameObject[] children = InitObjects(objectData.Children, objectsStorage, parentObject);
+
+                if (parentEntity != null)
+                {
+                    foreach (GameObject childObject in children)
+                    {
+                        parentEntity.Children.TryAdd(childObject.Id, childObject);
+                    }
+                }
+
+                gameObject.Load();
+
+                return gameObject;
+                
+            }).ToArray();
     }
 
     private object[] ConvertEntities(Dictionary<string, JObject> entitiesJson)

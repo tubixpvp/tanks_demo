@@ -10,7 +10,11 @@ internal class ParentModel(long id) : ModelBase<object>(id), IParent
     
     public GameObject? GetChild(string name)
     {
-        return GetEntity().Children.GetValueOrDefault(name);
+        return GetEntity().Children.Values.FirstOrDefault(obj => obj.Name == name);
+    }
+    public GameObject? GetChild(long id)
+    {
+        return GetEntity().Children.GetValueOrDefault(id);
     }
 
     public GameObject[] GetChildren()

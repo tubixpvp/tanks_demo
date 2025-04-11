@@ -6,6 +6,7 @@ using CoreModels.Resources;
 using GameResources;
 using Network.Session;
 using OSGI.Services;
+using Platform.Models.Core.Parent;
 using Projects.Tanks.Models.Lobby.ArmyInfo;
 using Projects.Tanks.Models.Lobby.MapInfo;
 using Projects.Tanks.Models.Lobby.Struct;
@@ -32,25 +33,25 @@ internal class LobbyModel(long id) : ModelBase<ILobbyModelClient>(id), IResource
     private const string ArmiesInfoObject = "Armies Info";
     
 
-    private GameObject GetTanksInfoObject()
+    private IParent GetTanksInfoParent()
     {
-        return Context.Space.ObjectsStorage.GetObject(TanksInfoObject)!;
+        GameObject tankInfoRoot = Context.Space.ObjectsStorage.GetObject(TanksInfoObject)!;
+        return tankInfoRoot.Adapt<IParent>();
     }
-    private GameObject GetArmiesInfoObject()
+    private IParent GetArmiesInfoParent()
     {
-        return Context.Space.ObjectsStorage.GetObject(ArmiesInfoObject)!;
+        GameObject armiesInfoRoot = Context.Space.ObjectsStorage.GetObject(ArmiesInfoObject)!;
+        return armiesInfoRoot.Adapt<IParent>();
     }
 
     public void ObjectAttached(NetworkSession session)
     {
         MapStruct[] maps = BattlesRegistry.GetActiveBattlesData();
 
-        GameObject[] tankObjects = GetTanksInfoObject().Children.GetObjects();
-        TankStruct[] tanks = tankObjects.Select(
+        TankStruct[] tanks = GetTanksInfoParent().GetChildren().Select(
             tankObj => tankObj.Adapt<ITankInfo>().GetTankStruct()).ToArray();
 
-        GameObject[] armyObjects = GetArmiesInfoObject().Children.GetObjects();
-        ArmyStruct[] armies = armyObjects.Select(
+        ArmyStruct[] armies = GetArmiesInfoParent().GetChildren().Select(
             armyObj => armyObj.Adapt<IArmyInfo>().GetArmyStruct()).ToArray();
         
         LobbyEntity entity = GetEntity<LobbyEntity>();
@@ -80,17 +81,19 @@ internal class LobbyModel(long id) : ModelBase<ILobbyModelClient>(id), IResource
 
     private IMapInfo[] GetMaps()
     {
-        IEnumerable<GameObject> mapObjects = Context.Space.ObjectsStorage.GetObject("Maps")!.Children.GetObjects();
+        GameObject mapsInfoRoot = Context.Space.ObjectsStorage.GetObject("Maps")!;
+
+        GameObject[] mapsInfoObjects = mapsInfoRoot.Adapt<IParent>().GetChildren();
         
-        return mapObjects.Select(mapObj => mapObj.Adapt<IMapInfo>()).ToArray();
+        return mapsInfoObjects.Select(mapObj => mapObj.Adapt<IMapInfo>()).ToArray();
     }
 
 
     [NetworkMethod]
     private void SelectTank(long tankId, long armyId)
     {
-        ITankInfo tankInfo = GetTanksInfoObject().Children.GetObject(tankId)!.Adapt<ITankInfo>();
-        IArmyInfo armyInfo = GetArmiesInfoObject().Children.GetObject(armyId)!.Adapt<IArmyInfo>();
+        ITankInfo tankInfo = GetTanksInfoParent().GetChild(tankId)!.Adapt<ITankInfo>();
+        IArmyInfo armyInfo = GetArmiesInfoParent().GetChild(armyId)!.Adapt<IArmyInfo>();
         
         string modelId = tankInfo.GetModelResourceId();
         string textureId = tankInfo.GetTextureResourceId(armyInfo.GetArmyType());

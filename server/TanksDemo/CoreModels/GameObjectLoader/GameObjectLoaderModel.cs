@@ -11,7 +11,7 @@ namespace CoreModels.GameObjectLoader;
 
 [ModelEntity(typeof(GameObjectLoaderEntity))]
 [Model(ServerOnly = true)]
-internal class GameObjectLoaderModel(long id) : ModelBase<object>(id), ObjectClientListener.Attached
+internal class GameObjectLoaderModel(long id) : ModelBase<object>(id), ObjectDeployListener.Deploy
 {
     [InjectService]
     private static ClientResourcesService ClientResourcesService;
@@ -19,7 +19,7 @@ internal class GameObjectLoaderModel(long id) : ModelBase<object>(id), ObjectCli
     [InjectService]
     private static ResourceRegistry ResourceRegistry;
     
-    public void ObjectAttached(NetworkSession session)
+    public void DeployObject(NetworkSession session, SimpleCancelToken cancelToken)
     {
         GameObject gameObject = Context.Object;
         
@@ -38,9 +38,8 @@ internal class GameObjectLoaderModel(long id) : ModelBase<object>(id), ObjectCli
             return;
         }
 
-        //TODO: cancel object load ability
         CancellableFunction resourcesLoadCancelToken = new CancellableFunction(
-            () => OnResourcesLoaded(gameObject, session), new SimpleCancelToken());
+            () => OnResourcesLoaded(gameObject, session), cancelToken);
 
         ClientResourcesService.LoadResources(session, uniqueResources, resourcesLoadCancelToken.Call);
     }

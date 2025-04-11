@@ -66,6 +66,7 @@ public class NetworkSession
 
     public void SetAttribute(string key, object value) => _attributes[key] = value;
     public T? GetAttribute<T>(string key) => (T?)_attributes.GetValueOrDefault(key);
+    public void DeleteAttribute(string key) => _attributes.TryRemove(key, out _);
 
     
 }

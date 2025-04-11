@@ -16,7 +16,7 @@ namespace Projects.Tanks.Models.Lobby;
 
 [ModelEntity(typeof(LobbyEntity))]
 [Model]
-internal class LobbyModel(long id) : ModelBase<ILobbyModelClient>(id), IResourceRequire, ObjectClientListener.Attach
+internal class LobbyModel(long id) : ModelBase<ILobbyModelClient>(id), IResourceRequire, ObjectAttachListener.Attached
 {
     [InjectService]
     private static ResourceRegistry ResourceRegistry;
@@ -41,7 +41,7 @@ internal class LobbyModel(long id) : ModelBase<ILobbyModelClient>(id), IResource
         return Context.Space.ObjectsStorage.GetObject(ArmiesInfoObject)!;
     }
 
-    public void AttachObject(NetworkSession session)
+    public void ObjectAttached(NetworkSession session)
     {
         MapStruct[] maps = BattlesRegistry.GetActiveBattlesData();
 

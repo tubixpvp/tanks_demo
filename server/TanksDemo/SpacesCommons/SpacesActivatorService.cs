@@ -5,6 +5,7 @@ using Core.Spaces;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OSGI.Services;
+using Platform.Models.Core.Parent;
 
 namespace SpacesCommons;
 
@@ -38,11 +39,17 @@ public class SpacesActivatorService
     {
         foreach (ObjectDataJson objectData in objectsData)
         {
-            GameObject gameObject = objectsStorage.CreateObject(objectData.Name, ConvertEntities(objectData.Entities), parentObject);
+            object[] entities = ConvertEntities(objectData.Entities);
 
+            if (objectData.Children.Length > 0)
+            {
+                entities = entities.Append(new ParentEntity()).ToArray();
+            }
+            
+            GameObject gameObject = objectsStorage.CreateObject(objectData.Name, entities);
             gameObject.Params.AutoAttach = objectData.AutoAttach;
 
-            InitObjects(objectData.Children, gameObject.Children, parentObject);
+            InitObjects(objectData.Children, objectsStorage, parentObject);
                 
             gameObject.Load();
         }

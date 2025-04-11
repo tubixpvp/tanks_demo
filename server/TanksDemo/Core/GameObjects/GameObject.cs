@@ -17,16 +17,13 @@ public class GameObject
     public string Name { get; }
     
     public Space Space { get; }
-    public GameObject? Parent { get; }
     
     public GameObjectParams Params { get; }
-    
-    public GameObjectsStorage Children { get; }
 
     public List<long> ModelsIds { get; }
     
 
-    private readonly Dictionary<long, List<object>> _entities = new();
+    private readonly Dictionary<Type, object> _entities = new();
 
     private readonly ConcurrentDictionary<Type, object> _eventProxies = new();
     private readonly ConcurrentDictionary<Type, object> _adaptProxies = new();
@@ -36,19 +33,16 @@ public class GameObject
 
     private bool _loaded;
     
-    internal GameObject(long id, 
-        GameObject? parent, 
+    internal GameObject(long id,
         string name, 
         Space space, 
         IEnumerable<object> modelEntities)
     {
         Id = id;
         Name = name;
-        Parent = parent;
         Space = space;
         Params = new();
         ModelsIds = new List<long>();
-        Children = new GameObjectsStorage(space);
         InitFromEntities(modelEntities);
     }
 
@@ -56,14 +50,11 @@ public class GameObject
     {
         foreach (object entity in objectEntities)
         {
-            IModel model = ModelRegistry.GetModelByEntityType(entity.GetType());
+            Type entityType = entity.GetType();
 
-            if (!_entities.TryGetValue(model.Id, out var entities))
-            {
-                _entities.Add(model.Id, entities = new List<object>());
-            }
-            
-            entities.Add(entity);
+            IModel model = ModelRegistry.GetModelByEntityType(entityType);
+
+            _entities.Add(entityType, entity);
 
             if (!ModelsIds.Contains(model.Id))
             {
@@ -88,21 +79,11 @@ public class GameObject
 
     public void Attach(NetworkSession session)
     {
-        //
-
-        Events<ObjectClientListener.Attach>().AttachObject(session);
-        Events<ObjectClientListener.Attached>().ObjectAttached(session);
+        Space.AttachObject(session, this);
     }
-
     public void Detach(NetworkSession session)
     {
-        //
-        
-        Events<ObjectClientListener.Detached>().ObjectDetached(session);
-    }
-    public bool IsAttached(NetworkSession session)
-    {
-        return true;
+        Space.DetachObject(session, this);
     }
     
     public T Events<T>() where T : class
@@ -125,6 +106,11 @@ public class GameObject
 
     public T Adapt<T>() where T : class
     {
+        return TryAdapt<T>() ??
+               throw new Exception("Model that implements interface is not found: " + typeof(T).FullName);
+    }
+    public T? TryAdapt<T>() where T : class
+    {
         Type type = typeof(T);
 
         if (_adaptProxies.TryGetValue(type, out object? storedProxy))
@@ -135,7 +121,7 @@ public class GameObject
         long? modelId = ModelsIds.FirstOrDefault(id => ModelRegistry.GetModelById(id) is T);
 
         if (modelId == 0 || modelId == null)
-            throw new Exception("Model that implements interface is not found: " +type.FullName);
+            return null;
         
         IModel model = ModelRegistry.GetModelById(modelId.Value);
 
@@ -172,7 +158,7 @@ public class GameObject
     public void PutClientInitParams(long modelId, ModelInitParams initParams) => _modelsClientInitParams[modelId] = initParams;
     public ModelInitParams? GetClientInitParams(long modelId) => _modelsClientInitParams.GetValueOrDefault(modelId);
 
-    public T GetModelEntity<T>(long modelId) => (T)_entities[modelId].First(entity => entity is T);
+    public T GetModelEntity<T>() => (T)_entities[typeof(T)];
     
     public override string ToString()
     {

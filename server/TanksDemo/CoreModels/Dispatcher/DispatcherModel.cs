@@ -11,7 +11,7 @@ namespace CoreModels.Dispatcher;
 
 [ModelEntity(typeof(DispatcherEntity))]
 [Model]
-internal class DispatcherModel(long modelId) : ModelBase<IDispatcherModelClient>(1), ObjectClientListener.Attached, IDispatcher
+internal class DispatcherModel(long modelId) : ModelBase<IDispatcherModelClient>(1), ObjectAttachListener.Attached, IDispatcher
 {
     
     public void ObjectAttached(NetworkSession session)
@@ -31,7 +31,7 @@ internal class DispatcherModel(long modelId) : ModelBase<IDispatcherModelClient>
 
                 foreach (GameObject gameObject in objects)
                 {
-                    GeneralDataEncoder.Encode(gameObject.Parent, buffer, nullMap);
+                    GeneralDataEncoder.Encode((GameObject?)null, buffer, nullMap); //parentId in old system
 
                     (long modelId, ModelInitParams? modelParams)[] modelsParams =
                         gameObject.ModelsIds

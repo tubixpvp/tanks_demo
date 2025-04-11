@@ -17,7 +17,7 @@ public class GameObjectsStorage(Space space)
     private readonly Dictionary<string, GameObject> _gameObjectsByName = new();
     
     
-    public GameObject CreateObject(string name, IEnumerable<object>? entities, GameObject? parentObject, long? objectId = null)
+    public GameObject CreateObject(string name, IEnumerable<object>? entities, long? objectId = null)
     {
         lock (_gameObjectsByName)
         {
@@ -43,7 +43,7 @@ public class GameObjectsStorage(Space space)
 
                 IEnumerable<object> systemEntities = [CreateObjectLoaderEntity()];
                 
-                GameObject gameObject = new GameObject(id, parentObject, name, space, entities?.Concat(systemEntities) ?? systemEntities);
+                GameObject gameObject = new GameObject(id, name, space, entities?.Concat(systemEntities) ?? systemEntities);
                 
                 _gameObjectsById.Add(id, gameObject);
                 _gameObjectsByName.Add(name, gameObject);

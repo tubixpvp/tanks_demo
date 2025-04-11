@@ -1,6 +1,6 @@
-namespace Projects.Tanks.Models.Lobby.Configs;
+namespace Projects.Tanks.Models.Lobby.MapInfo;
 
-internal class MapInfo
+internal class MapInfoEntity
 {
     public string Name;
     

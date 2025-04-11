@@ -68,7 +68,7 @@ public class SpaceChannelHandler : IChannelPacketHandler, IOSGiInitListener
             
             _logger.Log(LogLevel.Debug, $"New space packet: objectId={objectId}, methodId={methodId}");
 
-            GameObject gameObject = space.GetObject(objectId)!;
+            GameObject gameObject = space.ObjectsStorage.GetObject(objectId)!;
 
             if (context == null)
                 context = new ModelContext(gameObject, spaceSession);

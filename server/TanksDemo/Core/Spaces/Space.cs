@@ -20,9 +20,8 @@ public class Space
     public long Id { get; }
     public string Name { get; }
 
-
-    private readonly Dictionary<long, GameObject> _gameObjectsById = new();
-    private readonly Dictionary<string, GameObject> _gameObjectsByName = new();
+    public GameObjectsStorage ObjectsStorage { get; }
+    
 
     private readonly List<NetworkSession> _sessions = new();
 
@@ -34,6 +33,8 @@ public class Space
         
         Id = id;
         Name = name;
+
+        ObjectsStorage = new GameObjectsStorage(this);
         
         CreateRootObject();
     }
@@ -43,63 +44,11 @@ public class Space
         Type dispatcherEntityType = ModelRegistry.GetEntityTypeByName("DispatcherEntity");
         object dispatcherEntityInstance = Activator.CreateInstance(dispatcherEntityType)!;
         
-        CreateObject("root", [dispatcherEntityInstance], null, 0);
+        ObjectsStorage.CreateObject("root", [dispatcherEntityInstance], null, 0);
     }
     public GameObject GetRootObject()
     {
-        return GetObject(0)!;
-    }
-
-    public GameObject CreateObject(string name, IEnumerable<object>? entities, long? parentId, long? objectId = null)
-    {
-        lock (_gameObjectsByName)
-        {
-            if (_gameObjectsByName.ContainsKey(name))
-            {
-                throw new Exception("ClientObject with this name already exists: " + name);
-            }
-            
-            lock (_gameObjectsById)
-            {
-                long id;
-                if (objectId == null)
-                {
-                    do
-                    {
-                        id = Random.NextInt64(int.MinValue, int.MaxValue);
-                    } while (_gameObjectsById.ContainsKey(id));
-                }
-                else
-                {
-                    id = (long)objectId;
-                }
-
-                GameObject? parentObject = parentId != null ? GetObject((long)parentId) : null;
-
-                IEnumerable<object> systemEntities = [CreateObjectLoaderEntity()];
-                
-                GameObject gameObject = new GameObject(id, parentObject, name, this, entities?.Concat(systemEntities) ?? systemEntities);
-                
-                _gameObjectsById.Add(id, gameObject);
-                _gameObjectsByName.Add(name, gameObject);
-
-                return gameObject;
-            }
-        }
-    }
-
-    private object CreateObjectLoaderEntity()
-    {
-        Type objectLoaderEntity = ModelRegistry.GetEntityTypeByName("GameObjectLoaderEntity");
-        return Activator.CreateInstance(objectLoaderEntity)!;
-    }
-
-    public GameObject? GetObject(long id)
-    {
-        lock (_gameObjectsById)
-        {
-            return _gameObjectsById.GetValueOrDefault(id);
-        }
+        return ObjectsStorage.GetObject(0)!;
     }
 
     public void AddSession(NetworkSession spaceSession)
@@ -108,14 +57,8 @@ public class Space
         {
             _sessions.Add(spaceSession);
         }
-
-        lock (_gameObjectsById)
-        {
-            foreach (GameObject gameObject in _gameObjectsById.Values)
-            {
-                gameObject.Attach(spaceSession);
-            }
-        }
+        
+        ObjectsStorage.ForeachInObjects(gameObject => gameObject.Attach(spaceSession));
     }
 
     public void RemoveSession(NetworkSession spaceSession)
@@ -125,6 +68,7 @@ public class Space
             _sessions.Remove(spaceSession);
         }
         
+        ObjectsStorage.ForeachInObjects(gameObject => gameObject.Detach(spaceSession));
     }
     
 }

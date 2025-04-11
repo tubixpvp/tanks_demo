@@ -30,24 +30,21 @@ public class SpacesActivatorService
         {
             Space space = SpaceRegistry.CreateSpace(Random.NextInt64(long.MinValue,long.MaxValue), config.Name);
 
-            foreach (ObjectDataJson objectData in config.Objects)
-            {
-                GameObject gameObject = space.CreateObject(objectData.Name, ConvertEntities(objectData.Entities), null);
+            InitObjects(config.Objects, space.ObjectsStorage, null);
+        }
+    }
 
-                gameObject.Params.AutoAttach = objectData.AutoAttach;
+    private void InitObjects(ObjectDataJson[] objectsData, GameObjectsStorage objectsStorage, GameObject? parentObject)
+    {
+        foreach (ObjectDataJson objectData in objectsData)
+        {
+            GameObject gameObject = objectsStorage.CreateObject(objectData.Name, ConvertEntities(objectData.Entities), parentObject);
 
-                foreach (ObjectDataJson childObjectData in objectData.Children)
-                {
-                    GameObject childObject = space.CreateObject(childObjectData.Name,
-                        ConvertEntities(childObjectData.Entities), gameObject.Id);
-                    
-                    childObject.Params.AutoAttach = childObjectData.AutoAttach;
-                    
-                    childObject.Load();
-                }
+            gameObject.Params.AutoAttach = objectData.AutoAttach;
+
+            InitObjects(objectData.Children, gameObject.Children, parentObject);
                 
-                gameObject.Load();
-            }
+            gameObject.Load();
         }
     }
 

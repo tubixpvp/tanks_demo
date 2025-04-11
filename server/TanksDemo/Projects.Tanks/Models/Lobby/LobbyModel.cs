@@ -6,14 +6,17 @@ using CoreModels.Resources;
 using GameResources;
 using Network.Session;
 using OSGI.Services;
-using Projects.Tanks.Models.Lobby.Configs;
+using Projects.Tanks.Models.Lobby.ArmyInfo;
+using Projects.Tanks.Models.Lobby.MapInfo;
 using Projects.Tanks.Models.Lobby.Struct;
+using Projects.Tanks.Models.Lobby.TankInfo;
+using Projects.Tanks.Services.Lobby;
 
 namespace Projects.Tanks.Models.Lobby;
 
 [ModelEntity(typeof(LobbyEntity))]
 [Model]
-internal class LobbyModel(long id) : ModelBase<ILobbyModelClient>(id), ObjectListener.Load, IResourceRequire
+internal class LobbyModel(long id) : ModelBase<ILobbyModelClient>(id), IResourceRequire, ObjectClientListener.Attach
 {
     [InjectService]
     private static ResourceRegistry ResourceRegistry;
@@ -21,57 +24,36 @@ internal class LobbyModel(long id) : ModelBase<ILobbyModelClient>(id), ObjectLis
     [InjectService]
     private static ClientResourcesService ClientResourcesService;
     
-    
-    private static readonly Random Random = new();
+    [InjectService]
+    private static BattlesRegistry BattlesRegistry;
 
-
-    private readonly Dictionary<long, TankInfo> _tankInfoById = new();
-    private readonly Dictionary<long, string> _armyNameById = new();
     
-    public void ObjectLoaded()
+    private const string TanksInfoObject = "Tanks Info";
+    private const string ArmiesInfoObject = "Armies Info";
+    
+
+    private GameObject GetTanksInfoObject()
     {
-        LobbyEntity entity = GetEntity<LobbyEntity>();
-        
-        ArmyStruct[] armies = entity.Armies.Select(
-            name =>
-            {
-                long id = Random.NextInt64(long.MinValue, long.MaxValue);
-                _armyNameById.Add(id, name);
-                return new ArmyStruct()
-                {
-                    ArmyName = name,
-                    ArmyId = id
-                };
-            }).ToArray();
-        
-        TankStruct[] tanks = entity.Tanks.Select(
-            info =>
-            {
-                long id = Random.NextInt64(long.MinValue, long.MaxValue);
-                _tankInfoById.Add(id, info);
-                return new TankStruct()
-                {
-                    Name = info.Name,
-                    Id = id
-                };
-            }).ToArray();
+        return Context.Space.ObjectsStorage.GetObject(TanksInfoObject)!;
+    }
+    private GameObject GetArmiesInfoObject()
+    {
+        return Context.Space.ObjectsStorage.GetObject(ArmiesInfoObject)!;
+    }
 
-        int mapsCount = 5;
-        MapStruct[] maps = new MapStruct[mapsCount];
-        for (int i = 0; i < mapsCount; i++)
-        {
-            MapInfo info = entity.Maps[Random.Next(0, entity.Maps.Length)];
-            
-            maps[i] = new MapStruct()
-            {
-                Id = Random.NextInt64(long.MinValue, long.MaxValue),
-                Name = info.Name,
-                Description = info.Description,
-                TanksOnline = 0,
-                MaxTanksOnline = info.MaxTanks,
-                PreviewResourceId = ResourceRegistry.GetNumericId(info.PreviewId)
-            };
-        }
+    public void AttachObject(NetworkSession session)
+    {
+        MapStruct[] maps = BattlesRegistry.GetActiveBattlesData();
+
+        GameObject[] tankObjects = GetTanksInfoObject().Children.GetObjects();
+        TankStruct[] tanks = tankObjects.Select(
+            tankObj => tankObj.Adapt<ITankInfo>().GetTankStruct()).ToArray();
+
+        GameObject[] armyObjects = GetArmiesInfoObject().Children.GetObjects();
+        ArmyStruct[] armies = armyObjects.Select(
+            armyObj => armyObj.Adapt<IArmyInfo>().GetArmyStruct()).ToArray();
+        
+        LobbyEntity entity = GetEntity<LobbyEntity>();
         
         Clients(Context.Object, [], client => 
             client.InitObject(armies,
@@ -79,36 +61,39 @@ internal class LobbyModel(long id) : ModelBase<ILobbyModelClient>(id), ObjectLis
                 maps[0].Id,
                 tanks.First(tank => tank.Name == entity.DefaultTank).Id,
                 maps,
-                4,
+                12345,
                 true,
                 tanks,
                 [
                     new TopRecord()
                     {
                         Name = "test",
-                        Score = 100
+                        Score = 100000
                     }
                 ]));
     }
     
     public void CollectGameResources(List<string> resourcesIds)
     {
-        LobbyEntity entity = GetEntity<LobbyEntity>();
+        resourcesIds.AddRange(GetMaps().Select(info => info.GetEntity().PreviewId));
+    }
+
+    private IMapInfo[] GetMaps()
+    {
+        IEnumerable<GameObject> mapObjects = Context.Space.ObjectsStorage.GetObject("Maps")!.Children.GetObjects();
         
-        resourcesIds.AddRange(entity.Maps.Select(
-            mapInfo => mapInfo.PreviewId));
-        //resourcesIds.AddRange(entity.Tanks.Select(
-        //    tankInfo => tankInfo.ModelId));
+        return mapObjects.Select(mapObj => mapObj.Adapt<IMapInfo>()).ToArray();
     }
 
 
     [NetworkMethod]
     private void SelectTank(long tankId, long armyId)
     {
-        TankInfo tankInfo = _tankInfoById[tankId];
+        ITankInfo tankInfo = GetTanksInfoObject().Children.GetObject(tankId)!.Adapt<ITankInfo>();
+        IArmyInfo armyInfo = GetArmiesInfoObject().Children.GetObject(armyId)!.Adapt<IArmyInfo>();
         
-        string modelId = tankInfo.ModelId;
-        string textureId = tankInfo.Textures[_armyNameById[armyId]];
+        string modelId = tankInfo.GetModelResourceId();
+        string textureId = tankInfo.GetTextureResourceId(armyInfo.GetArmyType());
 
         GameObject gameObject = Context.Object;
         NetworkSession session = Context.Session!;

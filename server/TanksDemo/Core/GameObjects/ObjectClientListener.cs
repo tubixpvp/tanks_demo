@@ -4,6 +4,10 @@ namespace Core.GameObjects;
 
 public static class ObjectClientListener
 {
+    public interface Attach
+    {
+        public void AttachObject(NetworkSession session);
+    }
     public interface Attached
     {
         public void ObjectAttached(NetworkSession session);

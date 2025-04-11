@@ -37,4 +37,13 @@ public abstract class ModelBase<CI> : ModelGlobals, IModel where CI : class
     {
         return Context.Object.GetModelEntity<T>(Id);
     }
+
+    protected static void PutData(Type type, object data)
+    {
+        Context.Object.PutData(type, data);
+    }
+    protected static T? GetData<T>(Type type)
+    {
+        return Context.Object.GetData<T>(type);
+    }
 }

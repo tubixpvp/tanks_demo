@@ -5,7 +5,6 @@ using Core.Model.Registry;
 using Core.Spaces;
 using Network.Session;
 using OSGI.Services;
-using Utils;
 
 namespace Core.GameObjects;
 
@@ -21,6 +20,8 @@ public class GameObject
     public GameObject? Parent { get; }
     
     public GameObjectParams Params { get; }
+    
+    public GameObjectsStorage Children { get; }
 
     public List<long> ModelsIds { get; }
     
@@ -47,6 +48,7 @@ public class GameObject
         Space = space;
         Params = new();
         ModelsIds = new List<long>();
+        Children = new GameObjectsStorage(space);
         InitFromEntities(modelEntities);
     }
 
@@ -88,7 +90,15 @@ public class GameObject
     {
         //
 
+        Events<ObjectClientListener.Attach>().AttachObject(session);
         Events<ObjectClientListener.Attached>().ObjectAttached(session);
+    }
+
+    public void Detach(NetworkSession session)
+    {
+        //
+        
+        Events<ObjectClientListener.Detached>().ObjectDetached(session);
     }
     public bool IsAttached(NetworkSession session)
     {

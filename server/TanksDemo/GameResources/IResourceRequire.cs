@@ -1,4 +1,4 @@
-namespace CoreModels.GameObjectLoader;
+namespace GameResources;
 
 public interface IResourceRequire
 {

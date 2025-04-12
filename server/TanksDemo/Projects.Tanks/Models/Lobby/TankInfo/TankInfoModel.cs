@@ -1,5 +1,6 @@
 using Core.GameObjects;
 using Core.Model;
+using GameResources;
 using Projects.Tanks.Models.Lobby.ArmyInfo;
 using Projects.Tanks.Models.Lobby.Struct;
 
@@ -7,7 +8,7 @@ namespace Projects.Tanks.Models.Lobby.TankInfo;
 
 [ModelEntity(typeof(TankInfoEntity))]
 [Model(ServerOnly = true)]
-internal class TankInfoModel(long modelId) : ModelBase<object>(modelId), ITankInfo, ObjectListener.Load
+internal class TankInfoModel(long modelId) : ModelBase<object>(modelId), ITankInfo, ObjectListener.Load, IResourceRequire
 {
     
     public void ObjectLoaded()
@@ -25,8 +26,18 @@ internal class TankInfoModel(long modelId) : ModelBase<object>(modelId), ITankIn
     public string GetModelResourceId() => GetEntity<TankInfoEntity>().ModelId;
 
     public string GetTextureResourceId(ArmyType type) => GetEntity<TankInfoEntity>().Textures[type];
+    public string GetDeadTextureResourceId() => GetEntity<TankInfoEntity>().DeadTextureId;
 
 
     public TankStruct GetTankStruct() => GetData<TankStruct>(typeof(TankStruct))!;
+
     
+    public void CollectGameResources(List<string> resourcesIds)
+    {
+        TankInfoEntity entity = GetEntity<TankInfoEntity>();
+
+        resourcesIds.Add(entity.ModelId);
+
+        resourcesIds.AddRange(entity.Textures.Values.ToArray());
+    }
 }

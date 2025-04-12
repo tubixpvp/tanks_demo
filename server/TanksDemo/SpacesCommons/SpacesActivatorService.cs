@@ -29,7 +29,7 @@ public class SpacesActivatorService
 
             Space space = SpaceRegistry.CreateSpace(config.Name, templates);
 
-            templates.InitObjects(config.Objects, space.ObjectsStorage, null, true);
+            templates.InitObjects(config.Objects, space.ObjectsStorage, null);
         }
     }
 

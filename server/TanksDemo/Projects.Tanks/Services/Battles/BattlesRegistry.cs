@@ -3,7 +3,6 @@ using Core.Spaces;
 using GameResources;
 using OSGI.Services;
 using Platform.Models.Core.Child;
-using Platform.Models.Core.Parent;
 using Projects.Tanks.Models.Lobby.MapInfo;
 using Projects.Tanks.Models.Lobby.Struct;
 
@@ -34,27 +33,19 @@ internal class BattlesRegistry
         string battleName = "Battle" + (++_battleCounter);
         Space battleSpace = SpaceRegistry.CreateSpace(battleName, templateSpace.TemplatesStorage);
 
-        GameObject battleRootObject = battleSpace.TemplatesStorage.BuildObject("Battlefield Root", battleSpace.ObjectsStorage);
-
-        SetupBattle(battleSpace, battleRootObject, mapInfoObject);
         
-        _battleSpaces.Add(battleSpace.Id);
-
-        List<GameObject> children = new List<GameObject>();
-        battleRootObject.Adapt<IParent>().CollectAllChildrenLevels(children);
-        children.Reverse();
-        children.ForEach(child => child.Load());
-    }
-    private void SetupBattle(Space space, GameObject rootObject, GameObject mapInfoObject)
-    {
         MapInfoEntity mapInfoEntity = mapInfoObject.Adapt<IMapInfo>().GetEntity();
 
-        GameObject battleMapInfo = space.ObjectsStorage.CreateObject("Map Info", [
+        GameObject battleMapInfo = battleSpace.ObjectsStorage.CreateObject("Map Info", [
             mapInfoEntity,
             new ChildModelEntity()
         ]);
+        
+        GameObject battleRootObject = battleSpace.TemplatesStorage.BuildObject("Battlefield Root", battleSpace.ObjectsStorage);
 
-        battleMapInfo.Adapt<IChild>().ChangeParent(rootObject);
+        battleMapInfo.Adapt<IChild>().ChangeParent(battleRootObject);
+        
+        _battleSpaces.Add(battleSpace.Id);
     }
 
     public Space GetBattleSpaceById(long id)

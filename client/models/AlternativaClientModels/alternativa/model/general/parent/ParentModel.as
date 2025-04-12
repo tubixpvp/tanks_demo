@@ -10,8 +10,6 @@ package alternativa.model.general.parent {
 	import platform.models.core.parent.IParentModelBase;
 
 	public class ParentModel extends ParentModelBase implements IParentModelBase, IChildListener, IParent {
-
-		private var children:Set = new Set();
 		
 		public function ParentModel() {
 			super();
@@ -32,6 +30,7 @@ package alternativa.model.general.parent {
 		}
 		
 		public function getChildren(clientObject:ClientObject):Array {
+			var children:Set = clientObject.getParams(ParentModelBase) as Set;
 			return children.toArray();
 		}
 		

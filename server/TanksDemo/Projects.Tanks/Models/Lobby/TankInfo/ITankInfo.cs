@@ -9,6 +9,7 @@ internal interface ITankInfo
     
     public string GetModelResourceId();
     public string GetTextureResourceId(ArmyType armyType);
+    public string GetDeadTextureResourceId();
     
     public TankStruct GetTankStruct();
 }

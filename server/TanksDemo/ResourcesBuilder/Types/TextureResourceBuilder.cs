@@ -9,7 +9,7 @@ internal class TextureResourceBuilder : ResourceTypeBuilderBase
     private static readonly string[] DiffuseFileNames = ["texture","image"];
     private static readonly string[] AlphaFileNames = ["alpha"];
     
-    private static readonly string[] FileExtensions = ["png", "jpg", "jpeg", "gif"];
+    public static readonly string[] FileExtensions = ["png", "jpg", "jpeg", "gif"];
     
     public override async Task<string> CollectFiles(ResourceInfo resourceInfo, string[] resourceFiles, Dictionary<string, byte[]> outputFiles)
     {

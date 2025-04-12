@@ -8,7 +8,11 @@
             "name": "Battlefield Root",
             
             "entities": {
-                "Scene3DEntity": {}
+                "Scene3DEntity": {},
+                "BattlefieldEntity": {
+                    "EnvironmentSoundId": "battlefield.environment_sound",
+                    "MinimapResourceId": "battlefield.minimap"
+                }
             },
             
             "children": [
@@ -22,18 +26,33 @@
                         },
                         "View3DEntity": {
                             "EntityOrder": 1,
-                            "CameraPosition": {"X": 0,"Y": 0,"Z": 500},
-                            "CameraRotation": {"X": -1.0,"Y": 0,"Z": 0}
+                            "CameraPosition": {"X": 0,"Y": -1000,"Z": 1000},
+                            "CameraRotation": {"X": -2.0,"Y": 0,"Z": 0}
                         }
                     },
                     
                     "children": [],
                     
                     "attach": true
+                },
+                {
+                    "name": "Level",
+
+                    "entities": {
+                        "A3DModelEntity": {
+                            "ModelResourceId": "level.model",
+                            "CollisionResourceId": "level.collision"
+                        }
+                    },
+
+                    "children": [],
+
+                    "attach": true
                 }
             ],
             
             "attach": true
         }
+        
     ]
 }

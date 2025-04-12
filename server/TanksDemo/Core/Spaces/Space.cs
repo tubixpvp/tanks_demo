@@ -148,7 +148,7 @@ public class Space
         }
         gameObject.Events<ObjectAttachListener.Detached>().ObjectDetached(session);
     }
-    internal bool IsObjectDeployed(NetworkSession session, GameObject gameObject)
+    public bool IsObjectDeployed(NetworkSession session, GameObject gameObject)
     {
         SessionSpaceData data = GetSessionData(session);
         lock (data)

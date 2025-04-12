@@ -52,10 +52,13 @@ public class GameObject
         {
             Type entityType = entity.GetType();
 
-            IModel model = ModelRegistry.GetModelByEntityType(entityType);
-
             _entities.Add(entityType, entity);
+            
+            IModel? model = ModelRegistry.GetModelByEntityType(entityType);
 
+            if (model == null)
+                continue;
+            
             if (!ModelsIds.Contains(model.Id))
             {
                 ModelsIds.Add(model.Id);
@@ -71,9 +74,12 @@ public class GameObject
         
         Events<ObjectListener.Load>().ObjectLoaded();
     }
-
     public void UnloadAndDestroy()
     {
+    }
+    public bool IsLoaded()
+    {
+        return _loaded;
     }
 
 

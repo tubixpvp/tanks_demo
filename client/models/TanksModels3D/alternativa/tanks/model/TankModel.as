@@ -46,6 +46,7 @@ package alternativa.tanks.model {
 	
 	import projects.tanks.models.tank.TankModelBase;
 	import projects.tanks.models.tank.ITankModelBase;
+	import projects.tanks.models.tank.TankSoundsStruct;
 	
 	use namespace alternativa3d;
 	use namespace altphysics;
@@ -62,13 +63,13 @@ package alternativa.tanks.model {
 		public static const TURRET_LEFT:int = 16;
 		public static const TURRET_RIGHT:int = 32;
 		
-		public static const SHOT_SOUND_ID:Long = LongFactory.integerToLong(75);
-		public static const EXPLOSION_SOUND_ID:Long = LongFactory.integerToLong(76);
-		public static const ENGINESTART_SOUND_ID:Long = LongFactory.integerToLong(77);
-		public static const ENGINEIDLE_SOUND_ID:Long = LongFactory.integerToLong(78);
-		public static const STARTMOVING_SOUND_ID:Long = LongFactory.integerToLong(79);
-		public static const MOVE_SOUND_ID:Long = LongFactory.integerToLong(86);
-		public static const ENDMOVING_SOUND_ID:Long = LongFactory.integerToLong(87);
+		//public static const SHOT_SOUND_ID:Long = LongFactory.integerToLong(75);
+		//public static const EXPLOSION_SOUND_ID:Long = LongFactory.integerToLong(76);
+		//public static const ENGINESTART_SOUND_ID:Long = LongFactory.integerToLong(77);
+		//public static const ENGINEIDLE_SOUND_ID:Long = LongFactory.integerToLong(78);
+		//public static const STARTMOVING_SOUND_ID:Long = LongFactory.integerToLong(79);
+		//public static const MOVE_SOUND_ID:Long = LongFactory.integerToLong(86);
+		//public static const ENDMOVING_SOUND_ID:Long = LongFactory.integerToLong(87);
 		
 		private static const EMPTY_TARGET_ID:Long = LongFactory.getLong(0,0);
 		private static const GUN_COOLDOWN:int = 2000;
@@ -149,15 +150,15 @@ package alternativa.tanks.model {
 		 * @param turretAngle
 		 * @param up
 		 */
-		public function initObject(clientObject:ClientObject, accuracy:Number, control:int, damagedTextureId:Long, gunY:Number, gunZ:Number, h:Number, health:int, l:Number, name:String, orientation:Vector3d, position:Vector3d, score:int, selfTank:Boolean, speed:Number, turretAngle:Number, turretSpeed:Number, w:Number):void {
+		public function initObject(clientObject:ClientObject, accuracy:Number, control:int, damagedTextureId:Long, gunY:Number, gunZ:Number, h:Number, health:int, l:Number, name:String, orientation:Vector3d, position:Vector3d, score:int, selfTank:Boolean, speed:Number, turretAngle:Number, turretSpeed:Number, w:Number, soundsData:TankSoundsStruct):void {
 			Main.writeToConsole(TextUtils.insertVars("[TankModel.initData] id %1", clientObject.id));
 
 			var textureResource:TextureResource = Main.resourceRegister.getResource(damagedTextureId) as TextureResource;
 			var tankParams:TankParams = new TankParams(clientObject.id, name, health, speed, turretSpeed, accuracy, l, w, h, gunY, gunZ, selfTank, score, textureResource.data);
 			
-			var engineIdleSound:Sound = (Main.resourceRegister.getResource(ENGINEIDLE_SOUND_ID) as SoundResource).sound;
-			var startMovingSound:Sound = (Main.resourceRegister.getResource(STARTMOVING_SOUND_ID) as SoundResource).sound;
-			var moveSound:Sound = (Main.resourceRegister.getResource(MOVE_SOUND_ID) as SoundResource).sound;
+			var engineIdleSound:Sound = (Main.resourceRegister.getResource(soundsData.engineIdleSoundId) as SoundResource).sound;
+			var startMovingSound:Sound = (Main.resourceRegister.getResource(soundsData.startMovingSoundId) as SoundResource).sound;
+			var moveSound:Sound = (Main.resourceRegister.getResource(soundsData.moveSoundId) as SoundResource).sound;
 			
 			tankParams.sounds = new TankSounds(engineIdleSound, startMovingSound, moveSound);
 			
@@ -178,16 +179,16 @@ package alternativa.tanks.model {
 			clientObject.putParams(TankModelBase, tankParams);
 			
 			if (shotSound3D == null) {
-				initSounds();
+				initSounds(soundsData);
 			}
 		}
 		
 		/**
 		 * 
 		 */
-		private function initSounds():void {
-			shotSound3D = new Sound3D((Main.resourceRegister.getResource(SHOT_SOUND_ID) as SoundResource).sound, 500, 1500, 10, 10);
-			explosionSound3D = new Sound3D((Main.resourceRegister.getResource(EXPLOSION_SOUND_ID) as SoundResource).sound, 500, 1500, 10, 15);
+		private function initSounds(soundsData:TankSoundsStruct):void {
+			shotSound3D = new Sound3D((Main.resourceRegister.getResource(soundsData.shotSoundId) as SoundResource).sound, 500, 1500, 10, 10);
+			explosionSound3D = new Sound3D((Main.resourceRegister.getResource(soundsData.explosionSoundId) as SoundResource).sound, 500, 1500, 10, 15);
 //			engineStartSound = (Main.resourceRegister.getResource(ENGINESTART_SOUND_ID) as SoundResource).sound;
 //			engineIdleSound = (Main.resourceRegister.getResource(ENGINEIDLE_SOUND_ID) as SoundResource).sound;
 //			startMovingSound = (Main.resourceRegister.getResource(STARTMOVING_SOUND_ID) as SoundResource).sound;

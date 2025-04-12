@@ -2,7 +2,6 @@
 using Core.Model;
 using Core.Model.Communication;
 using Core.Spaces;
-using CoreModels.GameObjectLoader;
 using CoreModels.Resources;
 using GameResources;
 using Network.Session;
@@ -40,6 +39,9 @@ internal class LobbyModel(long id) : ModelBase<ILobbyModelClient>(id), IResource
 
     [InjectService]
     private static SpaceChannelHandler SpaceChannelHandler;
+
+    [InjectService]
+    private static BattleJoinService BattleJoinService;
 
 
     private static readonly Random Random = new();
@@ -104,6 +106,10 @@ internal class LobbyModel(long id) : ModelBase<ILobbyModelClient>(id), IResource
     public void CollectGameResources(List<string> resourcesIds)
     {
         resourcesIds.AddRange(GetMaps().Select(info => info.GetEntity().PreviewId));
+        foreach (GameObject tankInfoObj in GetTanksInfoParent().GetChildren())
+        {
+            tankInfoObj.Events<IResourceRequire>().CollectGameResources(resourcesIds);
+        }
     }
 
     private IMapInfo[] GetMaps()
@@ -129,22 +135,12 @@ internal class LobbyModel(long id) : ModelBase<ILobbyModelClient>(id), IResource
         
         LobbySessionData sessionData = GetSessionData(Context.Session!);
 
-        sessionData.SelectedTankId = tankInfoObject.Id;
+        sessionData.SelectedTank = tankInfoObject;
         sessionData.SelectedArmyId = armyInfoObject.Id;
         
         string modelId = tankInfo.GetModelResourceId();
         string textureId = tankInfo.GetTextureResourceId(armyInfo.GetArmyType());
-
-        GameObject gameObject = Context.Object;
-        NetworkSession session = Context.Session!;
-
-        ResourceInfo[] resources = new[] { modelId, textureId }.Select(ResourceRegistry.GetResourceInfo).ToArray();
         
-        ClientResourcesService.LoadResources(session, resources,
-            gameObject.GetFunctionWrapper(() => OnTankResourcesLoaded(modelId, textureId), session));
-    }
-    private void OnTankResourcesLoaded(string modelId, string textureId)
-    {
         Clients(Context, client =>
             client.ShowTank(ResourceRegistry.GetNumericId(modelId), ResourceRegistry.GetNumericId(textureId)));
     }
@@ -167,12 +163,7 @@ internal class LobbyModel(long id) : ModelBase<ILobbyModelClient>(id), IResource
         
         Space battleSpace = BattlesRegistry.GetBattleSpaceById(sessionData.SelectedBattleId);
 
-        NetworkSession controlSession = SpaceChannelHandler.GetControlSessionBySpace(session);
-        SpaceChannelHandler.ConnectToSpace(controlSession, battleSpace);
-        
-        //todo create tank
-
-        SpaceChannelHandler.DisconnectFromSpace(controlSession, session);
+        BattleJoinService.JoinBattle(battleSpace, session, sessionData.SelectedTank);
     }
 
     [NetworkMethod]
@@ -196,7 +187,7 @@ internal class LobbyModel(long id) : ModelBase<ILobbyModelClient>(id), IResource
             data = new LobbySessionData()
             {
                 //set default params
-                SelectedTankId = defaultTankObject.Id,
+                SelectedTank = defaultTankObject,
                 SelectedArmyId = defaultArmyObject.Id,
                 SelectedBattleId = BattlesRegistry.GetFirstBattleId(),
             };

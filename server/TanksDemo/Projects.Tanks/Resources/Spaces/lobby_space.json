@@ -17,7 +17,16 @@
                 {
                     "name": "Tanks Info",
 
-                    "entities": {},
+                    "entities": {
+                        "TankSoundsEntity": {
+                            "EngineIdleSoundId": "tank.sounds.engine_idle",
+                            "StartMovingSoundId": "tank.sounds.start_moving",
+                            "MoveSoundId": "tank.sounds.moving",
+                            
+                            "ShotSoundId": "tank.sounds.shot",
+                            "ExplosionSoundId": "tank.sounds.explosion"
+                        }
+                    },
 
                     "children": [
                         {
@@ -31,7 +40,8 @@
                                         "BlueGray": "tanks.light.bluegray",
                                         "Green": "tanks.light.green",
                                         "Desert": "tanks.light.desert"
-                                    }
+                                    },
+                                    "DeadTextureId": "tanks.light.dead"
                                 }
                             },
 
@@ -50,7 +60,8 @@
                                         "BlueGray": "tanks.medium.bluegray",
                                         "Green": "tanks.medium.green",
                                         "Desert": "tanks.medium.desert"
-                                    }
+                                    },
+                                    "DeadTextureId": "tanks.medium.dead"
                                 }
                             },
 
@@ -69,7 +80,8 @@
                                         "BlueGray": "tanks.heavy.bluegray",
                                         "Green": "tanks.heavy.green",
                                         "Desert": "tanks.heavy.desert"
-                                    }
+                                    },
+                                    "DeadTextureId": "tanks.heavy.dead"
                                 }
                             },
 

@@ -14,7 +14,7 @@ package alternativa.resource {
 	import flash.net.URLRequest;
 	import flash.utils.ByteArray;
 	import platform.models.general.world3d.a3d.A3D;
-	import alternativa.engine3d.loaders.Parser3DS;
+	import alternativa.engine3d.loaders.Loader3DS;
 	
 	/**
 	 * Ресурс хранит трёхмерную модель Alternativa3D.
@@ -78,8 +78,6 @@ package alternativa.resource {
 			{
 				parse3DS(data);
 			}
-
-			completeLoading();
 		}
 
 		private function parseA3D(data:ByteArray) : void
@@ -98,13 +96,31 @@ package alternativa.resource {
 
 			var parser:A3DParser = new A3DParser(protocol.decode(a3dData) as A3D);
 			_object = parser.parse();
+
+			completeLoading();
 		}
 
 		private function parse3DS(data:ByteArray) : void
 		{
-			var parser:Parser3DS = new Parser3DS();
-			parser.parse(data);
+			var parser:Loader3DS = new Loader3DS();
+			parser.addEventListener(Event.COMPLETE, on3DSLoaded);
+			parser.addEventListener(IOErrorEvent.IO_ERROR, onTextureLoadingError);
+			parser.loadBytes(data, url);
+		}
+		private function onTextureLoadingError(e:Event) : void
+		{
+			Main.writeToConsole("texture not found: " + e);
+		}
+		private function on3DSLoaded(e:Event) : void
+		{
+			var parser:Loader3DS = (e.target as Loader3DS);
+
+			parser.removeEventListener(Event.COMPLETE, on3DSLoaded);
+			parser.removeEventListener(IOErrorEvent.IO_ERROR, onTextureLoadingError);
+
 			_object = parser.content;
+
+			completeLoading();
 		}
 		
 	}

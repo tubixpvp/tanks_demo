@@ -2,7 +2,7 @@
 
 namespace Projects.Tanks.Models.Tank;
 
-public interface ITankModelClient
+internal interface ITankModelClient
 {
     public void InitObject(float accuracy,
         int control,
@@ -19,7 +19,8 @@ public interface ITankModelClient
         float speed,
         float turretAngle,
         float turretSpeed,
-        float width);
+        float width,
+        TankSoundsStruct sounds);
 
     public void Fire(Vector3d targetPosition, long targetTankId);
 

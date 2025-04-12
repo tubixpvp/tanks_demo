@@ -22,6 +22,10 @@ internal class UserProfileService
     {
         return GetUserProfile(session).Experience;
     }
+    public string GetUserName(NetworkSession session)
+    {
+        return GetUserProfile(session).UserName;
+    }
 
     public bool IsRegistered(NetworkSession session)
     {

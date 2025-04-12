@@ -9,4 +9,6 @@ internal class TankInfoEntity
     public string ModelId;
 
     public Dictionary<ArmyType, string> Textures;
+
+    public string DeadTextureId;
 }

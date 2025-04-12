@@ -26,10 +26,10 @@ internal class GameObjectTemplatesStorage : IGameObjectTemplates
     {
         GameObjectTemplate template = _templates[name];
 
-        return InitObjects([template], objectsStorage, null, false).First();
+        return InitObjects([template], objectsStorage, null).First();
     }
     
-    public GameObject[] InitObjects(GameObjectTemplate[] objectsData, GameObjectsStorage objectsStorage, GameObject? parentObject, bool load)
+    public GameObject[] InitObjects(GameObjectTemplate[] objectsData, GameObjectsStorage objectsStorage, GameObject? parentObject)
     {
         return objectsData.Select(
             objectData =>
@@ -54,7 +54,7 @@ internal class GameObjectTemplatesStorage : IGameObjectTemplates
                 GameObject gameObject = objectsStorage.CreateObject(objectData.Name, entities);
                 gameObject.Params.AutoAttach = objectData.AutoAttach;
 
-                GameObject[] children = InitObjects(objectData.Children, objectsStorage, parentObject, load);
+                GameObject[] children = InitObjects(objectData.Children, objectsStorage, gameObject);
 
                 if (parentEntity != null)
                 {
@@ -64,10 +64,7 @@ internal class GameObjectTemplatesStorage : IGameObjectTemplates
                     }
                 }
 
-                if (load)
-                {
-                    gameObject.Load();
-                }
+                gameObject.Load();
 
                 return gameObject;
                 

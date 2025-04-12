@@ -1,6 +1,7 @@
 using System.Reflection;
 using Logging;
 using Newtonsoft.Json.Linq;
+using Utils;
 
 namespace Config;
 
@@ -26,7 +27,7 @@ public static class ServerResources
 
         foreach (string configPath in configsPaths)
         {
-            JObject json = JObject.Parse(File.ReadAllText(configPath));
+            JObject json = JSON.ParseObject(File.ReadAllText(configPath));
             
             string fileName = Path.GetFileName(configPath);
             

@@ -1,0 +1,5 @@
+{
+    "id": "level.collision",
+    "type": "A3DCollisionData",
+    "description": "Level1 collision data"
+}

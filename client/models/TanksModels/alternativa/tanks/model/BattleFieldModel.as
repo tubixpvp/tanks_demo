@@ -259,7 +259,7 @@ package alternativa.tanks.model {
 			if (Main.contentUILayer.contains(buttonContainer)) {
 				Main.contentUILayer.removeChild(buttonContainer);
 			}
-			if (Main.contentUILayer.contains(lifelevel)) {
+			if (lifelevel != null && Main.contentUILayer.contains(lifelevel)) {
 				Main.contentUILayer.removeChild(lifelevel);
 			}
 			if (Main.contentUILayer.contains(scoresPanel)) {

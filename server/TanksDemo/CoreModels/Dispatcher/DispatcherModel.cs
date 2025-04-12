@@ -41,8 +41,8 @@ internal class DispatcherModel(long modelId) : ModelBase<IDispatcherModelClient>
 
                     long?[]? modelsIds = modelsParams.Select(
                         entry => (long?)entry.modelId).ToArray();
-                    
-                    GeneralDataEncoder.Encode(modelsIds, buffer, nullMap);
+
+                    GeneralDataEncoder.Encode(typeof(long?[]), modelsIds, buffer, nullMap, true);
 
                     foreach (var entry in modelsParams)
                     {

@@ -145,8 +145,6 @@ package alternativa.tanks.model {
 
 	    	if (modelResource != null && textureResource != null) {
 	    		lobbyWindow.showTank(modelResource, textureResource);
-
-				Main.loadingProgress.closeLoadingWindow();
 	    	}
 	    }
 	    

@@ -12,6 +12,7 @@
       <ProjectReference Include="..\Logging\Logging.csproj" />
       <ProjectReference Include="..\NetworkCommons\NetworkCommons.csproj" />
       <ProjectReference Include="..\Network\Network.csproj" />
+      <ProjectReference Include="..\Platform\Platform.csproj" />
     </ItemGroup>
 
 </Project>

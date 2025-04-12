@@ -16,11 +16,11 @@ package alternativa.resource {
 		[Embed(source="images/loading_window.png")] private static const backBitmap:Class;
 		private static const backBd:BitmapData = new backBitmap().bitmapData;
 		
-		[Embed(source="sounds/load.mp3")]
+		/*[Embed(source="sounds/load.mp3")]
         public var soundClass:Class;
 		
 		private var loadingSound:Sound;
-		private var soundLoaded:Boolean;
+		private var soundLoaded:Boolean;*/
 		
 		private var back:Bitmap;
 		
@@ -47,7 +47,7 @@ package alternativa.resource {
 			statusLabel.thickness = -100;
 			statusLabel.sharpness = 100;
 			with (statusLabel) {
-				defaultTextFormat = new TextFormat("Sign", 12, 0xffffff);
+				defaultTextFormat = new TextFormat("Alternativa", 12, 0xffffff);
 				type = TextFieldType.DYNAMIC;
 				autoSize = TextFieldAutoSize.CENTER;
 				antiAliasType = AntiAliasType.ADVANCED;
@@ -58,7 +58,7 @@ package alternativa.resource {
 				tabEnabled = false;
 				text = "LOADING..."
 			}
-			addChild(statusLabel);
+			//addChild(statusLabel);
 			
 			progressBar = new LoadingProgressBar();
 			progressBar.mouseEnabled = false;
@@ -72,10 +72,10 @@ package alternativa.resource {
 			
 			repaint();
 			
-			loadingSound = new soundClass() as Sound;
+			/*loadingSound = new soundClass() as Sound;
 			if (loadingSound != null) {
 				soundLoaded = true;
-			}
+			}*/
 		}
 		
 		public function changeStatus(value:String):void {
@@ -88,9 +88,9 @@ package alternativa.resource {
 			if (progressBar.value != progress) {
 				progressBar.value = progress;
 				// запуск звука
-				if (soundLoaded) {
+				/*if (soundLoaded) {
 					loadingSound.play(0);
-				}
+				}*/
 			}
 		}
 		

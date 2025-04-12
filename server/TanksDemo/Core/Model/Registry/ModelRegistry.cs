@@ -199,11 +199,21 @@ public class ModelRegistry
     }
     
     internal IModel GetModelById(long id) => _idToModel[id];
-    internal IModel GetModelByEntityType(Type entityType) => _entityToModel.GetValueOrDefault(entityType)
-                                                             ?? throw new Exception("Entity not found: " + entityType.Name);
+    internal IModel? GetModelByEntityType(Type entityType) => _entityToModel.GetValueOrDefault(entityType);
     
-    public Type GetEntityTypeByName(string name) => _entityTypeByName.GetValueOrDefault(name) 
-                                                    ?? throw new Exception("Entity not found: " + name);
+    public Type GetEntityTypeByName(string name)
+    {
+        Type? type = _entityTypeByName.GetValueOrDefault(name);
+        if (type != null)
+            return type;
+        type = AttributesUtil.GetAllTypes().FirstOrDefault(t => t.Name == name);
+        if (type != null)
+        {
+            _entityTypeByName.Add(name, type);
+            return type;
+        }
+        throw new Exception("Entity type not found: " + name);
+    }
 
     public IModel[] GetAllModels() => _idToModel.Values.ToArray();
     

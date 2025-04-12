@@ -45,6 +45,7 @@ package alternativa.init {
 	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
 	import flash.display.Stage;
+	import alternativa.service.IModelService;
 	
 	
 	public class Main implements IBundleActivator {
@@ -121,6 +122,7 @@ package alternativa.init {
 			resourceRegister = controlHandler.resourceRegister;
 			modelsRegister = controlHandler.modelsRegister;
 			//spaceRegister = controlHandler.spaceRegister;
+			osgi.registerService(IModelService, modelsRegister);
 			
 			// Регистрация диспетчер модели
 			var dispatcherModelId:Long = LongFactory.getLong(0, 1);

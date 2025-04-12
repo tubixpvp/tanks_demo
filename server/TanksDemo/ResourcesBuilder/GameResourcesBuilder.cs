@@ -13,7 +13,10 @@ internal class GameResourcesBuilder
     private static readonly Dictionary<ResourceType, ResourceTypeBuilderBase> ResourceTypeBuilders = new()
     {
         [ResourceType.Texture] = new TextureResourceBuilder(),
-        [ResourceType.A3D] = new A3DResourceBuilder()
+        [ResourceType.A3D] = new A3DResourceBuilder(),
+        [ResourceType.A3DCollisionData] = new A3DCollisionResourceBuilder(),
+        [ResourceType.MP3] = new SoundResourceBuilder(),
+        [ResourceType.MovieClip] = new MovieClipResourceBuilder()
     };
 
 

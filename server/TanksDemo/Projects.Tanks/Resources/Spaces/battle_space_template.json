@@ -1,0 +1,39 @@
+{
+    "name": "Battle Template",
+    
+    "objects": [],
+    
+    "templates": [
+        {
+            "name": "Battlefield Root",
+            
+            "entities": {
+                "Scene3DEntity": {}
+            },
+            
+            "children": [
+                {
+                    "name": "View",
+                    
+                    "entities": {
+                        "LayerModelEntity": {
+                            "EntityOrder": 0,
+                            "Layer": "Content"
+                        },
+                        "View3DEntity": {
+                            "EntityOrder": 1,
+                            "CameraPosition": {"X": 0,"Y": 0,"Z": 500},
+                            "CameraRotation": {"X": -1.0,"Y": 0,"Z": 0}
+                        }
+                    },
+                    
+                    "children": [],
+                    
+                    "attach": true
+                }
+            ],
+            
+            "attach": true
+        }
+    ]
+}

@@ -22,7 +22,7 @@ package alternativa.model {
 		
 		public static function init():void {
 			Main.writeToConsole("AlternativaClientModels init", 0xff0000);
-			var modelRegister:IModelService = Main.osgi.getService(IModelService) as IModelService;
+			var modelRegister:IModelService = Main.modelsRegister;
 			
 			// Добавление реализаций моделей
 			var model:IModel = new QuadroModel();

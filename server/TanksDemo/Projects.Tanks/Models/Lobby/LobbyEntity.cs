@@ -1,8 +1,10 @@
+using Projects.Tanks.Models.Lobby.ArmyInfo;
+
 namespace Projects.Tanks.Models.Lobby;
 
 internal class LobbyEntity
 {
-    public string DefaultArmy;
+    public ArmyType DefaultArmy;
 
     public string DefaultTank;
 }

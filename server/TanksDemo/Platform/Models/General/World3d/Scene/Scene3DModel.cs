@@ -2,7 +2,8 @@
 
 namespace Platform.Models.General.World3d.Scene;
 
+[ModelEntity(typeof(Scene3DEntity))]
 [Model]
-public class Scene3DModel(long id) : ModelBase<object>(id)
+internal class Scene3DModel(long id) : ModelBase<object>(id)
 {
 }

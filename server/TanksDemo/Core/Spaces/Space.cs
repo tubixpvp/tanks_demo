@@ -19,6 +19,7 @@ public class Space
     public string Name { get; }
 
     public GameObjectsStorage ObjectsStorage { get; }
+    public IGameObjectTemplates TemplatesStorage { get; }
 
     private const string SessionDataKey = "SessionSpaceData";
 
@@ -26,7 +27,7 @@ public class Space
 
     private readonly ILogger _logger;
 
-    internal Space(long id, string name)
+    internal Space(long id, string name, IGameObjectTemplates templatesStorageImpl)
     {
         _logger = LoggerService.GetLogger(GetType());
         
@@ -34,6 +35,7 @@ public class Space
         Name = name;
 
         ObjectsStorage = new GameObjectsStorage(this);
+        TemplatesStorage = templatesStorageImpl;
         
         CreateRootObject();
     }
@@ -57,7 +59,12 @@ public class Space
             _sessions.Add(spaceSession);
         }
         
-        ObjectsStorage.ForeachInObjects(gameObject => AttachObject(spaceSession, gameObject));
+        ObjectsStorage.ForeachInObjects(gameObject =>
+        {
+            if (!gameObject.Params.AutoAttach)
+                return;
+            AttachObject(spaceSession, gameObject);
+        });
     }
 
     public void RemoveSession(NetworkSession spaceSession)

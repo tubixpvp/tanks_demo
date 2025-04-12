@@ -51,7 +51,7 @@ package alternativa.network.handler {
 			
 			// Создание корневого объекта спейса. Объект имеет модель DispatcherModel с идентификатором 1. Эта
 			// модель принимает команды на загрузку и выгрузку объектов спейса.
-			_objectRegister.createObject(LongFactory.getLong(0, 0), null, "rootObject", new Array([1]));
+			_objectRegister.createObject(LongFactory.getLong(0, 0), null, "rootObject", [LongFactory.getLong(0,1)]);
 		}
 			
 		/**

@@ -211,7 +211,7 @@ package alternativa.tanks.model {
 			}
 		}
 		
-		public function setHash(clientObject:ClientObject = null, hash:String = null):void {
+		public function setHash(clientObject:ClientObject, hash:String):void {
 			Main.console.writeToConsole("UserModel setHash: " + hash, 0x0000cc);
 			
 			var storage:SharedObject = (Main.osgi.getService(IStorageService) as IStorageService).getStorage();

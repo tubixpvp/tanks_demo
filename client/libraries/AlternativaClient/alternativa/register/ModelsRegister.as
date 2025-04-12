@@ -158,6 +158,7 @@ package alternativa.register {
 				var interfaces:Array = modelInterfaces[modelIds[i]] as Array;
 				if (interfaces == null) {
 					Main.writeToConsole("[ModelsRegister::getModelForObject] no interfaces found. Object: " + object.id + ", model: " + modelIds[i], 0xFF0000);
+					continue;
 				}
 				// Цикл по интерфейсам модели
 				for (var n:int = 0; n < interfaces.length; n++) {

@@ -94,7 +94,7 @@ public static class GeneralDataDecoder
 
     private static Enum DecodeEnum(Type type, ByteArray bytes, NullMap nullMap)
     {
-        Type baseType = type.BaseType!;
+        Type baseType = Enum.GetUnderlyingType(type);
 
         //decode index
         object value = CodecsRegistry.GetCodec(baseType)!.Decode(bytes, nullMap);

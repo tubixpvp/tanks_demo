@@ -83,11 +83,14 @@ public static class GeneralDataEncoder
 
     private static void EncodeEnum(Type type, object value, ByteArray output, NullMap nullMap)
     {
-        Type baseType = type.BaseType!;
+        Type baseType = Enum.GetUnderlyingType(type);
         
         object index = Convert.ChangeType(value, baseType);
 
-        CodecsRegistry.GetCodec(baseType)!.Encode(index, output, nullMap);
+        ICustomCodec baseCodec = CodecsRegistry.GetCodec(baseType)
+                                 ?? throw new Exception("Codec not found for " + baseType.Name);
+        
+        baseCodec.Encode(index, output, nullMap);
     }
 
     private static void EncodeArray(Type type, object value, ByteArray output, NullMap nullMap)

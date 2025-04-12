@@ -8,4 +8,6 @@ public interface IParent
     public GameObject? GetChild(long id);
     
     public GameObject[] GetChildren();
+
+    public void CollectAllChildrenLevels(List<GameObject> children);
 }

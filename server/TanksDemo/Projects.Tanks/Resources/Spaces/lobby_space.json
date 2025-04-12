@@ -13,157 +13,157 @@
                 }
             },
             
-            "children": [],
+            "children": [
+                {
+                    "name": "Tanks Info",
+
+                    "entities": {},
+
+                    "children": [
+                        {
+                            "name": "Light Tank",
+
+                            "entities": {
+                                "TankInfoEntity": {
+                                    "Name": "Light",
+                                    "ModelId": "tanks.light.model",
+                                    "Textures": {
+                                        "BlueGray": "tanks.light.bluegray",
+                                        "Green": "tanks.light.green",
+                                        "Desert": "tanks.light.desert"
+                                    }
+                                }
+                            },
+
+                            "children": [],
+
+                            "attach": false
+                        },
+                        {
+                            "name": "Medium Tank",
+
+                            "entities": {
+                                "TankInfoEntity": {
+                                    "Name": "Medium",
+                                    "ModelId": "tanks.medium.model",
+                                    "Textures": {
+                                        "BlueGray": "tanks.medium.bluegray",
+                                        "Green": "tanks.medium.green",
+                                        "Desert": "tanks.medium.desert"
+                                    }
+                                }
+                            },
+
+                            "children": [],
+
+                            "attach": false
+                        },
+                        {
+                            "name": "Heavy Tank",
+
+                            "entities": {
+                                "TankInfoEntity": {
+                                    "Name": "Heavy",
+                                    "ModelId": "tanks.heavy.model",
+                                    "Textures": {
+                                        "BlueGray": "tanks.heavy.bluegray",
+                                        "Green": "tanks.heavy.green",
+                                        "Desert": "tanks.heavy.desert"
+                                    }
+                                }
+                            },
+
+                            "children": [],
+
+                            "attach": false
+                        }
+                    ],
+
+                    "attach": false
+                },
+
+                {
+                    "name": "Armies Info",
+
+                    "entities": {},
+
+                    "children": [
+                        {
+                            "name": "Blue-Gray Army",
+
+                            "entities": {
+                                "ArmyInfoEntity": {
+                                    "Name": "Blue-Gray",
+                                    "Type": "BlueGray"
+                                }
+                            },
+
+                            "children": [],
+
+                            "attach": false
+                        },
+                        {
+                            "name": "Green Army",
+
+                            "entities": {
+                                "ArmyInfoEntity": {
+                                    "Name": "Green",
+                                    "Type": "Green"
+                                }
+                            },
+
+                            "children": [],
+
+                            "attach": false
+                        },
+                        {
+                            "name": "Desert Army",
+
+                            "entities": {
+                                "ArmyInfoEntity": {
+                                    "Name": "Desert",
+                                    "Type": "Desert"
+                                }
+                            },
+
+                            "children": [],
+
+                            "attach": false
+                        }
+                    ],
+
+                    "attach": false
+                },
+
+                {
+                    "name": "Maps",
+
+                    "entities": {},
+
+                    "children": [
+                        {
+                            "name": "Map Tankograd",
+
+                            "entities": {
+                                "MapInfoEntity":  {
+                                    "Name": "Tankograd",
+                                    "Description": "Urban deathmatch",
+                                    "MaxTanks": 10,
+                                    "PreviewId": "level.preview"
+                                }
+                            },
+
+                            "children": [],
+
+                            "attach": false
+                        }
+                    ],
+
+                    "attach": false
+                }
+            ],
             
             "attach": true
-        },
-
-        {
-            "name": "Tanks Info",
-            
-            "entities": {},
-            
-            "children": [
-                {
-                    "name": "Light Tank",
-                    
-                    "entities": {
-                        "TankInfoEntity": {
-                            "Name": "Light",
-                            "ModelId": "tanks.light.model",
-                            "Textures": {
-                                "BlueGray": "tanks.light.bluegray",
-                                "Green": "tanks.light.green",
-                                "Desert": "tanks.light.desert"
-                            }
-                        }
-                    },
-                    
-                    "children": [],
-                    
-                    "attach": false
-                },
-                {
-                    "name": "Medium Tank",
-
-                    "entities": {
-                        "TankInfoEntity": {
-                            "Name": "Medium",
-                            "ModelId": "tanks.medium.model",
-                            "Textures": {
-                                "BlueGray": "tanks.medium.bluegray",
-                                "Green": "tanks.medium.green",
-                                "Desert": "tanks.medium.desert"
-                            }
-                        }
-                    },
-
-                    "children": [],
-
-                    "attach": false
-                },
-                {
-                    "name": "Heavy Tank",
-
-                    "entities": {
-                        "TankInfoEntity": {
-                            "Name": "Heavy",
-                            "ModelId": "tanks.heavy.model",
-                            "Textures": {
-                                "BlueGray": "tanks.heavy.bluegray",
-                                "Green": "tanks.heavy.green",
-                                "Desert": "tanks.heavy.desert"
-                            }
-                        }
-                    },
-
-                    "children": [],
-
-                    "attach": false
-                }
-            ],
-            
-            "attach": false
-        },
-
-        {
-            "name": "Armies Info",
-            
-            "entities": {},
-            
-            "children": [
-                {
-                    "name": "Blue-Gray Army",
-                    
-                    "entities": {
-                        "ArmyInfoEntity": {
-                            "Name": "Blue-Gray",
-                            "Type": "BlueGray"
-                        }
-                    },
-                    
-                    "children": [],
-                    
-                    "attach": false
-                },
-                {
-                    "name": "Green Army",
-
-                    "entities": {
-                        "ArmyInfoEntity": {
-                            "Name": "Green",
-                            "Type": "Green"
-                        }
-                    },
-
-                    "children": [],
-
-                    "attach": false
-                },
-                {
-                    "name": "Desert Army",
-
-                    "entities": {
-                        "ArmyInfoEntity": {
-                            "Name": "Desert",
-                            "Type": "Desert"
-                        }
-                    },
-
-                    "children": [],
-
-                    "attach": false
-                }
-            ],
-            
-            "attach": false
-        },
-
-        {
-            "name": "Maps",
-            
-            "entities": {},
-            
-            "children": [
-                {
-                    "name": "Map Tankograd",
-                    
-                    "entities": {
-                        "MapInfoEntity":  {
-                            "Name": "Tankograd",
-                            "Description": "Urban deathmatch",
-                            "MaxTanks": 10,
-                            "PreviewId": "level.preview"
-                        }
-                    },
-                    
-                    "children": [],
-                    
-                    "attach": false
-                }
-            ],
-            
-            "attach": false
         }
         
     ],

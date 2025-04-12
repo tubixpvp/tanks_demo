@@ -7,7 +7,10 @@
             "name": "Root",
             
             "entities": {
-                "UserModelEntity": {}
+                "UserModelEntity": {
+                    "MinNameLength": 3,
+                    "MaxNameLength": 20
+                }
             },
             
             "children": [],

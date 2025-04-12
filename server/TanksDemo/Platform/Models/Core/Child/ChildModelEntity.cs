@@ -4,5 +4,5 @@ namespace Platform.Models.Core.Child;
 
 public class ChildModelEntity
 {
-    public required GameObject Parent { get; set; }
+    public GameObject? Parent { get; set; }
 }

@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Core.GameObjects;
@@ -21,6 +22,9 @@ public class ModelCommunicationServiceImpl : IModelCommunicationService
 
     [InjectService]
     private static ModelRegistry ModelRegistry;
+
+    
+    private readonly ConcurrentDictionary<Type, object> _proxies = new();
     
     public void GetSender<CI>(
         GameObject gameObject, 
@@ -28,13 +32,13 @@ public class ModelCommunicationServiceImpl : IModelCommunicationService
         IEnumerable<NetworkSession> sessions, 
         Action<CI> callback)
     {
-        CI? proxyT = gameObject.GetData<CI>(typeof(ModelCommunicationServiceImpl));
+        CI? proxyT = (CI?)_proxies.GetValueOrDefault(typeof(CI));
 
         if (proxyT == null)
         {
             proxyT = DispatchProxy.Create<CI, SendProxy>()!;
 
-            gameObject.PutData(typeof(ModelCommunicationServiceImpl), proxyT);
+            _proxies.TryAdd(typeof(CI), proxyT);
         }
         
         SendProxy proxy = (proxyT as SendProxy)!;

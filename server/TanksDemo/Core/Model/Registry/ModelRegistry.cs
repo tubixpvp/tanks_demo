@@ -166,9 +166,7 @@ public class ModelRegistry
         Type clientInterfaceType = model.GetClientInterfaceType();
         
         MethodInfo[] clientMethods = clientInterfaceType.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
-        clientMethods = clientMethods.Where(method => 
-            method.Name != ModelUtils.InitObjectFunc
-            && method.DeclaringType != typeof(object)).ToArray();
+        clientMethods = clientMethods.Where(method => method.DeclaringType != typeof(object)).ToArray();
 
         List<long> methodsIds = new();
         
@@ -198,7 +196,7 @@ public class ModelRegistry
         Console.WriteLine("Registered model " + modelType.Name + " with id: " + model.Id);
     }
     
-    internal IModel GetModelById(long id) => _idToModel[id];
+    public IModel GetModelById(long id) => _idToModel[id];
     internal IModel? GetModelByEntityType(Type entityType) => _entityToModel.GetValueOrDefault(entityType);
     
     public Type GetEntityTypeByName(string name)

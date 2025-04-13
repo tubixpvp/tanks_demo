@@ -29,7 +29,6 @@ public class GameObject
     private readonly ConcurrentDictionary<Type, object> _adaptProxies = new();
 
     private readonly ConcurrentDictionary<Type, object> _runtimeData = new();
-    private readonly ConcurrentDictionary<long, ModelInitParams> _modelsClientInitParams = new();
 
     private bool _loaded;
     
@@ -163,9 +162,6 @@ public class GameObject
     public void PutData(Type key, object data) => _runtimeData[key] = data;
     public T? GetData<T>(Type key) => (T?)_runtimeData.GetValueOrDefault(key);
     public T? ClearData<T>(Type key) => _runtimeData.TryRemove(key, out object? data) ? (T?)data : default;
-
-    public void PutClientInitParams(long modelId, ModelInitParams initParams) => _modelsClientInitParams[modelId] = initParams;
-    public ModelInitParams? GetClientInitParams(long modelId) => _modelsClientInitParams.GetValueOrDefault(modelId);
 
     public T GetModelEntity<T>() => (T)_entities[typeof(T)];
     

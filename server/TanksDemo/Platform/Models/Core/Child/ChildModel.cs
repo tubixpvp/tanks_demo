@@ -1,20 +1,14 @@
 ﻿using Core.GameObjects;
 using Core.Model;
-using Network.Session;
 using Platform.Models.Core.Parent;
 
 namespace Platform.Models.Core.Child;
 
 [ModelEntity(typeof(ChildModelEntity))]
 [Model]
-internal class ChildModel(long id) : ModelBase<IChildModelClient>(id), IChild, ObjectAttachListener.Attached
+internal class ChildModel(long id) : ModelBase<IChildModelClient>(id), IClientConstructor<ChildCC>, IChild
 {
-    public void ObjectAttached(NetworkSession session)
-    {
-        Clients(Context, client => 
-            client.InitObject(GetParent().Id));
-    }
-
+    
     public GameObject GetParent()
     {
         return GetEntity<ChildModelEntity>().Parent!;
@@ -44,5 +38,13 @@ internal class ChildModel(long id) : ModelBase<IChildModelClient>(id), IChild, O
         
         Clients(Context.Object, Context.Space.GetDeployedSessions(Context.Object),
             client => client.ChangeParent(newParent.Id));
+    }
+
+    public ChildCC GetClientInitData()
+    {
+        return new ChildCC()
+        {
+            ParentId = GetParent().Id
+        };
     }
 }

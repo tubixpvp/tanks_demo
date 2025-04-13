@@ -9,9 +9,6 @@ public static class ModelUtils
 {
     [InjectService]
     private static ModelRegistry ModelRegistry;
-    
-    
-    public const string InitObjectFunc = "InitObject";
 
     
     public static MethodInfo[] GetServerInterfaceMethods(Type modelType)

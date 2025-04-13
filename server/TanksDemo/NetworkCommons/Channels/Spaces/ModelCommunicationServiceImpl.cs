@@ -118,13 +118,6 @@ public class ModelCommunicationServiceImpl : IModelCommunicationService
             if (targetMethod == null)
                 return null;
 
-            if (targetMethod.Name == ModelUtils.InitObjectFunc)
-            {
-                _object.PutClientInitParams(_model.Id, new ModelInitParams(args!, targetMethod.GetParameters()));
-                
-                return null;
-            }
-
             long methodId = ModelRegistry.GetMethodId(targetMethod);
 
             SpaceCommand command = new SpaceCommand(_object.Id, methodId);

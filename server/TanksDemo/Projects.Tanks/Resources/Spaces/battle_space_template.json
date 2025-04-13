@@ -42,7 +42,8 @@
                         "A3DModelEntity": {
                             "ModelResourceId": "level.model",
                             "CollisionResourceId": "level.collision"
-                        }
+                        },
+                        "MapModelEntity": {}
                     },
 
                     "children": [],

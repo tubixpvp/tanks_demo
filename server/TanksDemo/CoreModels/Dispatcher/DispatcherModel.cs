@@ -2,9 +2,11 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Core.GameObjects;
 using Core.Model;
+using Core.Model.Registry;
 using GameResources;
 using Network.Protocol;
 using Network.Session;
+using OSGI.Services;
 using ProtocolEncoding;
 using Utils;
 
@@ -14,6 +16,8 @@ namespace CoreModels.Dispatcher;
 [Model]
 internal class DispatcherModel(long modelId) : ModelBase<IDispatcherModelClient>(1), ObjectAttachListener.Attached, IDispatcher
 {
+    [InjectService]
+    private static ModelRegistry ModelRegistry;
     
     public void ObjectAttached(NetworkSession session)
     {
@@ -22,9 +26,17 @@ internal class DispatcherModel(long modelId) : ModelBase<IDispatcherModelClient>
 
     public void LoadEntities(GameObject[] objects, IEnumerable<NetworkSession> sessions)
     {
+        foreach (NetworkSession session in sessions)
+        {
+            LoadEntities(objects, session);
+        }
+    }
+
+    private void LoadEntities(GameObject[] objects, NetworkSession session)
+    {
         long?[] ids = objects.Select(obj => (long?)obj.Id).ToArray();
         
-        ModelCommunicationService.SendSpaceCommand(Context.Object.Id, 1, sessions,
+        ModelCommunicationService.SendSpaceCommand(Context.Object.Id, 1, [session],
             (ByteArray buffer, NullMap nullMap) =>
             {
 
@@ -34,11 +46,16 @@ internal class DispatcherModel(long modelId) : ModelBase<IDispatcherModelClient>
                 {
                     GeneralDataEncoder.Encode((GameObject?)null, buffer, nullMap); //parentId in old system
 
-                    (long modelId, ModelInitParams? modelParams)[] modelsParams =
-                        gameObject.ModelsIds
+                    (long modelId, ModelInitParams? modelParams)[] modelsParams = null;
+                    ModelContext.RunLocked(() =>
+                    {
+                        PutContext(new ModelContext(gameObject, session));
+                        modelsParams = gameObject.ModelsIds
                             .Where(modelId => !ModelRegistry.IsServerOnlyModel(modelId))
-                            .Select(modelId => (modelId, gameObject.GetClientInitParams(modelId)))
+                            .Select(modelId => (modelId, GetModelInitData(modelId)))
                             .ToArray();
+                        PopContext();
+                    });
 
                     long?[]? modelsIds = modelsParams.Select(
                         entry => (long?)entry.modelId).ToArray();
@@ -49,20 +66,42 @@ internal class DispatcherModel(long modelId) : ModelBase<IDispatcherModelClient>
                     {
                         if(entry.modelParams == null)
                             continue;
-                        int paramsNum = entry.modelParams.ParametersInfo.Length;
-                        for (int i = 0; i < paramsNum; i++)
+                        int fieldsNum = entry.modelParams.FieldsInfo.Length;
+                        for (int i = 0; i < fieldsNum; i++)
                         {
-                            ParameterInfo paramInfo = entry.modelParams.ParametersInfo[i];
-                            GeneralDataEncoder.Encode(paramInfo.ParameterType,
-                                entry.modelParams.ArgumentsData[i],
+                            FieldInfo fieldInfo = entry.modelParams.FieldsInfo[i];
+                            GeneralDataEncoder.Encode(fieldInfo.FieldType,
+                                entry.modelParams.FieldsData[i],
                                 buffer, nullMap,
-                                Nullable.GetUnderlyingType(paramInfo.ParameterType) != null
-                                || paramInfo.GetCustomAttribute<MaybeNullAttribute>() != null);
+                                Nullable.GetUnderlyingType(fieldInfo.FieldType) != null
+                                || fieldInfo.GetCustomAttribute<MaybeNullAttribute>() != null);
                         }
                     }
                 }
 
             });
+    }
+
+    private ModelInitParams? GetModelInitData(long modelId)
+    {
+        IModel model = ModelRegistry.GetModelById(modelId);
+
+        Type? interfaceType = model.GetClientConstructorInterfaceType();
+
+        if (interfaceType == null)
+            return null;
+
+        Type initDataType = interfaceType.GetGenericArguments().First();
+
+        MethodInfo getDataMethod = interfaceType.GetMethod("GetClientInitData")!;
+
+        object dataInstance = getDataMethod.Invoke(model, [])!;
+
+        FieldInfo[] fields = initDataType.GetFields(BindingFlags.Instance | BindingFlags.Public);
+
+        object?[] fieldsValues = fields.Select(field => field.GetValue(dataInstance)).ToArray();
+
+        return new ModelInitParams(fieldsValues, fields);
     }
 
     public void UnloadEntities(GameObject[] objects, IEnumerable<NetworkSession> sessions)

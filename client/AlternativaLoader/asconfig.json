@@ -6,7 +6,11 @@
         ],
         "target-player": "32.0",
         "output": "./../bin/AlternativaLoader.swf",
-        "default-frame-rate": 60
+        "default-frame-rate": 60,
+        "default-size": {
+            "width": 800,
+            "height": 600
+        }
     },
     "mainClass": "AlternativaLoader"
 }

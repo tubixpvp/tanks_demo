@@ -2,6 +2,7 @@
 using Core.Model;
 using Core.Model.Communication;
 using GameResources;
+using Logging;
 using Network.Session;
 using NetworkCommons.Channels.Spaces;
 using OSGI.Services;
@@ -15,7 +16,7 @@ namespace Projects.Tanks.Models.Tank;
 
 [ModelEntity(typeof(TankModelEntity))]
 [Model]
-internal class TankModel(long modelId) : ModelBase<ITankModelClient>(modelId), ObjectAttachListener.Attached, ObjectListener.Load, IResourceRequire, ITank, ObjectAttachListener.Detached
+internal class TankModel(long modelId) : ModelBase<ITankModelClient>(modelId), IClientConstructor<TankCC>, ObjectListener.Load, IResourceRequire, ITank, ObjectAttachListener.Detached
 {
     [InjectService]
     private static UserProfileService UserProfileService;
@@ -44,9 +45,11 @@ internal class TankModel(long modelId) : ModelBase<ITankModelClient>(modelId), O
         });
 
         PutData(typeof(TankData), new TankData());
+
+        GetLogger().Log(LogLevel.Info, "Tank.InitObject() " + Context.Object);
     }
     
-    public void ObjectAttached(NetworkSession session)
+    public TankCC GetClientInitData()
     {
         TankModelEntity entity = GetEntity<TankModelEntity>();
 
@@ -58,36 +61,36 @@ internal class TankModel(long modelId) : ModelBase<ITankModelClient>(modelId), O
         NetworkSession ownerControlSession = entity.ControlSession;
         NetworkSession? ownerSession = GetOwnerSession();
         
-        Clients(Context, client => 
-            client.InitObject(
-                selfTank:ownerSession == session,
+        return new TankCC()
+        {
+            SelfTank=ownerSession == Context.Session!,
                 
-                name:UserProfileService.GetUserName(ownerControlSession),
-                score:UserProfileService.GetUserExperience(ownerControlSession),
+            Name=UserProfileService.GetUserName(ownerControlSession),
+            Score=UserProfileService.GetUserExperience(ownerControlSession),
                 
-                damagedTextureId:ResourceRegistry.GetNumericId(tankInfo.GetDeadTextureResourceId()),
-                sounds:sounds,
-                paintResourceId:ResourceRegistry.GetNumericId(tankInfo.GetTextureResourceId(entity.ArmyType)),
+            DamagedTextureId=ResourceRegistry.GetNumericId(tankInfo.GetDeadTextureResourceId()),
+            Sounds=sounds,
+            PaintResourceId=ResourceRegistry.GetNumericId(tankInfo.GetTextureResourceId(entity.ArmyType)),
                 
-                health:(byte)tankInfo.GetMaxHealth(), //max health
+            Health=(byte)tankInfo.GetMaxHealth(), //max health
                 
-                accuracy:1,//not used anywhere
-                control:tankData.Controls, //current tank control bits
+            Accuracy=1,//not used anywhere
+            Control=tankData.Controls, //current tank control bits
                 
-                gunY:70,
-                gunZ:20,
+            GunY=70,
+            GunZ=20,
                 
-                height:50,
-                length:190,
-                width:90,
+            Height=50,
+            Length=190,
+            Width=90,
                 
-                orientation:tankData.Orientation.ToVector3d(),
-                position:tankData.Position.ToVector3d(),
-                turretAngle:tankData.TurretAngle,
+            Orientation=tankData.Orientation.ToVector3d(),
+            Position=tankData.Position.ToVector3d(),
+            TurretAngle=tankData.TurretAngle,
                 
-                speed:100,
-                turretSpeed:1
-                ));
+            Speed=100,
+            TurretSpeed=1
+        };
     }
     
     public void ObjectDetached(NetworkSession session)

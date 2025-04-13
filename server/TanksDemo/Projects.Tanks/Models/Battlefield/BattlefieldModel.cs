@@ -1,5 +1,4 @@
-﻿using Core.GameObjects;
-using Core.Model;
+﻿using Core.Model;
 using Core.Model.Communication;
 using GameResources;
 using Network.Session;
@@ -10,7 +9,7 @@ namespace Projects.Tanks.Models.Battlefield;
 
 [ModelEntity(typeof(BattlefieldEntity))]
 [Model]
-internal class BattlefieldModel(long id) : ModelBase<IBattlefieldModelClient>(id), ObjectListener.Load, IResourceRequire
+internal class BattlefieldModel(long id) : ModelBase<object>(id), IClientConstructor<BattlefieldCC>, IResourceRequire
 {
     [InjectService]
     private static ResourceRegistry ResourceRegistry;
@@ -19,19 +18,6 @@ internal class BattlefieldModel(long id) : ModelBase<IBattlefieldModelClient>(id
     private static ClientSpacesControlService ClientSpacesControlService;
 
     
-    public void ObjectLoaded()
-    {
-        BattlefieldEntity entity = GetEntity<BattlefieldEntity>();
-        
-        Clients(Context, client => 
-            client.InitObject(
-                environmentSoundResourceId:ResourceRegistry.GetNumericId(entity.EnvironmentSoundId),
-                minimapResourceId:ResourceRegistry.GetNumericId(entity.MinimapResourceId),
-                tankHealths:[],
-                tanksScores:[]
-                ));
-    }
-
     [NetworkMethod]
     private void Leave()
     {
@@ -46,5 +32,18 @@ internal class BattlefieldModel(long id) : ModelBase<IBattlefieldModelClient>(id
 
         resourcesIds.Add(entity.EnvironmentSoundId);
         resourcesIds.Add(entity.MinimapResourceId);
+    }
+
+    public BattlefieldCC GetClientInitData()
+    {
+        BattlefieldEntity entity = GetEntity<BattlefieldEntity>();
+
+        return new BattlefieldCC()
+        {
+            EnvironmentSoundResourceId = ResourceRegistry.GetNumericId(entity.EnvironmentSoundId),
+            MinimapResourceId = ResourceRegistry.GetNumericId(entity.MinimapResourceId),
+            TankHealths = [],
+            TanksScores = []
+        };
     }
 }

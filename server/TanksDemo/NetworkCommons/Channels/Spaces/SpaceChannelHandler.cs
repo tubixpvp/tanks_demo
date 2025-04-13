@@ -81,6 +81,9 @@ public class SpaceChannelHandler : IChannelPacketHandler, IOSGiInitListener
 
     public async Task HandleConnect(NetworkSession spaceSession)
     {
+        if (spaceSession.ChannelType == ProtocolChannelType.Control)
+            return;
+        
         string sessionId = GetControlSessionId(spaceSession)!;
         NetworkSession controlSession = ControlChannelHandler.GetSessionById(sessionId);
         
@@ -225,7 +228,7 @@ public class SpaceChannelHandler : IChannelPacketHandler, IOSGiInitListener
         return session.GetAttribute<string?>(ControlSessionIdKey)!;
     }
     
-    internal void SetupAsSpaceSession(NetworkSession session, string sessionId)
+    internal async Task SetupAsSpaceSession(NetworkSession session, string sessionId)
     {
         session.ChannelType = ProtocolChannelType.Space;
         
@@ -234,7 +237,7 @@ public class SpaceChannelHandler : IChannelPacketHandler, IOSGiInitListener
         _logger.Log(LogLevel.Info, 
             $"Connection IP:{session.Socket.IPAddress} has joined SPACE channel with sessionID:{sessionId}");
 
-        HandleConnect(session);
+        await HandleConnect(session);
     }
 
 

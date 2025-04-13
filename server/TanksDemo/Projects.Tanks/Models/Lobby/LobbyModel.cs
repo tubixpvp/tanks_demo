@@ -20,7 +20,7 @@ namespace Projects.Tanks.Models.Lobby;
 
 [ModelEntity(typeof(LobbyEntity))]
 [Model]
-internal class LobbyModel(long id) : ModelBase<ILobbyModelClient>(id), IResourceRequire, ObjectAttachListener.Attached, ObjectListener.Load
+internal class LobbyModel(long id) : ModelBase<ILobbyModelClient>(id), IClientConstructor<LobbyCC>, IResourceRequire, ObjectListener.Load
 {
     [InjectService]
     private static ResourceRegistry ResourceRegistry;
@@ -77,8 +77,10 @@ internal class LobbyModel(long id) : ModelBase<ILobbyModelClient>(id), IResource
         return armiesInfoRoot.Adapt<IParent>();
     }
 
-    public void ObjectAttached(NetworkSession session)
+    public LobbyCC GetClientInitData()
     {
+        NetworkSession session = Context.Session!;
+        
         MapStruct[] maps = BattlesRegistry.GetActiveBattlesData();
 
         TankStruct[] tanks = GetTanksInfoParent().GetChildren().Select(
@@ -91,16 +93,18 @@ internal class LobbyModel(long id) : ModelBase<ILobbyModelClient>(id), IResource
 
         LobbySessionData sessionData = GetSessionData(session);
         
-        Clients(Context.Object, [], client => 
-            client.InitObject(armies,
-                sessionData.SelectedArmy.Id,
-                sessionData.SelectedBattleId,
-                tanks.First(tank => tank.Name == entity.DefaultTank).Id,
-                maps,
-                UserProfileService.GetUserExperience(session),
-                !UserProfileService.IsRegistered(session),
-                tanks,
-                UserTopService.GetTopRecords(10)));
+        return new LobbyCC()
+        {
+            Armies = armies,
+            DefaultArmy = sessionData.SelectedArmy.Id,
+            DefaultMap = sessionData.SelectedBattleId,
+            DefaultTank = tanks.First(tank => tank.Name == entity.DefaultTank).Id,
+            Maps = maps,
+            SelfScore = UserProfileService.GetUserExperience(session),
+            ShowRegButton = !UserProfileService.IsRegistered(session),
+            Tanks = tanks,
+            Top10 = UserTopService.GetTopRecords(10)
+        };
     }
     
     public void CollectGameResources(List<string> resourcesIds)

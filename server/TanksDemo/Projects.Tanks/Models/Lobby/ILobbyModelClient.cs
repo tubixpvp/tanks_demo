@@ -1,20 +1,7 @@
-﻿using Projects.Tanks.Models.Lobby.Struct;
-
-namespace Projects.Tanks.Models.Lobby;
+﻿namespace Projects.Tanks.Models.Lobby;
 
 public interface ILobbyModelClient
 {
-    public void InitObject(ArmyStruct[] armies,
-        long defaultArmy,
-        long defaultMap,
-        long defaultTank,
-        MapStruct[] maps,
-        int selfScore,
-        bool showRegButton,
-        TankStruct[] tanks,
-        TopRecord[] top10
-    );
-
     public void ShowTank(long modelId, long textureId);
-
+    
 }

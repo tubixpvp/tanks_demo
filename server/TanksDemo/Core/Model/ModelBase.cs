@@ -18,6 +18,12 @@ public abstract class ModelBase<CI> : ModelGlobals, IModel where CI : class
     
     public Type GetClientInterfaceType() => typeof(CI);
 
+    public Type? GetClientConstructorInterfaceType()
+    {
+        return GetType().GetInterfaces().FirstOrDefault(
+            i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IClientConstructor<>));
+    }
+
 
     protected void Clients(GameObject gameObject, IEnumerable<NetworkSession> sessions, Action<CI> callback)
     {

@@ -29,7 +29,7 @@ internal class ProduceHashCommand(byte[] hashBytes) : IControlCommand
         
         sessionId = Encoding.UTF8.GetString(hashBytes);
 
-        SpaceChannelHandler.SetupAsSpaceSession(session, sessionId);
+        await SpaceChannelHandler.SetupAsSpaceSession(session, sessionId);
     }
     
 }

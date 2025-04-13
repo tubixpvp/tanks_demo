@@ -78,6 +78,9 @@ internal class BattleJoinService
     {
         string objectName = $"tank@{UserProfileService.GetUserName(controlSession)}@{controlSession.Socket.IPAddress}";
         
+        LoggerService.GetLogger(typeof(BattleJoinService)).Log(LogLevel.Info, 
+            $"creating tank {objectName}");
+        
         GameObject tankObj = space.ObjectsStorage.CreateObject(objectName,
             [
                 new ChildModelEntity(),

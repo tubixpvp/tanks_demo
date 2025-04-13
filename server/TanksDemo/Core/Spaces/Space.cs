@@ -150,8 +150,11 @@ public class Space
             data.DeployingObjects.Add(gameObject, deployCancelToken);
         }
 
-        gameObject.Events<ObjectAttachListener.Attached>().ObjectAttached(session);
-        gameObject.Events<ObjectDeployListener.Deploy>().DeployObject(session, deployCancelToken);
+        lock (gameObject)
+        {
+            gameObject.Events<ObjectAttachListener.Attached>().ObjectAttached(session);
+            gameObject.Events<ObjectDeployListener.Deploy>().DeployObject(session, deployCancelToken);
+        }
     }
     public void OnObjectDeployed(NetworkSession session, GameObject gameObject)
     {

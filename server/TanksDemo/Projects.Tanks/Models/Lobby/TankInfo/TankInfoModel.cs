@@ -31,7 +31,11 @@ internal class TankInfoModel(long modelId) : ModelBase<object>(modelId), ITankIn
 
     public TankStruct GetTankStruct() => GetData<TankStruct>(typeof(TankStruct))!;
 
-    
+    public int GetMaxHealth() => GetProperties().HealthPoints;
+
+
+    private TankProperties GetProperties() => GetEntity<TankInfoEntity>().Params;
+
     public void CollectGameResources(List<string> resourcesIds)
     {
         TankInfoEntity entity = GetEntity<TankInfoEntity>();

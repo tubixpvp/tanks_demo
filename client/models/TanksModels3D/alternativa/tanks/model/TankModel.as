@@ -150,11 +150,12 @@ package alternativa.tanks.model {
 		 * @param turretAngle
 		 * @param up
 		 */
-		public function initObject(clientObject:ClientObject, accuracy:Number, control:int, damagedTextureId:Long, gunY:Number, gunZ:Number, h:Number, health:int, l:Number, name:String, orientation:Vector3d, position:Vector3d, score:int, selfTank:Boolean, speed:Number, turretAngle:Number, turretSpeed:Number, w:Number, soundsData:TankSoundsStruct):void {
+		public function initObject(clientObject:ClientObject, accuracy:Number, control:int, damagedTextureId:Long, gunY:Number, gunZ:Number, h:Number, health:int, l:Number, name:String, orientation:Vector3d, position:Vector3d, score:int, selfTank:Boolean, speed:Number, turretAngle:Number, turretSpeed:Number, w:Number, soundsData:TankSoundsStruct, paintResourceId:Long):void {
 			Main.writeToConsole(TextUtils.insertVars("[TankModel.initData] id %1", clientObject.id));
 
-			var textureResource:TextureResource = Main.resourceRegister.getResource(damagedTextureId) as TextureResource;
-			var tankParams:TankParams = new TankParams(clientObject.id, name, health, speed, turretSpeed, accuracy, l, w, h, gunY, gunZ, selfTank, score, textureResource.data);
+			var paintTextureResource:TextureResource = Main.resourceRegister.getResource(paintResourceId) as TextureResource;
+			var damagedTextureResource:TextureResource = Main.resourceRegister.getResource(damagedTextureId) as TextureResource;
+			var tankParams:TankParams = new TankParams(clientObject.id, name, health, speed, turretSpeed, accuracy, l, w, h, gunY, gunZ, selfTank, score, damagedTextureResource.data, paintTextureResource.data);
 			
 			var engineIdleSound:Sound = (Main.resourceRegister.getResource(soundsData.engineIdleSoundId) as SoundResource).sound;
 			var startMovingSound:Sound = (Main.resourceRegister.getResource(soundsData.startMovingSoundId) as SoundResource).sound;
@@ -340,7 +341,7 @@ package alternativa.tanks.model {
 		 * Вызывается при получении от сервера сообщения об изменении управляющих воздействий на танк. Танку задаются указанные координаты и
 		 * положение в пространстве, угол поворота башни и новое состояние органов управления.
 		 */
-		public function move(clientObject:ClientObject = null, position:Vector3d = null, orientation:Vector3d = null, turretAngle:Number = 0, control:int = 0, timer:int = 0):void {
+		public function move(clientObject:ClientObject, position:Vector3d, orientation:Vector3d, turretAngle:Number, control:int, timer:int):void {
 			if (clientObject != playerClientObject) {
 				var time:uint = getTimer();
 				var tankParams:TankParams = tanksRegistry[clientObject];
@@ -420,9 +421,9 @@ package alternativa.tanks.model {
 			var m:Matrix3D = playerTankParams.turret._transformation;
 			// Координаты точки вылета снаряда
 			var gunCoords:Point3D = new Point3D(m.d, m.h, m.l);
-//			gunCoords.x += m.b*playerTankParams.gunY + m.c*playerTankParams.gunZ;
-//			gunCoords.y += m.f*playerTankParams.gunY + m.g*playerTankParams.gunZ;
-//			gunCoords.z += m.j*playerTankParams.gunY + m.k*playerTankParams.gunZ;
+			gunCoords.x += m.b*playerTankParams.gunY + m.c*playerTankParams.gunZ;
+			gunCoords.y += m.f*playerTankParams.gunY + m.g*playerTankParams.gunZ;
+			gunCoords.z += m.j*playerTankParams.gunY + m.k*playerTankParams.gunZ;
 			// Направление полёта снаряда
 			var gunDirection:Point3D = new Point3D(m.b, m.f, m.j);
 //			Main.writeVarsToConsole("[TankModel.fireGun] hull matrix %1", playerTankParams._object3d._transformation);

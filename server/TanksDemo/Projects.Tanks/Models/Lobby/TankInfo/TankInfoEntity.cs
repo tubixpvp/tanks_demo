@@ -11,4 +11,6 @@ internal class TankInfoEntity
     public Dictionary<ArmyType, string> Textures;
 
     public string DeadTextureId;
+
+    public TankProperties Params;
 }

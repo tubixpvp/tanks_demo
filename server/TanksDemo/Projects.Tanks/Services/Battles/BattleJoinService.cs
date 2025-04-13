@@ -2,13 +2,16 @@ using Core.GameObjects;
 using Core.Spaces;
 using CoreModels.Resources;
 using GameResources;
+using Logging;
 using Network.Session;
 using NetworkCommons.Channels.Spaces;
 using OSGI.Services;
 using Platform.Models.Core.Child;
 using Platform.Models.General.World3d.A3D;
+using Projects.Tanks.Models.Lobby.ArmyInfo;
 using Projects.Tanks.Models.Lobby.TankInfo;
 using Projects.Tanks.Models.Tank;
+using Projects.Tanks.Services.Profile;
 
 namespace Projects.Tanks.Services.Battles;
 
@@ -23,20 +26,30 @@ internal class BattleJoinService
 
     [InjectService]
     private static ResourceRegistry ResourceRegistry;
+
+    [InjectService]
+    private static UserProfileService UserProfileService;
+
+    [InjectService]
+    private static LoggerService LoggerService;
     
     
-    public void JoinBattle(Space battleSpace, NetworkSession spaceSession, GameObject selectedTankInfo)
+    public void JoinBattle(Space battleSpace, NetworkSession spaceSession, GameObject selectedTankInfo, ArmyType armyType)
     {
         NetworkSession controlSession = SpaceChannelHandler.GetControlSessionBySpace(spaceSession);
 
         SpaceChannelHandler.DisconnectFromSpace(controlSession, spaceSession);
 
-        GameObject tankObject = CreateTankObject(spaceSession, battleSpace, selectedTankInfo);
+        GameObject tankObject = CreateTankObject(controlSession, battleSpace, selectedTankInfo, armyType);
         
         LoadAllSpaceResources(battleSpace, controlSession,
             () =>
             {
                 SpaceChannelHandler.ConnectToSpace(controlSession, battleSpace);
+
+                battleSpace.AttachObjectToAll(tankObject);
+                
+                tankObject.Params.AutoAttach = true;
             });
     }
 
@@ -50,8 +63,6 @@ internal class BattleJoinService
 
         foreach (GameObject gameObject in objects)
         {
-            if(!gameObject.Params.AutoAttach)
-                continue;
             gameObject.Events<IResourceRequire>().CollectGameResources(requiredResourcesIds);
         }
         
@@ -63,14 +74,18 @@ internal class BattleJoinService
         ClientResourcesService.LoadResources(controlSession, uniqueResources, callback);
     }
 
-    private GameObject CreateTankObject(NetworkSession session, Space space, GameObject tankInfoObject)
+    private GameObject CreateTankObject(NetworkSession controlSession, Space space, GameObject tankInfoObject, ArmyType armyType)
     {
-        GameObject tankObj = space.ObjectsStorage.CreateObject("tank@" + session.Socket.IPAddress,
+        string objectName = $"tank@{UserProfileService.GetUserName(controlSession)}@{controlSession.Socket.IPAddress}";
+        
+        GameObject tankObj = space.ObjectsStorage.CreateObject(objectName,
             [
                 new ChildModelEntity(),
                 new TankModelEntity()
                 {
-                    TankInfoObject = tankInfoObject
+                    TankInfoObject = tankInfoObject,
+                    ControlSession = controlSession,
+                    ArmyType = armyType
                 },
                 new A3DModelEntity()
                 {
@@ -85,9 +100,15 @@ internal class BattleJoinService
         GameObject battleRootObject = space.ObjectsStorage.GetObject("Battlefield Root")!;
         tankObj.Adapt<IChild>().ChangeParent(battleRootObject);
         
-        tankObj.Params.AutoAttach = true;
-        
         return tankObj;
+    }
+
+
+    public void OnDisconnected(NetworkSession spaceSession, GameObject tankObject)
+    {
+        tankObject.Params.AutoAttach = false;
+        
+        tankObject.UnloadAndDestroy();
     }
     
 }

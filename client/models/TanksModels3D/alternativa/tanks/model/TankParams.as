@@ -102,7 +102,7 @@ package alternativa.tanks.model {
 		 * @param height
 		 * @param player
 		 */
-		public function TankParams(id:Long, titleString:String, maxHealth:int, maxSpeed:Number, maxTurretSpeed:Number, accuracy:Number, length:Number, width:Number, height:Number, gunY:Number, gunZ:Number, player:Boolean, score:int, damagedTexture:Texture) {
+		public function TankParams(id:Long, titleString:String, maxHealth:int, maxSpeed:Number, maxTurretSpeed:Number, accuracy:Number, length:Number, width:Number, height:Number, gunY:Number, gunZ:Number, player:Boolean, score:int, damagedTexture:Texture, normalTexture:Texture) {
 			this.id = id;
 			this.maxHealth = maxHealth;
 			_health = maxHealth;
@@ -120,6 +120,7 @@ package alternativa.tanks.model {
 			boundRadius = Math.sqrt(width*width + height*height + length*length)*0.5;
 			_player = player;
 			_damagedTexture = damagedTexture;
+			_normalTexture = normalTexture;
 			_title = new Title(titleString == null ? id.toString() : titleString);
 		}
 		
@@ -388,8 +389,9 @@ package alternativa.tanks.model {
 			_object3d = value;
 			hull = _object3d.getChildByName("hull", true) as Mesh;
 			var surface:Surface = hull.surfaces.peek();
-			_normalTexture = (surface.material as TextureMaterial).texture;
+			//_normalTexture = (surface.material as TextureMaterial).texture;
 			turret = _object3d.getChildByName("turret", true) as Mesh;
+			setTexture(_normalTexture);
 		}
 		
 		public function get health():int {

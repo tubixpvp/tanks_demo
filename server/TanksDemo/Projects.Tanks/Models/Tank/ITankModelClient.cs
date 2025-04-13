@@ -9,7 +9,7 @@ internal interface ITankModelClient
         long damagedTextureId,
         float gunY, float gunZ,
         float height,
-        int health,
+        byte health,
         float length,
         string name,
         Vector3d orientation,
@@ -20,7 +20,10 @@ internal interface ITankModelClient
         float turretAngle,
         float turretSpeed,
         float width,
-        TankSoundsStruct sounds);
+        TankSoundsStruct sounds,
+        long paintResourceId);
+
+    public void Move(Vector3d position, Vector3d orientation, float turretAngle, int control, int timer);
 
     public void Fire(Vector3d targetPosition, long targetTankId);
 

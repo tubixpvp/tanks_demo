@@ -79,7 +79,7 @@ public class SpaceChannelHandler : IChannelPacketHandler, IOSGiInitListener
         }
     }
 
-    public Task HandleConnect(NetworkSession spaceSession)
+    public async Task HandleConnect(NetworkSession spaceSession)
     {
         string sessionId = GetControlSessionId(spaceSession)!;
         NetworkSession controlSession = ControlChannelHandler.GetSessionById(sessionId);
@@ -108,9 +108,9 @@ public class SpaceChannelHandler : IChannelPacketHandler, IOSGiInitListener
         Space space = spacesData.ConnectingSpace;
         spacesData.ConnectingSpace = null;
 
-        space.AddSession(spaceSession);
-
         spacesData.ConnectedSpaces.TryAdd(spaceSession, space);
+        
+        space.AddSession(spaceSession);
 
         
         lock (spacesData.SpacesToConnect)
@@ -120,8 +120,6 @@ public class SpaceChannelHandler : IChannelPacketHandler, IOSGiInitListener
                 ConnectToSpace(controlSession, queuedSpace);
             }
         }
-        
-        return Task.CompletedTask;
     }
 
     private Task OnControlSessionClosed(NetworkSession controlSession)
@@ -140,7 +138,7 @@ public class SpaceChannelHandler : IChannelPacketHandler, IOSGiInitListener
 
         return Task.WhenAll(spaceSessions.Select(HandleDisconnect));
     }
-    public Task HandleDisconnect(NetworkSession spaceSession)
+    public async Task HandleDisconnect(NetworkSession spaceSession)
     {
         string sessionId = GetControlSessionId(spaceSession)!;
         NetworkSession controlSession = ControlChannelHandler.GetSessionById(sessionId);
@@ -161,8 +159,6 @@ public class SpaceChannelHandler : IChannelPacketHandler, IOSGiInitListener
         spacesData.ConnectedSpaces.TryRemove(spaceSession, out Space? space);
 
         space!.RemoveSession(spaceSession);
-        
-        return Task.CompletedTask;
     }
 
     public NetworkSession GetControlSessionBySpace(NetworkSession spaceSession)
@@ -170,6 +166,21 @@ public class SpaceChannelHandler : IChannelPacketHandler, IOSGiInitListener
         string sessionId = GetControlSessionId(spaceSession)!;
         NetworkSession controlSession = ControlChannelHandler.GetSessionById(sessionId);
         return controlSession;
+    }
+
+    public NetworkSession? GetSpaceSession(NetworkSession controlSession, Space spaceConnected)
+    {
+        SessionSpacesData spacesData = GetControlSessionData(controlSession);
+
+        foreach ((NetworkSession spaceSession, Space space) in spacesData.ConnectedSpaces)
+        {
+            if (space == spaceConnected)
+            {
+                return spaceSession;
+            }
+        }
+
+        return null;
     }
     
     public void ConnectToSpace(NetworkSession controlSession, Space space)

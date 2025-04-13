@@ -16,11 +16,9 @@ internal class ResourcesLoadedCommand(int batchId) : IControlCommand
 
     public byte CommandId => CommandID;
     
-    public Task Execute(ControlChannelHandler channelHandler, NetworkSession session)
+    public async Task Execute(ControlChannelHandler channelHandler, NetworkSession session)
     {
         LoadListener.OnResourceLoaded(session, batchId);
-        
-        return Task.CompletedTask;
     }
     
 }

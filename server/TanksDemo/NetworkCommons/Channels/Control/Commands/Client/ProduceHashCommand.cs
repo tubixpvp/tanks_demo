@@ -18,20 +18,18 @@ internal class ProduceHashCommand(byte[] hashBytes) : IControlCommand
 
     public byte CommandId => CommandID;
     
-    public Task Execute(ControlChannelHandler channelHandler, NetworkSession session)
+    public async Task Execute(ControlChannelHandler channelHandler, NetworkSession session)
     {
         string? sessionId = channelHandler.GetSessionId(session);
 
         if (sessionId != null)
         {
-            return Task.CompletedTask; //already inited as CONTROL session
+            return; //already inited as CONTROL session
         }
         
         sessionId = Encoding.UTF8.GetString(hashBytes);
 
         SpaceChannelHandler.SetupAsSpaceSession(session, sessionId);
-        
-        return Task.CompletedTask;
     }
     
 }

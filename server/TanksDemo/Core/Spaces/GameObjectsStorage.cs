@@ -52,6 +52,17 @@ public class GameObjectsStorage(Space space)
             }
         }
     }
+
+    public void DeleteObject(string name)
+    {
+        lock (_gameObjectsByName)
+        {
+            if (!_gameObjectsByName.Remove(name, out GameObject? gameObject))
+                return;
+            
+            _gameObjectsById.Remove(gameObject.Id);
+        }
+    }
     
     private object CreateObjectLoaderEntity()
     {

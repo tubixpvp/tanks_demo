@@ -19,13 +19,13 @@ internal sealed class HashRequestCommand : IControlCommand, ICustomCodec
 
     public byte CommandId => CommandID;
     
-    public Task Execute(ControlChannelHandler channelHandler, NetworkSession session)
+    public async Task Execute(ControlChannelHandler channelHandler, NetworkSession session)
     {
         string? sessionId = channelHandler.GetSessionId(session);
 
         if (sessionId != null) //already got it's hash
         {
-            return Task.CompletedTask;
+            return;
         }
 
         sessionId = channelHandler.SetupAsControlSession(session);
@@ -33,8 +33,6 @@ internal sealed class HashRequestCommand : IControlCommand, ICustomCodec
         byte[] hashBytes = Encoding.UTF8.GetBytes(sessionId);
 
         channelHandler.SendCommand(new HashResponseCommand(hashBytes), session);
-        
-        return Task.CompletedTask;
     }
     
     public object Decode(ByteArray input, NullMap nullMap)

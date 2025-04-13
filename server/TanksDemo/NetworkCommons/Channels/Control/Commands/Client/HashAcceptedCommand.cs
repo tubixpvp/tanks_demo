@@ -14,21 +14,19 @@ public class HashAcceptedCommand : IControlCommand, ICustomCodec
 
     public byte CommandId => CommandID;
     
-    public Task Execute(ControlChannelHandler channelHandler, NetworkSession session)
+    public async Task Execute(ControlChannelHandler channelHandler, NetworkSession session)
     {
         string? sessionId = channelHandler.GetSessionId(session);
 
         if (sessionId == null) //not requested -> not got hash
         {
-            return Task.CompletedTask;
+            return;
         }
         
         OSGi.GetService<LoggerService>().GetLogger(GetType()).Log(LogLevel.Debug, 
             $"Client sessionId:{sessionId} accepted hash!");
 
         channelHandler.OnHashAccepted(session);
-        
-        return Task.CompletedTask;
     }
 
     

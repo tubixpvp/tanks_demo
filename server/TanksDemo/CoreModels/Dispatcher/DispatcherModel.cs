@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Core.GameObjects;
 using Core.Model;
+using GameResources;
 using Network.Protocol;
 using Network.Session;
 using ProtocolEncoding;
@@ -63,5 +64,17 @@ internal class DispatcherModel(long modelId) : ModelBase<IDispatcherModelClient>
 
             });
     }
-    
+
+    public void UnloadEntities(GameObject[] objects, IEnumerable<NetworkSession> sessions)
+    {
+        long[] ids = objects.Select(obj => obj.Id).ToArray();
+        
+        ModelCommunicationService.SendSpaceCommand(Context.Object.Id, 2, sessions,
+            (ByteArray buffer, NullMap nullMap) =>
+            {
+                GeneralDataEncoder.Encode(ids, buffer, nullMap);
+
+                GeneralDataEncoder.Encode(Array.Empty<ResourceInfo>(), buffer, nullMap);
+            });
+    }
 }

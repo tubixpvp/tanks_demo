@@ -41,7 +41,11 @@
                                         "Green": "tanks.light.green",
                                         "Desert": "tanks.light.desert"
                                     },
-                                    "DeadTextureId": "tanks.light.dead"
+                                    "DeadTextureId": "tanks.light.dead",
+                                    
+                                    "Params": {
+                                        "HealthPoints": 2
+                                    }
                                 }
                             },
 
@@ -61,7 +65,11 @@
                                         "Green": "tanks.medium.green",
                                         "Desert": "tanks.medium.desert"
                                     },
-                                    "DeadTextureId": "tanks.medium.dead"
+                                    "DeadTextureId": "tanks.medium.dead",
+
+                                    "Params": {
+                                        "HealthPoints": 3
+                                    }
                                 }
                             },
 
@@ -81,7 +89,11 @@
                                         "Green": "tanks.heavy.green",
                                         "Desert": "tanks.heavy.desert"
                                     },
-                                    "DeadTextureId": "tanks.heavy.dead"
+                                    "DeadTextureId": "tanks.heavy.dead",
+
+                                    "Params": {
+                                        "HealthPoints": 4
+                                    }
                                 }
                             },
 

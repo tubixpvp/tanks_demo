@@ -2,7 +2,9 @@
 using Core.Model;
 using Core.Model.Communication;
 using GameResources;
+using Network.Session;
 using OSGI.Services;
+using SpacesCommons.ClientControl;
 
 namespace Projects.Tanks.Models.Battlefield;
 
@@ -12,6 +14,9 @@ internal class BattlefieldModel(long id) : ModelBase<IBattlefieldModelClient>(id
 {
     [InjectService]
     private static ResourceRegistry ResourceRegistry;
+
+    [InjectService]
+    private static ClientSpacesControlService ClientSpacesControlService;
 
     
     public void ObjectLoaded()
@@ -30,7 +35,9 @@ internal class BattlefieldModel(long id) : ModelBase<IBattlefieldModelClient>(id
     [NetworkMethod]
     private void Leave()
     {
-        
+        NetworkSession session = Context.Session!;
+
+        ClientSpacesControlService.SwitchSpace(session, "Lobby");
     }
 
     public void CollectGameResources(List<string> resourcesIds)

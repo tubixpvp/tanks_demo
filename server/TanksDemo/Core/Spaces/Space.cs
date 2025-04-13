@@ -88,12 +88,48 @@ public class Space
         {
             CancelObjectDeploy(spaceSession, deployingObject);
         }
+        
         foreach (GameObject attachedObject in attachedObjects)
         {
             DetachObject(spaceSession, attachedObject);
         }
 
         spaceSession.DeleteAttribute(SessionDataKey);
+    }
+
+    internal void DestroyObject(GameObject gameObject)
+    {
+        lock (_sessions)
+        {
+            foreach (NetworkSession session in _sessions)
+            {
+                CancelObjectDeploy(session, gameObject);
+                DetachObject(session, gameObject);
+            }
+        }
+        
+        gameObject.Events<ObjectListener.Unload>().ObjectUnloaded();
+
+        ObjectsStorage.DeleteObject(gameObject.Name);
+
+        _logger.Log(LogLevel.Debug,
+            "GameObject destroyed: " + gameObject);
+    }
+
+    public void AttachObjectToAll(GameObject gameObject)
+    {
+        lock (_sessions)
+        {
+            foreach (NetworkSession session in _sessions)
+            {
+                SessionSpaceData data = GetSessionData(session);
+
+                if (!data.AttachedObjects.Contains(gameObject))
+                {
+                    AttachObject(session, gameObject);
+                }
+            }
+        }
     }
     
     internal void AttachObject(NetworkSession session, GameObject gameObject)
@@ -127,6 +163,15 @@ public class Space
         }
         gameObject.Events<ObjectDeployListener.Deployed>().ObjectDeployed(session);
     }
+    public void OnObjectUndeployed(NetworkSession session, GameObject gameObject)
+    {
+        SessionSpaceData data = GetSessionData(session);
+        lock (data)
+        {
+            data.DeployedObjects.Remove(gameObject);
+        }
+    }
+    
     private void CancelObjectDeploy(NetworkSession session, GameObject gameObject)
     {
         SessionSpaceData data = GetSessionData(session);
@@ -140,13 +185,17 @@ public class Space
     internal void DetachObject(NetworkSession session, GameObject gameObject)
     {
         SessionSpaceData data = GetSessionData(session);
+        bool removed;
         lock (data)
         {
-            data.AttachedObjects.Remove(gameObject);
+            removed = data.AttachedObjects.Remove(gameObject);
             
             data.DeployingObjects.Remove(gameObject);
         }
-        gameObject.Events<ObjectAttachListener.Detached>().ObjectDetached(session);
+        if (removed)
+        {
+            gameObject.Events<ObjectAttachListener.Detached>().ObjectDetached(session);
+        }
     }
     public bool IsObjectDeployed(NetworkSession session, GameObject gameObject)
     {

@@ -12,4 +12,6 @@ internal interface ITankInfo
     public string GetDeadTextureResourceId();
     
     public TankStruct GetTankStruct();
+
+    public int GetMaxHealth();
 }

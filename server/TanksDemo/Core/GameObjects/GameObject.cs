@@ -76,6 +76,9 @@ public class GameObject
     }
     public void UnloadAndDestroy()
     {
+        Space.DestroyObject(this);
+        
+        _loaded = false;
     }
     public bool IsLoaded()
     {

@@ -93,7 +93,7 @@ internal class LobbyModel(long id) : ModelBase<ILobbyModelClient>(id), IResource
         
         Clients(Context.Object, [], client => 
             client.InitObject(armies,
-                sessionData.SelectedArmyId,
+                sessionData.SelectedArmy.Id,
                 sessionData.SelectedBattleId,
                 tanks.First(tank => tank.Name == entity.DefaultTank).Id,
                 maps,
@@ -136,7 +136,7 @@ internal class LobbyModel(long id) : ModelBase<ILobbyModelClient>(id), IResource
         LobbySessionData sessionData = GetSessionData(Context.Session!);
 
         sessionData.SelectedTank = tankInfoObject;
-        sessionData.SelectedArmyId = armyInfoObject.Id;
+        sessionData.SelectedArmy = armyInfoObject;
         
         string modelId = tankInfo.GetModelResourceId();
         string textureId = tankInfo.GetTextureResourceId(armyInfo.GetArmyType());
@@ -163,7 +163,9 @@ internal class LobbyModel(long id) : ModelBase<ILobbyModelClient>(id), IResource
         
         Space battleSpace = BattlesRegistry.GetBattleSpaceById(sessionData.SelectedBattleId);
 
-        BattleJoinService.JoinBattle(battleSpace, session, sessionData.SelectedTank);
+        IArmyInfo armyInfo = sessionData.SelectedArmy.Adapt<IArmyInfo>();
+
+        BattleJoinService.JoinBattle(battleSpace, session, sessionData.SelectedTank, armyInfo.GetArmyType());
     }
 
     [NetworkMethod]
@@ -188,7 +190,7 @@ internal class LobbyModel(long id) : ModelBase<ILobbyModelClient>(id), IResource
             {
                 //set default params
                 SelectedTank = defaultTankObject,
-                SelectedArmyId = defaultArmyObject.Id,
+                SelectedArmy = defaultArmyObject,
                 SelectedBattleId = BattlesRegistry.GetFirstBattleId(),
             };
             session.SetAttribute(SessionDataKey, data);

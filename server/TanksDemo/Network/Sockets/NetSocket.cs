@@ -16,6 +16,8 @@ public class NetSocket
     
     public string IPAddress { get; }
 
+    public bool Connected => !_disconnected;
+
     internal event PacketCallbackFunc? OnPacketReceived;
     internal event Func<Task>? OnDisconnected;
     internal event Action<Exception>? OnError;
@@ -80,8 +82,15 @@ public class NetSocket
 
             data = _sendBuffer.ToArray();
         }
-        
-        await _socket.SendAsync(data, SocketFlags.None);
+
+        try
+        {
+            await _socket.SendAsync(data, SocketFlags.None);
+        }
+        catch (Exception e)
+        {
+            OnSocketError(e);
+        }
     }
 
     private void BeginRead()

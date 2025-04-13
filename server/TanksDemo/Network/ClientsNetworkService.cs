@@ -82,12 +82,10 @@ public class ClientsNetworkService : IOSGiInitListener
         });
     }
 
-    private Task OnConnectionClosed(NetworkSession session)
+    private async Task OnConnectionClosed(NetworkSession session)
     {
         SessionsRegistry.RemoveSession(session);
         
         _logger.Log(LogLevel.Info, $"Connection from IP: {session.Socket.IPAddress} closed!");
-
-        return Task.CompletedTask;
     }
 }

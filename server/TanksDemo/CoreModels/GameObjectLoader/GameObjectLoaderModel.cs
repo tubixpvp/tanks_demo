@@ -13,7 +13,7 @@ namespace CoreModels.GameObjectLoader;
 
 [ModelEntity(typeof(GameObjectLoaderEntity))]
 [Model(ServerOnly = true)]
-internal class GameObjectLoaderModel(long id) : ModelBase<object>(id), ObjectDeployListener.Deploy, IGameObjectLoader
+internal class GameObjectLoaderModel(long id) : ModelBase<object>(id), ObjectDeployListener.Deploy, IGameObjectLoader, ObjectAttachListener.Detached
 {
     [InjectService]
     private static ClientResourcesService ClientResourcesService;
@@ -117,5 +117,20 @@ internal class GameObjectLoaderModel(long id) : ModelBase<object>(id), ObjectDep
             listenersObj.Listeners.TryAdd(gameObject, callbacks = new List<Action>());
         }
         return callbacks;
+    }
+
+    public void ObjectDetached(NetworkSession session)
+    {
+        GameObject gameObject = Context.Object;
+        
+        if (Context.Space.IsObjectDeployed(session, gameObject))
+        {
+            if (session.Socket.Connected)
+            {
+                Context.Space.GetRootObject().Adapt<IDispatcher>().UnloadEntities([gameObject], [session]);
+            }
+
+            Context.Space.OnObjectUndeployed(session, gameObject);
+        }
     }
 }

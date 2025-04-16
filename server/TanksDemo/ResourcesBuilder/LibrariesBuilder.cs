@@ -44,7 +44,7 @@ internal class LibrariesBuilder
 
     public async Task Build()
     {
-        Dictionary<string, SWFLibraryData> libsData = await LibsDataService.GetLibsData(_clientRootDir);
+        List<SWFLibraryData> libsData = await LibsDataService.GetLibsData(_clientRootDir);
         
         JObject config = JObject.Parse(await File.ReadAllTextAsync(_tasksConfigPath));
         
@@ -90,7 +90,7 @@ internal class LibrariesBuilder
         await _resourceBuilder.WriteFile(fileName, data);
     }
 
-    private async Task BuildLibrary(string taskName, int libIndex, Dictionary<string, SWFLibraryData> libsData)
+    private async Task BuildLibrary(string taskName, int libIndex, List<SWFLibraryData> libsData)
     {
         TaskConfigJson taskConfig = _tasks.First(task => task.Label == taskName);
         
@@ -119,11 +119,13 @@ internal class LibrariesBuilder
         byte[] librarySwcData = await File.ReadAllBytesAsync(Path.Combine(libraryDir, "library.swc"));
 
         string libHash = HashUtil.GetBase64SHA256String(librarySwcData);
-        
-        if (!libsData.TryGetValue(libName, out SWFLibraryData? libData))
+
+        SWFLibraryData? libData = libsData.FirstOrDefault(lib => lib.Name == libName);
+        if (libData == null)
         {
             libData = new SWFLibraryData()
             {
+                Name = libName,
                 ResourceId = _random.Next(10000000,int.MaxValue),
                 ResourceVersion = _random.Next(10000000,int.MaxValue),
                 LibraryFileHash = libHash
@@ -131,7 +133,7 @@ internal class LibrariesBuilder
             _logger.Log(LogLevel.Debug, $"Library config for {libName} not exists, created new: {JsonConvert.SerializeObject(libData)}");
             lock (libsData)
             {
-                libsData.Add(libName, libData);
+                libsData.Add(libData);
             }
         }
         else if(libData.LibraryFileHash != libHash)

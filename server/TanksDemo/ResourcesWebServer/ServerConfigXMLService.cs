@@ -25,7 +25,7 @@ internal class ServerConfigXMLService
         
         string clientDir = ServerLaunchParams.GetLaunchParams().GetString("clientDir") ?? throw new Exception("Client dir is not provided");
 
-        Dictionary<string, SWFLibraryData> libsData = LibsDataService.GetLibsData(clientDir).GetAwaiter().GetResult();
+        List<SWFLibraryData> libsData = LibsDataService.GetLibsData(clientDir).GetAwaiter().GetResult();
             
         /*foreach (var entry in libsData)
         {
@@ -49,11 +49,11 @@ internal class ServerConfigXMLService
             ),
             
             new XElement("plugins",
-                libsData.Select(entry => 
+                libsData.Select(lib => 
                     new XElement("plugin",
-                        new XAttribute("name", entry.Key),
-                        new XAttribute("id", entry.Value.ResourceId),
-                        new XAttribute("version", entry.Value.ResourceVersion)
+                        new XAttribute("name", lib.Name),
+                        new XAttribute("id", lib.ResourceId),
+                        new XAttribute("version", lib.ResourceVersion)
                     ))
             )
             

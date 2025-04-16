@@ -70,6 +70,12 @@ public class ModelRegistry
         {
             AddModel(modelType, config);
         }
+
+        string modelsConfigDir = Path.GetDirectoryName(modelsConfigPath)!;
+        if (!Directory.Exists(modelsConfigDir))
+        {
+            Directory.CreateDirectory(modelsConfigDir);
+        }
         
         File.WriteAllText(modelsConfigPath, JsonConvert.SerializeObject(config, Formatting.Indented));
     }

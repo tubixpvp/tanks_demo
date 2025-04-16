@@ -8,8 +8,8 @@
 			"args": [
 				"run",
 				"-client_src ${workspaceFolder}/client/",
-				"-models ${workspaceFolder}/server/models.json",
-				"-resCacheDir ${workspaceFolder}/server/resources_cache/"
+				"-models ${workspaceFolder}/cache/models.json",
+				"-resCacheDir ${workspaceFolder}/cache/resources_cache/"
 			],
 			"options": {
 				"cwd": "${workspaceFolder}/server/TanksDemo/ClientGenerator"
@@ -27,7 +27,7 @@
 				"-build_task Game Client Build",
 				"-output ${workspaceFolder}/file_server_data/",
 				"-debug true",
-				"-resCacheDir ${workspaceFolder}/server/resources_cache/"
+				"-resCacheDir ${workspaceFolder}/cache/resources_cache/"
 			],
 			"options": {
 				"cwd": "${workspaceFolder}/server/TanksDemo/ResourcesBuilder"

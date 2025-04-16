@@ -1,3 +1,4 @@
 /file_server_data/
 .vscode/settings.json
 .DS_Store
+/cache/

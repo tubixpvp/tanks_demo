@@ -11,7 +11,7 @@ Project is set up to build with VS Code Tasks. You can take a look on it inside 
 You will need VS Code with [AS3&MXML Plugin](https://marketplace.visualstudio.com/items?itemName=bowlerhatllc.vscode-as3mxml).
 Also, [dotnet9](https://dotnet.microsoft.com/en-us/download/dotnet/9.0) is required to build both client and server.
 
-Make sure you set the directory to your Flash or AIR SDK. You can get it [here](https://airsdk.harman.com/download).
+Make sure you set the directory to your Flash or AIR SDK. You must use SDK version 32, otherwise you will not be able to run the SWF in Flash Player.
 
 
 Step 1: build the client

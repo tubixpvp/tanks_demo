@@ -30,4 +30,5 @@ Windows: open `start.bat` in `/server/` folder.
 MacOS/Linux: go to `/server/` folder in terminal and execute the `start.sh` script.
 
 
-Step 3: Open `http://localhost:8000/AlternativaLoader.swf` in Flash Player app.
+Step 3: Open `http://localhost:8000/AlternativaLoader.swf?debug=true` in Flash Player app.
+Press Ctrl + ` to close the console.

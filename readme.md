@@ -5,7 +5,7 @@ This project is about compiling the client and reimplementing the server on C#.
 Everything inside `client/libraries` and `client/models` is a leaked code from AlternativaPlaform.
 Therefore, the content is not for commercial use.
 
-# How to build
+# How to run
 Project is set up to build with VS Code Tasks. You can take a look on it inside `.vscode/tasks.json` if want to build manually.
 
 You will need VS Code with [AS3&MXML Plugin](https://marketplace.visualstudio.com/items?itemName=bowlerhatllc.vscode-as3mxml).
@@ -13,10 +13,21 @@ Also, [dotnet9](https://dotnet.microsoft.com/en-us/download/dotnet/9.0) is requi
 
 Make sure you set the directory to your Flash or AIR SDK. You can get it [here](https://airsdk.harman.com/download).
 
-Building:
 
-Windows: Press Ctrl+Shift+B
+Step 1: build the client
+
+Windows/Linux: Press Ctrl+Shift+B
 
 MacOS: Press Command+Shift+B
 
--> Select your option: build client or server
+-> Select 'Game Client Build'
+
+
+Step 2: run the game server
+
+Windows: open `start.bat` in `/server/` folder.
+
+MacOS/Linux: go to `/server/` folder in terminal and execute the `start.sh` script.
+
+
+Step 3: Open `http://localhost:8000/AlternativaLoader.swf` in Flash Player app.

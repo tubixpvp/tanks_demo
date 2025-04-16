@@ -9,7 +9,7 @@ namespace Projects.Tanks.Models.Battlefield;
 
 [ModelEntity(typeof(BattlefieldEntity))]
 [Model]
-internal class BattlefieldModel(long id) : ModelBase<object>(id), IClientConstructor<BattlefieldCC>, IResourceRequire
+internal class BattlefieldModel(long id) : ModelBase<IBattlefieldModelClient>(id), IClientConstructor<BattlefieldCC>, IResourceRequire
 {
     [InjectService]
     private static ResourceRegistry ResourceRegistry;

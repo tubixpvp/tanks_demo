@@ -19,20 +19,18 @@ public static class AttributesUtil
 
         List<Assembly> assemblies = AppDomain.CurrentDomain.GetAssemblies().ToList();
 
-        string[] loadedAssemblies = assemblies.Select(assembly => assembly.GetName().Name).ToArray()!;
+        string[] loadedAssemblies = assemblies.Select(assembly => assembly.GetName().Name!).ToArray();
         
-        //Console.WriteLine("loaded libs:" + string.Join(',', loadedAssemblies));
+        //Console.WriteLine("loaded libs:" + string.Join(',', loadedAssemblies.Where(name => !name.StartsWith("System."))));
         
         //get list of required dlls
         
         List<string> requiredAssemblies = new();
+        
+        string appBinaryDir = Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!;
+        string entryAssemblyName = Assembly.GetEntryAssembly()!.GetName().Name!;
 
-        string appBinaryDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
-
-        string depsFileName = Directory
-            .GetFiles(appBinaryDir, "*.deps.json", SearchOption.TopDirectoryOnly).First();
-
-        JObject depsConfig = JObject.Parse(File.ReadAllText(depsFileName));
+        JObject depsConfig = JObject.Parse(File.ReadAllText(Path.Combine(appBinaryDir, entryAssemblyName + ".deps.json")));
         
         string runtimeTarget = depsConfig["runtimeTarget"]!["name"]!.ToObject<string>()!;
         var modules = depsConfig["targets"]![runtimeTarget]!.ToObject<Dictionary<string, JObject>>()!;
@@ -60,7 +58,6 @@ public static class AttributesUtil
 
         foreach (string assemblyName in notLoadedAssemblies)
         {
-            //assemblies.Add(Assembly.LoadFile(Path.Combine(Directory.GetCurrentDirectory(), assemblyName)));
             assemblies.Add(Assembly.Load(assemblyName));
         }
         

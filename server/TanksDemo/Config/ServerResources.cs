@@ -17,7 +17,7 @@ public static class ServerResources
     
     public static void Init()
     {
-        string binFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
+        string binFolder = Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!;
         string configsRoot = Path.Combine(binFolder, ResourcesFolder);
         
         Logger.Log(LogLevel.Info, 

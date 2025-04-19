@@ -12,7 +12,8 @@
                 "BattlefieldEntity": {
                     "EnvironmentSoundId": "battlefield.environment_sound",
                     "MinimapResourceId": "battlefield.minimap"
-                }
+                },
+                "ChatModelEntity": {}
             },
             
             "children": [

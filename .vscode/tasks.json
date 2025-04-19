@@ -79,6 +79,7 @@
 				"Build World3DModels",
 				"Build TanksModels3D",
 				"Build TanksModels",
+				"Build AlternativaChatModels",
 				
 				"Build AlternativaLoader",
 
@@ -233,6 +234,12 @@
 			"type": "actionscript",
 			"debug": true,
 			"asconfig": "client/models/TanksModels/asconfig.json"
+		},
+		{
+			"label": "Build AlternativaChatModels",
+			"type": "actionscript",
+			"debug": true,
+			"asconfig": "client/models/AlternativaChatModels/asconfig.json"
 		},
 
 		{

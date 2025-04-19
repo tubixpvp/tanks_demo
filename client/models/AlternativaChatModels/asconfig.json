@@ -1,0 +1,20 @@
+{
+    "type": "lib",
+    "compilerOptions": {
+        "include-sources": [
+            "./"
+        ],
+        "external-library-path": [
+            "./../../bin/AlternativaOSGI/library.swc",
+            "./../../bin/AlternativaClient/library.swc",
+            "./../../bin/ClientBase/library.swc",
+            "./../../bin/AlternativaTypes/library.swc",
+            "./../../bin/AlternativaProtocol/library.swc",
+            "./../../bin/AlternativaGUI/library.swc",
+            "./../../bin/AlternativaSkinManager/library.swc",
+            "./../../bin/AlternativaIOInterfaces/library.swc"
+        ],
+        "target-player": "32.0",
+        "output": "./../../bin/AlternativaChatModels/library.swc"
+    }
+}

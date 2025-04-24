@@ -1,6 +1,7 @@
 using Config;
 using Core.Model.Registry;
 using Core.Spaces;
+using Logging;
 using Newtonsoft.Json;
 using OSGI.Services;
 using SpacesCommons.Templates;
@@ -15,16 +16,20 @@ public class SpacesActivatorService
 
     [InjectService]
     private static ModelRegistry ModelRegistry;
+
+    [InjectService]
+    private static LoggerService LoggerService;
     
     public void Init()
     {
-        SpaceConfigJson[] configs = new []
-        {
-            "entrance_space.json", "battle_space_template.json", "lobby_space.json"
-        }.Select(ServerResources.GetConfig<SpaceConfigJson>).ToArray();
+        ILogger logger = LoggerService.GetLogger(GetType());
+        
+        SpaceConfigJson[] configs = ServerResources.GetConfigsInPath<SpaceConfigJson>("Spaces/");
 
         foreach (SpaceConfigJson config in configs)
         {
+            logger.Log(LogLevel.Info, "Creating space " + config.Name);
+            
             GameObjectTemplatesStorage templates = new GameObjectTemplatesStorage(config.Templates);
 
             Space space = SpaceRegistry.CreateSpace(config.Name, templates);

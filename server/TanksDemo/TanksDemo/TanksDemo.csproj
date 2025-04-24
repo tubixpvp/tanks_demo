@@ -18,6 +18,10 @@
       <ProjectReference Include="..\ResourcesWebServer\ResourcesWebServer.csproj" />
       <ProjectReference Include="..\Projects.Tanks\Projects.Tanks.csproj" />
       <ProjectReference Include="..\SpacesCommons\SpacesCommons.csproj" />
+
+        <Content Include="Resources\**\*">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
 
 </Project>

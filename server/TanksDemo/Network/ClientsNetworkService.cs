@@ -29,7 +29,7 @@ public class ClientsNetworkService : IOSGiInitListener
 
     public ClientsNetworkService()
     {
-        _netConfig = ServerResources.GetConfig<ServerNetworkConfig>("network.json");
+        _netConfig = ServerResources.GetConfig<ServerNetworkConfig>("Network/network.json");
 
         _tcpListener = new TcpListener(IPAddress.Any, _netConfig.ClientPorts[0]);
     }

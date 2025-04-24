@@ -12,10 +12,6 @@
       <ProjectReference Include="..\GameResources\GameResources.csproj" />
       <ProjectReference Include="..\Platform\Platform.csproj" />
       <ProjectReference Include="..\SpacesCommons\SpacesCommons.csproj" />
-        
-        <Content Include="Resources\**\*">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
     </ItemGroup>
 
 </Project>
